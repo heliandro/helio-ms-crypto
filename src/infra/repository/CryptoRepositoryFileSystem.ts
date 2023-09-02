@@ -10,6 +10,8 @@ const isAnyKeyPairExistsInPath = (): boolean => {
     return FileSystem.existsSync(PATH_PUBLIC_KEY) || FileSystem.existsSync(PATH_PRIVATE_KEY)
 }
 
+export type KeyType = 'public' | ' private' | string
+
 export default class CryptoRepositoryFileSystem implements CryptoRepository {
 
     constructor() {
@@ -29,18 +31,24 @@ export default class CryptoRepositoryFileSystem implements CryptoRepository {
         }
     }
 
-    async getKeyPair(): Promise<KeyPair> {
+    async getKey(type: KeyType): Promise<KeyPair> {
         if (!isAnyKeyPairExistsInPath())
-            throw new Error('O par de chaves de criptografia nao existe no caminho especificado.')
+            throw new Error('A chaves de criptografia nao existe no caminho especificado.')
+
+        const keyPath = `${PATH_KEY_FOLDER}/${type}_key.pem`;
 
         try {
-            const publicKey = FileSystem.readFileSync(PATH_PUBLIC_KEY, 'utf8');
-            const privateKey = FileSystem.readFileSync(PATH_PRIVATE_KEY, 'utf8');
+            let content = FileSystem.readFileSync(keyPath, 'utf8');
+            let publicKey = '';
+            let privateKey = '';
+
+            if (type.includes('public')) publicKey = content;
+            else privateKey = content;
             
             return new KeyPair(publicKey, privateKey)
         } catch (error: any) {
             console.error(error.message)
-            throw new Error('O par de chaves de criptografia nao pode ser recuperado devido a uma falha no servico');
+            throw new Error('A chaves de criptografia nao pode ser recuperada devido a uma falha no servico');
         }
     }
 }
