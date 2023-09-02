@@ -1,4 +1,6 @@
-import GenerateKeys from "./application/usecase/GenerateKeys"
+import GenerateKeyPair from './application/usecase/GenerateKeyPair';
+import EncryptionAlgorithm from './domain/value-object/EncryptionAlgorithm';
+import CryptoAdapterImpl from './infra/adapters/CryptoAdapterImpl';
 
 // driver, primary driver, input adapter
 process.stdin.on("data", async function (chunk) {
@@ -13,8 +15,10 @@ process.stdin.on("data", async function (chunk) {
     }
 
     if (command.startsWith("generate-keys")) {
-        const generateKeysUseCase = new GenerateKeys();
-        const output = await generateKeysUseCase.execute()
+        const encryptionAlgorithmVo = new EncryptionAlgorithm();
+        const cryptoAdapter = new CryptoAdapterImpl(encryptionAlgorithmVo)
+        const usecase = new GenerateKeyPair(cryptoAdapter);
+        const output = await usecase.execute()
         console.log(output);
     }
 
