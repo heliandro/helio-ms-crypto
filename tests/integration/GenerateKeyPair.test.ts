@@ -7,13 +7,13 @@ const deleteKeyFolder = () => {
 }
 
 test('Deve gerar as chaves de criptografia', async () => {
-    // when
+    // Given
     const repository = new CryptoRepositoryFileSystem();
     const usecase = new GenerateKeyPair(repository);
-    // then
+    // When
     deleteKeyFolder()
     const output = await usecase.execute();
-    // assert
+    // Then
     expect(output).toStrictEqual({ 
         message: 'O par de chaves de criptografia foi criado e salvo com sucesso!',
     });
