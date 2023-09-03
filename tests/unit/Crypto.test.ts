@@ -28,22 +28,21 @@ describe('Crypto', () => {
             const data = JSON.stringify({ name: 'Heliandro' });
             const crypto = await Crypto.create()
             // When
-            const encrypted = crypto.encrypt(data);
-            console.log(encrypted);
+            const encrypted = crypto.encrypt(data);            
             // Then
-            expect(encrypted).toBeInstanceOf(Buffer);
+            expect(encrypted).toBeTruthy();
         })
 
         test('Deve desencriptar um dado', async () => {
             // Given
-            const data = JSON.stringify({ name: 'Heliandro' });
+            const data = { name: 'Heliandro' };
+            const jsonData = JSON.stringify(data)
             const crypto = await Crypto.create()
-            const encrypted = crypto.encrypt(data);
+            const encrypted = crypto.encrypt(jsonData);
             // When
             const desencripted = crypto.decrypt(encrypted);
-            console.log(desencripted);
             // Then
-            expect(desencripted).toBeTruthy();
+            expect(JSON.parse(desencripted)).toStrictEqual(data);
         })
     })
 
@@ -67,10 +66,12 @@ describe('Crypto', () => {
 
         test('Deve lançar um erro ao encriptar um dado inválido', async () => {
             // Given
-            const invalidDataFormat = { name: 'Heliandro' };
+            const stub = sinon.stub(NodeCrypto, 'publicEncrypt').throwsException('Internal error');
+            const input = "xpto";
             const crypto = await Crypto.create()
             // When
-            expect(() => crypto.encrypt(invalidDataFormat)).toThrow(new Error('Falha ao encriptar os dados.'))
+            expect(() => crypto.encrypt(input)).toThrow(new Error('Falha ao encriptar os dados.'))
+            stub.restore();
         })
 
         test('Deve lançar um erro ao desencriptar um dado inválido', async () => {

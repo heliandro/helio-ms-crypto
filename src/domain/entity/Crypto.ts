@@ -21,19 +21,21 @@ export default class Crypto {
         }
     }
 
-    encrypt(data: any): Buffer {
+    encrypt(data: string): string {
         try {
-            return NodeCrypto.publicEncrypt({
+            const encryptedData = NodeCrypto.publicEncrypt({
                 key: this.keyPair.publicKey,
                 padding: NodeCrypto.constants.RSA_PKCS1_PADDING
             }, Buffer.from(data));
+
+            return encryptedData.toString('base64')
         } catch(error: any) {
             console.error(error.message);
             throw new Error('Falha ao encriptar os dados.');
         }
     }
 
-    decrypt(data: any) {
+    decrypt(data: string): string {
         const encryptedData = Buffer.from(data, 'base64');
 
         try {
