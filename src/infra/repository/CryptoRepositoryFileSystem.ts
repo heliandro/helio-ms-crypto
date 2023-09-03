@@ -27,7 +27,7 @@ export default class CryptoRepositoryFileSystem implements CryptoRepository {
             FileSystem.writeFileSync(PATH_PRIVATE_KEY, keyPair.privateKey);
         } catch (error: any) {
             console.error(error.message)
-            throw new Error('O par de chaves de criptografia não pode ser criado.', error.message)
+            throw new Error('Falha ao salvar o par de chaves de criptografia.', error.message)
         }
     }
 

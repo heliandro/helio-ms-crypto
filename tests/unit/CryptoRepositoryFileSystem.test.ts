@@ -4,6 +4,7 @@ import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFi
 import * as FileSystemHelper from '../utils/FileSystemHelper';
 import sinon from "sinon";
 import FileSystem from 'node:fs';
+import KeyPair from '@app/domain/entity/KeyPair';
 
 describe('CryptoRepositoryFileSystem', () => {
 
@@ -21,6 +22,21 @@ describe('CryptoRepositoryFileSystem', () => {
     })
 
     describe('Cenários de Sucesso', () => {
+
+        test('Deve salvar o par de chaves de criptografia', async () => {
+            // Given
+            stubs.registry.push(
+                sinon.stub(FileSystem, 'existsSync').returns(false),
+                sinon.stub(FileSystem, 'mkdirSync').returns(''),
+            );
+            const stub = sinon.stub(FileSystem, 'writeFileSync').returns()
+            const keyPair: KeyPair = new KeyPair(MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY);
+            // When
+            await repository.save(keyPair);
+            // Then
+            expect(stub.callCount).toBe(2)
+            stub.restore()
+        })
 
         test('Deve recuperar a chave de criptografia publica', async () => {
             // Given
@@ -69,6 +85,17 @@ describe('CryptoRepositoryFileSystem', () => {
             const keyType: KeyType = 'private';
             // When - Then
             await expect(() => repository.getKey(keyType)).rejects.toThrow(new Error('A chave de criptografia não pode ser recuperada devido a uma falha no serviço.'));
+        });
+
+        test('Deve lançar um erro ao tentar salvar o par de chaves de criptografia', async () => {
+            // Given
+            stubs.registry.push(
+                sinon.stub(FileSystem, 'existsSync').returns(false),
+                sinon.stub(FileSystem, 'mkdirSync').throwsException('Erro de escrita')
+            );
+            const keyPair: KeyPair = new KeyPair(MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY);
+            // When - Then
+            await expect(() => repository.save(keyPair)).rejects.toThrow(new Error('Falha ao salvar o par de chaves de criptografia.'));
         });
     });
 })

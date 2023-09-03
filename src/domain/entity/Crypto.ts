@@ -10,14 +10,14 @@ export default class Crypto {
         this.keyPair = new KeyPair(publicKey, privateKey)
     }
 
-    static create () {
+    static async create (): Promise<Crypto> {
         try {
             const encryptionAlgorithm = EncryptionAlgorithm.create()
             const { publicKey, privateKey } = NodeCrypto.generateKeyPairSync(encryptionAlgorithm.keyType, encryptionAlgorithm.options)
             return new Crypto(publicKey, privateKey)
         } catch (error: any) {
             console.error(error.message)
-            throw new Error('Error on generate key pair')
+            throw new Error('Falha ao gerar o par de chaves de criptografia.')
         }
     }
 }
