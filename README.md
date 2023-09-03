@@ -20,8 +20,8 @@ Este projeto adota a arquitetura hexagonal para garantir uma separação clara e
 - [x] Geração dos pares de chaves pública e privada.
 - [x] Armazenamento de chaves em um sistema de arquivos.
 - [x] Recuperação da chave pública e privada.
-- [ ] Criptografia de dados com a chave pública.
-- [ ] Descriptografia de dados com a chave privada.
+- [x] Criptografia de dados com a chave pública.
+- [x] Descriptografia de dados com a chave privada.
 - [ ] API RESTful para integração.
 - [ ] CLI para integração.
 
