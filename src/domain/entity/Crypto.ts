@@ -20,4 +20,32 @@ export default class Crypto {
             throw new Error('Falha ao gerar o par de chaves de criptografia.')
         }
     }
+
+    encrypt(data: any): Buffer {
+        try {
+            return NodeCrypto.publicEncrypt({
+                key: this.keyPair.publicKey,
+                padding: NodeCrypto.constants.RSA_PKCS1_PADDING
+            }, Buffer.from(data));
+        } catch(error: any) {
+            console.error(error.message);
+            throw new Error('Falha ao encriptar os dados.');
+        }
+    }
+
+    decrypt(data: any) {
+        const encryptedData = Buffer.from(data, 'base64');
+
+        try {
+            const decryptedDataBuffer = NodeCrypto.privateDecrypt({
+                key: this.keyPair.privateKey,
+                padding: NodeCrypto.constants.RSA_PKCS1_PADDING
+            }, encryptedData)
+
+            return decryptedDataBuffer.toString();
+        } catch(error: any) {
+            console.error(error.message);
+            throw new Error('Falha ao desencriptar os dados.');
+        }
+    }
 }

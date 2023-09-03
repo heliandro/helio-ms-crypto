@@ -4,11 +4,6 @@ import sinon from "sinon"
 import NodeCrypto from "crypto";
 
 describe('Crypto', () => {
-
-    // let crypto: Crypto
-    // afterEach(() => {
-    //     sinon.restore()
-    // })
     
     describe('Cenários de Sucesso', () => {
         
@@ -26,6 +21,29 @@ describe('Crypto', () => {
             // Then
             expect(output.publicKey).toBeTruthy()
             expect(output.privateKey).toBeTruthy()
+        })
+
+        test('Deve encriptar um dado', async () => {
+            // Given
+            const data = JSON.stringify({ name: 'Heliandro' });
+            const crypto = await Crypto.create()
+            // When
+            const encrypted = crypto.encrypt(data);
+            console.log(encrypted);
+            // Then
+            expect(encrypted).toBeInstanceOf(Buffer);
+        })
+
+        test('Deve desencriptar um dado', async () => {
+            // Given
+            const data = JSON.stringify({ name: 'Heliandro' });
+            const crypto = await Crypto.create()
+            const encrypted = crypto.encrypt(data);
+            // When
+            const desencripted = crypto.decrypt(encrypted);
+            console.log(desencripted);
+            // Then
+            expect(desencripted).toBeTruthy();
         })
     })
 
@@ -45,6 +63,23 @@ describe('Crypto', () => {
             const privateKey = 'chavePrivada';
             // When - Then
             expect(() => new Crypto(publicKey, privateKey)).toThrow(new Error('A(s) chave(s) de criptografia pem são inválidas'));
+        })
+
+        test('Deve lançar um erro ao encriptar um dado inválido', async () => {
+            // Given
+            const invalidDataFormat = { name: 'Heliandro' };
+            const crypto = await Crypto.create()
+            // When
+            expect(() => crypto.encrypt(invalidDataFormat)).toThrow(new Error('Falha ao encriptar os dados.'))
+        })
+
+        test('Deve lançar um erro ao desencriptar um dado inválido', async () => {
+            // Given
+            const data = JSON.stringify({ name: 'Heliandro' });
+            const invalidDataFormatInBase64 = btoa(data);
+            const crypto = await Crypto.create()
+            // When
+            expect(() => crypto.decrypt(invalidDataFormatInBase64)).toThrow(new Error('Falha ao desencriptar os dados.'))
         })
     })
 })
