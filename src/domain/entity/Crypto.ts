@@ -13,19 +13,11 @@ export default class Crypto {
     static create () {
         try {
             const encryptionAlgorithm = EncryptionAlgorithm.create()
-            const { publicKey, privateKey } = NodeCrypto.generateKeyPairSync(encryptionAlgorithm.name, encryptionAlgorithm.options)
+            const { publicKey, privateKey } = NodeCrypto.generateKeyPairSync(encryptionAlgorithm.keyType, encryptionAlgorithm.options)
             return new Crypto(publicKey, privateKey)
         } catch (error: any) {
             console.error(error.message)
             throw new Error('Error on generate key pair')
         }
-    }
-
-    encrypt(data: any): Promise<any> {
-        throw new Error('Method not implemented.');
-    }
-
-    decrypt(data: any): Promise<any> {
-        throw new Error('Method not implemented.');
     }
 }

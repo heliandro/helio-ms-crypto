@@ -27,13 +27,13 @@ export default class CryptoRepositoryFileSystem implements CryptoRepository {
             FileSystem.writeFileSync(PATH_PRIVATE_KEY, keyPair.privateKey);
         } catch (error: any) {
             console.error(error.message)
-            throw new Error('O par de chaves de criptografia nao pode ser criado.', error.message)
+            throw new Error('O par de chaves de criptografia não pode ser criado.', error.message)
         }
     }
 
     async getKey(type: KeyType): Promise<KeyPair> {
         if (!isAnyKeyPairExistsInPath())
-            throw new Error('A chaves de criptografia nao existe no caminho especificado.')
+            throw new Error('A chave de criptografia não existe no caminho especificado.')
 
         const keyPath = `${PATH_KEY_FOLDER}/${type}_key.pem`;
 
@@ -48,7 +48,7 @@ export default class CryptoRepositoryFileSystem implements CryptoRepository {
             return new KeyPair(publicKey, privateKey)
         } catch (error: any) {
             console.error(error.message)
-            throw new Error('A chaves de criptografia nao pode ser recuperada devido a uma falha no servico');
+            throw new Error('A chave de criptografia não pode ser recuperada devido a uma falha no serviço.');
         }
     }
 }

@@ -8,7 +8,7 @@ export default class GetKey {
     async execute(input: Input): Promise<Output> {
         const keyPair: KeyPair = await this.repository.getKey(input.keyType);
         return {
-            [`${input.keyType}Key`]: keyPair.publicKey ?? keyPair.privateKey
+            [`${input.keyType}Key`]: keyPair.publicKey || keyPair.privateKey
         }
     }
 }

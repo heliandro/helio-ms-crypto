@@ -1,28 +1,30 @@
-export type Options = {
-    modulusLength: number,
-    publicKeyEncoding: { type: string, format: string },
-    privateKeyEncoding: { type: string, format: string }
+import { RSAKeyPairOptions } from "crypto";
+
+type KeyType = 'rsa';
+
+const defaultOptions: RSAKeyPairOptions<'pem', 'pem'> = {
+    modulusLength: 1024,
+    publicKeyEncoding: { 
+        type: 'spki',
+        format: 'pem' 
+    },
+    privateKeyEncoding: { 
+        type: 'pkcs8',
+        format: 'pem'
+    }
 }
 
 export default class EncryptionAlgorithm {
 
-    readonly name: any;
-    readonly options: any;
+    readonly keyType: KeyType;
+    readonly options: RSAKeyPairOptions<'pem', 'pem'>;
 
-    constructor(name?: string, options?: Options) {
-        this.name = name ?? 'rsa';
-        this.options = options ?? this.defaultOptions();
+    constructor(name: KeyType, options: RSAKeyPairOptions<'pem', 'pem'>) {
+        this.keyType = name;
+        this.options = options;
     }
 
     static create () {
-        return new EncryptionAlgorithm()
-    }
-
-    private defaultOptions(): Options {
-        return {
-            modulusLength: 1024,
-            publicKeyEncoding: { type: 'spki', format: 'pem' },
-            privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
-        }
+        return new EncryptionAlgorithm('rsa', defaultOptions)
     }
 }
