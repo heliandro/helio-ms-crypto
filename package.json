@@ -4,7 +4,7 @@
   "description": "Crypto Microsservice",
   "scripts": {
     "start": "ts-node ./src/cli.ts",
-    "test": "jest --coverage"
+    "test": "jest --runInBand --coverage"
   },
   "keywords": [
     "crypto",
