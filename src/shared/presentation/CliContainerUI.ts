@@ -1,6 +1,6 @@
 import Readline from "node:readline"
 import { HeaderComponentUI } from "./HeaderComponentUI"
-import { MenuComponent } from "./MenuComponentUI"
+import { MenuComponentUI } from "./MenuComponentUI"
 import { log } from "../utils/function/log"
 import { LogColor } from "../utils/enum/LogColor.enum"
 
@@ -10,12 +10,12 @@ export class CliContainerUI {
     
     start() {
         HeaderComponentUI();
-        MenuComponent();
+        MenuComponentUI();
     }
     
     async showMenuAndChooseAnOption(showHeaderUI: boolean = true): Promise<string> {
         if (showHeaderUI) 
-            MenuComponent();
+            MenuComponentUI();
 
         return new Promise((resolve, reject) => {
             this.readline.question('> ', (choice) => {

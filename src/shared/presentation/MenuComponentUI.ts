@@ -12,7 +12,7 @@ close           | Encerrar o CLI
 Digite opção desejada:
 ${LogColor.RESET}`;
 
-export const MenuComponent = () => {
+export const MenuComponentUI = () => {
 
     console.log(MENU_UI);
 }

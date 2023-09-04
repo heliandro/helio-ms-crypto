@@ -5,7 +5,7 @@ import CryptoRepositoryFileSystem from '@app/infra/repository/CryptoRepositoryFi
 import { CliContainerUI } from './shared/presentation/CliContainerUI';
 import { log } from './shared/utils/function/log';
 
-class CLI {
+export default class CLI {
 
     constructor(
         readonly cliContainerUI: CliContainerUI,
@@ -18,7 +18,7 @@ class CLI {
     async start() {
         this.cliContainerUI.start();
         const isHeaderUI = false;
-        this.showMenu(isHeaderUI);
+        await this.showMenu(isHeaderUI);
     }
 
     async continueQuestion(): Promise<void> {
@@ -37,14 +37,14 @@ class CLI {
 
         switch(chosen) {
             case 'generate': {
-                this.choiceGenerateKeys();
+                await this.choiceGenerateKeys();
                 break;
             }
     
             case 'get public':
             case 'get private': {
                 const type = <KeyType>chosen.replace('get ', '');
-                this.choiceGetKey(type);
+                await this.choiceGetKey(type);
                 break;
             }
     
@@ -61,15 +61,15 @@ class CLI {
         }
     }
 
-    choiceGenerateKeys() {
-        this.generateKeyPair.execute()
+    async choiceGenerateKeys() {
+        return this.generateKeyPair.execute()
             .then(this.outputSuccess)
             .catch(this.outputError)
             .finally(() => { this.continueQuestion().then() })
     }
 
-    choiceGetKey(type: KeyType) {
-        this.getKey.execute({ keyType: type })
+    async choiceGetKey(type: KeyType) {
+        return this.getKey.execute({ keyType: type })
             .then(this.outputSuccess)
             .catch(this.outputError)
             .finally(() => { this.continueQuestion().then() })
@@ -84,7 +84,7 @@ class CLI {
     }
 }
 
-(async function main() {
+async function init() {
     const readline = Readline.createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -98,4 +98,4 @@ class CLI {
     const cli = new CLI(ui, generateKeyPair, getKey);
 
     cli.start();
-})();
+};
