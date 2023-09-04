@@ -10,12 +10,9 @@ const isAnyKeyPairExistsInPath = (): boolean => {
     return FileSystem.existsSync(PATH_PUBLIC_KEY) || FileSystem.existsSync(PATH_PRIVATE_KEY)
 }
 
-export type KeyType = 'public' | ' private' | string
+export type KeyType = 'public' | 'private';
 
 export default class CryptoRepositoryFileSystem implements CryptoRepository {
-
-    constructor() {
-    }
 
     async save(keyPair: KeyPair): Promise<void> {
         if (isAnyKeyPairExistsInPath())
