@@ -159,7 +159,7 @@ describe('CLI', () => {
             // Given
             sinon.stub(FileSystem, 'existsSync').returns(true)
             sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PRIVATE_KEY);
-            const data = "ZDnjmkjlZGv4O7p/vRW3yCoEphgLQLLZTS9PMrfEFWnc2Hp7jOvujnmlEpWtZmuEXmRJnPvRlYlXoDUKVO+QxPxOT0k1z1W0HJTIbpD5WYbEt3ONgkpmwVk4Y1ZFYn9sNdQf5DQMuStkFLlMhsBS5zw0qq4JQ0l8nYygD3N8yVc="; // "GVL3ViL5xphKBFZEzjlRdOW6eJdCgNfYYelzu1xbd/3HojSQwS/juRAGiGMrIeaUrR6QI26MVztxR266oUnpvO2svzw2XpuLqqR3TESQi2FulvzcY2Xh1EW4/hwEMFK/KpeMJ9EOzWnQZmlonpLrvFy1VtvOYQDePh3Ohqk+Oks=";
+            const data = "ZDnjmkjlZGv4O7p/vRW3yCoEphgLQLLZTS9PMrfEFWnc2Hp7jOvujnmlEpWtZmuEXmRJnPvRlYlXoDUKVO+QxPxOT0k1z1W0HJTIbpD5WYbEt3ONgkpmwVk4Y1ZFYn9sNdQf5DQMuStkFLlMhsBS5zw0qq4JQ0l8nYygD3N8yVc=";
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
             const uiFinishSpy = sinon.spy(ui, 'finish');
