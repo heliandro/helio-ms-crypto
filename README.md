@@ -4,7 +4,7 @@
 [![Nodejs Pipeline](https://github.com/heliandro/helio-ms-crypto/actions/workflows/nodejs-pipeline.yml/badge.svg)](https://github.com/heliandro/helio-ms-crypto/actions/workflows/nodejs-pipeline.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=heliandro_helio-ms-crypto&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=heliandro_helio-ms-crypto)
 
-Este é um microserviço em Node.js seguindo a arquitetura hexagonal (Port & Adapter) que oferece recursos de criptografia e descriptografia para suas aplicações.
+Este é um microserviço em Node.js seguindo a arquitetura hexagonal (Ports & Adapters) que oferece recursos de criptografia e descriptografia para suas aplicações.
 
 ## Arquitetura Hexagonal
 
@@ -20,10 +20,13 @@ Este projeto adota a arquitetura hexagonal para garantir uma separação clara e
 - [x] Geração dos pares de chaves pública e privada.
 - [x] Armazenamento de chaves em um sistema de arquivos.
 - [x] Recuperação da chave pública e privada.
-- [x] Criptografia de dados com a chave pública.
-- [x] Descriptografia de dados com a chave privada.
+- [x] Criptografia de dados.
+- [x] Descriptografia de dados.
+- [x] CLI para integração.
 - [ ] API RESTful para integração.
-- [ ] CLI para integração.
+- [ ] Documentação com Swagger.
+- [ ] Container/Cloud Like.
+
 
 ## Pré-requisitos
 
@@ -42,17 +45,25 @@ Instale as dependências:
 
 1. Inicie o cli
     ```bash
-    npx ts-node src/cli.ts
+    npm run start:cli
     ```
 
 2. Gere o par de chaves de criptografia:
     ```bash
-    generate-keys
+    generate
     ```
 
 3. Recupere a chave publica:
     ```bash
-    get-key public
+    get public
+    ```
+4. Faça a encriptação de um dado:
+    ```bash
+    encrypt "{ name: \"heliandro\" }"
+    ```
+5. Faça a desencriptação de um dado:
+    ```bash
+    decrypt "ZDnjmkjlZGv4O7p/vRW3yCoEphgLQLLZTS9PMrfEFWnc2Hp7jOvujnmlEpWtZmuEXmRJnPvRlYlXoDUKVO+QxPxOT0k1z1W0HJTIbpD5WYbEt3ONgkpmwVk4Y1ZFYn9sNdQf5DQMuStkFLlMhsBS5zw0qq4JQ0l8nYygD3N8yVc="
     ```
 
 ## Testes
@@ -60,6 +71,6 @@ Instale as dependências:
 Execute os testes com o seguinte comando:
 
 ```bash
-get-key public
+npm run test
 ```
 
