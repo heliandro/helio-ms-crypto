@@ -6,7 +6,7 @@ Selecione uma opção abaixo:
 generate        | Gerar um par de chaves
 get             | Ler uma chave. Ex: > get public | > get private
 encrypt         | Criptografa um dado. Ex: > encrypt "{ nome: 'fulano' }"
-decrypt         | Desencriptografa um dado. Ex: > decrypt XptoRSsdsdsadasdsaasdasdVQ=
+decrypt         | Desencriptografa um dado. Ex: > decrypt "XptoRSsdsdsadasdsaasdasdVQ="
 close           | Encerrar o CLI
 
 Digite opção desejada:

@@ -1,6 +1,6 @@
 import GenerateKeys from "@app/application/usecase/GenerateKeyPair";
 import GetKey from "@app/application/usecase/GetKey";
-import CLI from "@app/cli";
+import { CLI, init } from "@app/cli";
 import CryptoRepository from "@app/domain/repository/CryptoRepository";
 import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem";
 import { CliContainerUI } from "@app/shared/presentation/CliContainerUI";
@@ -9,6 +9,8 @@ import sinon from 'sinon';
 import { deleteFolder } from '../utils/FileSystemHelper';
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
 import FileSystem from 'node:fs';
+import Encrypt from "@app/application/usecase/Encrypt";
+import Decrypt from "@app/application/usecase/Decrypt";
 
 const sleep = async (milisseconds: number) => new Promise((resolve) => setTimeout(resolve, milisseconds));
 
@@ -22,6 +24,8 @@ describe('CLI', () => {
     let ui: CliContainerUI;
     let generateKeys: GenerateKeys;
     let getKey: GetKey;
+    let encrypt: Encrypt;
+    let decrypt: Decrypt;
     let cli: CLI;
 
     beforeEach(() => {
@@ -38,8 +42,10 @@ describe('CLI', () => {
         ui = new CliContainerUI(readline);
         generateKeys = new GenerateKeys(repository);
         getKey = new GetKey(repository);
+        encrypt = new Encrypt(repository);
+        decrypt = new Decrypt(repository);
         // init cli
-        cli = new CLI(ui, generateKeys, getKey);
+        cli = new CLI(ui, generateKeys, getKey, encrypt, decrypt);
     })
 
     afterEach(() => {
@@ -129,6 +135,46 @@ describe('CLI', () => {
             expect(uiFinishSpy.callCount).toBe(1);
         });
 
+        test('Deve encriptar um dado', async () => {
+            // Given
+            sinon.stub(FileSystem, 'existsSync').returns(true)
+            sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PUBLIC_KEY)
+            const data = JSON.stringify({ nome: "heliandro" });
+            const cliStartSpy = sinon.spy(cli, 'start');
+            const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
+            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const message = '"data": '
+            // When
+            readlineQuestionStub.onFirstCall().callsArgWith(1, `encrypt ${data}`);
+            readlineQuestionStub.onSecondCall().callsArgWith(1, 'n');
+            await cli.start();
+            // Then
+            expect(cliStartSpy.callCount).toBe(1);
+            expect(cliStartShowMenuSpy.callCount).toBe(1);
+            expect(uiFinishSpy.callCount).toBe(1);
+            expect(consoleLogSpy.getCall(2).calledWithMatch(message)).toBe(true)
+        });
+
+        test('Deve desencriptar um dado', async () => {
+            // Given
+            sinon.stub(FileSystem, 'existsSync').returns(true)
+            sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PRIVATE_KEY);
+            const data = "ZDnjmkjlZGv4O7p/vRW3yCoEphgLQLLZTS9PMrfEFWnc2Hp7jOvujnmlEpWtZmuEXmRJnPvRlYlXoDUKVO+QxPxOT0k1z1W0HJTIbpD5WYbEt3ONgkpmwVk4Y1ZFYn9sNdQf5DQMuStkFLlMhsBS5zw0qq4JQ0l8nYygD3N8yVc="; // "GVL3ViL5xphKBFZEzjlRdOW6eJdCgNfYYelzu1xbd/3HojSQwS/juRAGiGMrIeaUrR6QI26MVztxR266oUnpvO2svzw2XpuLqqR3TESQi2FulvzcY2Xh1EW4/hwEMFK/KpeMJ9EOzWnQZmlonpLrvFy1VtvOYQDePh3Ohqk+Oks=";
+            const cliStartSpy = sinon.spy(cli, 'start');
+            const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
+            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const message = '"data": '
+            // When
+            readlineQuestionStub.onFirstCall().callsArgWith(1, `decrypt ${data}`);
+            readlineQuestionStub.onSecondCall().callsArgWith(1, 'n');
+            await cli.start();
+            // Then
+            expect(cliStartSpy.callCount).toBe(1);
+            expect(cliStartShowMenuSpy.callCount).toBe(1);
+            expect(uiFinishSpy.callCount).toBe(1);
+            expect(consoleLogSpy.getCall(2).calledWithMatch(message)).toBe(true)
+        });
+
         test('Deve escolher uma opcao inválida', async () => {
             // Given
             const cliStartSpy = sinon.spy(cli, 'start');
@@ -145,9 +191,42 @@ describe('CLI', () => {
             expect(uiFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true)
         });
+
+        test('Deve testar a funcao init do arquivo', async () => {
+            // Given
+            const { dependency, instance } = await init();
+            sinon.replace(dependency.readline, 'question', readlineQuestionStub);
+            const cliStartSpy = sinon.spy(instance.cli, 'start');
+            const cliStartShowMenuSpy = sinon.spy(instance.cli, 'showMenu');
+            const uiFinishSpy = sinon.spy(dependency.ui, 'finish');
+            // When
+            readlineQuestionStub.onFirstCall().callsArgWith(1, 'close');
+            await instance.cli.start();
+            // Then
+            expect(cliStartSpy.callCount).toBe(1);
+            expect(cliStartShowMenuSpy.callCount).toBe(1);
+            expect(uiFinishSpy.callCount).toBe(1);
+        })
     })
 
     describe('Cenários de Erro', () => {
+
+        test('Deve logar uma mensagem de erro ao escolher a opcao get sem o segundo argumento', async () => {
+            // Given
+            const cliStartSpy = sinon.spy(cli, 'start');
+            const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
+            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const errorMessage = 'Opção inválida.';
+            // When
+            readlineQuestionStub.onFirstCall().callsArgWith(1, 'get');
+            readlineQuestionStub.onSecondCall().callsArgWith(1, 'n');
+            await cli.start();
+            // Then
+            expect(cliStartSpy.callCount).toBe(1);
+            expect(cliStartShowMenuSpy.callCount).toBe(1);
+            expect(uiFinishSpy.callCount).toBe(1);
+            expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true)
+        });
 
         test('Deve logar uma mensagem de erro ao criar novas chaves', async () => {
             // Given

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Crypto Microsservice",
   "scripts": {
-    "start": "ts-node ./src/cli.ts",
+    "start:cli": "npx ts-node -e \"import { init } from './src/cli'; init().then((data) => data.instance.cli.start());\"",
     "test": "jest --runInBand --coverage"
   },
   "keywords": [

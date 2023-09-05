@@ -10,7 +10,7 @@ export default class Decrypt {
         const crypto = new Crypto('', keyPair.privateKey);
         const decryptedData = crypto.decrypt(input.data);
         return {
-            data: decryptedData
+            data: JSON.parse(decryptedData)
         }
     }
 }
