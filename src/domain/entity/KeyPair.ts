@@ -12,7 +12,7 @@ export default class KeyPair {
     }
 
     validate(key: string) {
-        const pemKeyRegex = /^(-----BEGIN [A-Z ]+-----\r?\n?[\/+=A-Za-z0-9\r?\n?]+-----END [A-Z ]+-----\r?\n?)$/;
+        const pemKeyRegex = /^(-----BEGIN [A-Z ]+-----\r?\n?[/+=A-Za-z0-9\r\n?]+-----END [A-Z ]+-----\r?\n?)$/;
         return pemKeyRegex.test(key);
     }
 }
