@@ -1,54 +1,153 @@
-import GenerateKeyPair from '@app/application/usecase/GenerateKeyPair';
-import GetKey from '@app/application/usecase/GetKey';
-import CryptoRepositoryFileSystem from '@app/infra/repository/CryptoRepositoryFileSystem';
+import Readline from 'readline';
+import GenerateKeyPair from '@app/application/usecase/GenerateKeyPair'; // Importe seu use case de geração de chave
+import GetKey from '@app/application/usecase/GetKey'; // Importe seu use case de leitura de chave
+import CryptoRepositoryFileSystem from '@app/infra/repository/CryptoRepositoryFileSystem'; // Importe seu repositório
+import { CliContainerUI } from './shared/presentation/CliContainerUI';
+import { log } from './shared/utils/function/log';
+import Encrypt from './application/usecase/Encrypt';
+import Decrypt from './application/usecase/Decrypt';
 
-// driver, primary driver, input adapter
-process.stdin.on("data", async function (chunk) {
-    const command = chunk.toString().replace(/\n/g, "")
+export class CLI {
 
-    if (command.startsWith("help")) {
-        console.log("\nList of commands: \n");
-        console.table({
-            "generate-keys": "generate public and private keys. Exec: > generate-keys",
-            "get-key": "get public or private key. Exec: > get-key public",
-            // encrypt: "encrypt data. Exec: > encrypt \"{ name: 'Heliandro' }\""
-        })
+    constructor(
+        readonly cliContainerUI: CliContainerUI,
+        readonly generateKeyPair: GenerateKeyPair,
+        readonly getKey: GetKey,
+        readonly encrypt: Encrypt,
+        readonly decrypt: Decrypt
+    ) {}
+
+    async start() {
+        this.cliContainerUI.start();
+        const isHeaderUI = false;
+        await this.showMenu(isHeaderUI);
     }
 
-    if (command.startsWith("generate-keys")) {
-        const repository = new CryptoRepositoryFileSystem();
-        const usecase = new GenerateKeyPair(repository);
-        const output = await usecase.execute()
-        console.log(output);
+    async continueQuestion(): Promise<void> {
+        const chosen = await this.cliContainerUI.continueAndChooseAnOption()
+    
+        if (chosen === 'n') {
+            this.cliContainerUI.finish();
+            return;
+        }
+
+        await this.showMenu()
     }
 
-    if (command.startsWith("get-key")) {
-        const data: KeyType = <KeyType>command.replace(/get-key\s{0,1}/, "")
-        const input: { keyType: KeyType } = { keyType: data }
-
-        const repository = new CryptoRepositoryFileSystem();
-        const usecase = new GetKey(repository);
-        const output = await usecase.execute(input)
-        console.log(output);
+    isInvalidArg(arg: string): boolean {
+        if (!arg) {
+            log.error('\nOpção inválida.');
+            return true;
+        }
+        return false;
     }
 
-    // if (command.startsWith("encrypt")) {
-    //     const data = command.replace(/encrypt\s{0,1}/, "")
+    async showMenu(isHeaderUI: boolean = true): Promise<void> {
+        const chosen = await this.cliContainerUI.showMenuAndChooseAnOption(isHeaderUI)
         
-    //     if (!data) {
-    //         console.error('Data not found!')
-    //         return;
-    //     }
+        const [chosenFirstArg, chosenSecondArg] = /\s/.test(chosen) ? chosen.replace(' ', '--').split('--') : [chosen];
 
-    //     try {
-    //         const parsedData = JSON.parse(data)
-    //         console.log(parsedData)
-    //     } catch (error: any) {
-    //         console.error("Incorrete JSON format. ", error?.message)
-    //     }
-    // }
+        switch(chosenFirstArg) {
+            case 'generate': {
+                await this.choiceGenerateKeys();
+                break;
+            }
+    
+            case 'get': {
+                if (this.isInvalidArg(chosenSecondArg)) {
+                    await this.continueQuestion();
+                    break;
+                }
+                const type = <KeyType>chosenSecondArg;
+                await this.choiceGetKey(type);
+                break;
+            }
 
-    // if (command.startsWith("decrypt")) {
-    //     console.log("TODO - decrypt data....")
-    // }
-})
+            case 'encrypt': {
+                if (this.isInvalidArg(chosenSecondArg)) {
+                    await this.continueQuestion();
+                    break;
+                }
+                await this.choiceEncrypt(chosenSecondArg);
+                break;
+            }
+
+            case 'decrypt': {
+                if (this.isInvalidArg(chosenSecondArg)) {
+                    await this.continueQuestion();
+                    break;
+                }
+                await this.choiceDecrypt(chosenSecondArg);
+                break;
+            }
+    
+            case 'close': {
+                this.cliContainerUI.finish();
+                break;
+            }
+    
+            default: {
+                log.error('\nOpção inválida.');
+                await this.continueQuestion();
+                break;
+            }
+        }
+    }
+
+    async choiceGenerateKeys() {
+        return this.generateKeyPair.execute()
+            .then(this.outputSuccess)
+            .catch(this.outputError)
+            .finally(() => { this.continueQuestion().then() })
+    }
+
+    async choiceGetKey(type: KeyType) {
+        return this.getKey.execute({ keyType: type })
+            .then(this.outputSuccess)
+            .catch(this.outputError)
+            .finally(() => { this.continueQuestion().then() })
+    }
+
+    async choiceEncrypt(data: any) {
+        return this.encrypt.execute({data})
+            .then(this.outputSuccess)
+            .catch(this.outputError)
+            .finally(() => { this.continueQuestion().then() })
+    }
+
+    async choiceDecrypt(data: string) {
+        return this.decrypt.execute({data})
+            .then(this.outputSuccess)
+            .catch(this.outputError)
+            .finally(() => { this.continueQuestion().then() })
+    }
+
+    outputSuccess(data: any) {
+        log.info('\n' + JSON.stringify(data, null, 2));
+    }
+
+    outputError(error: any) {
+        log.error(`\n${error.message}`);
+    }
+}
+
+export async function init() {
+    const readline = Readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+    
+    const ui = new CliContainerUI(readline)
+    const repository = new CryptoRepositoryFileSystem();
+    const generateKeyPair = new GenerateKeyPair(repository);
+    const getKey = new GetKey(repository);
+    const encrypt = new Encrypt(repository);
+    const decrypt = new Decrypt(repository);
+
+    const cli = new CLI(ui, generateKeyPair, getKey, encrypt, decrypt);
+
+    return {
+        dependency: { readline, ui },
+        instance: { cli }
+    }
+};

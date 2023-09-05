@@ -7,7 +7,7 @@ module.exports = {
     '^@tests/(.*)$': '<rootDir>/tests/$1'
   },
   coveragePathIgnorePatterns: [
-    "/node_modules/",
-    "/src/cli.ts"
+    "/node_modules/"
   ]
 };
+                                                
