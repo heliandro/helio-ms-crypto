@@ -1,8 +1,8 @@
 import Readline from "node:readline"
 import { HeaderComponentUI } from "./HeaderComponentUI"
 import { MenuComponentUI } from "./MenuComponentUI"
-import { log } from "../utils/function/log"
-import { LogColor } from "../utils/enum/LogColor.enum"
+import { log } from "../utils/log"
+import { LogColor } from "../enum/LogColor.enum"
 
 export class CliContainerUI {
 

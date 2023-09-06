@@ -1,4 +1,4 @@
-import { LogColor } from "../utils/enum/LogColor.enum";
+import { LogColor } from "../enum/LogColor.enum";
 
 const MENU_UI = `${LogColor.GREEN}
 Selecione uma opção abaixo:

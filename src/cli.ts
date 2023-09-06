@@ -3,7 +3,7 @@ import GenerateKeyPair from '@app/application/usecases/GenerateKeyPair';
 import GetKey from '@app/application/usecases/GetKey';
 import CryptoRepositoryFileSystem from '@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem';
 import { CliContainerUI } from './shared/presentation/CliContainerUI';
-import { log } from './shared/utils/function/log';
+import { log } from './shared/utils/log';
 import Encrypt from './application/usecases/Encrypt';
 import Decrypt from './application/usecases/Decrypt';
 
