@@ -1,4 +1,4 @@
-import GenerateKeys from "@app/application/usecases/GenerateKeyPair";
+import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair";
 import GetKey from "@app/application/usecases/GetKey";
 import { CLI, init } from "@app/cli";
 import CryptoRepository from "@app/domain/repositories/CryptoRepository";
@@ -22,7 +22,7 @@ describe('CLI', () => {
     let repository: CryptoRepository;
     let readlineQuestionStub: sinon.SinonStub;
     let ui: CliContainerUI;
-    let generateKeys: GenerateKeys;
+    let generateKeys: GenerateKeyPair;
     let getKey: GetKey;
     let encrypt: Encrypt;
     let decrypt: Decrypt;
@@ -40,7 +40,7 @@ describe('CLI', () => {
         // init dependencies
         repository = new CryptoRepositoryFileSystem();
         ui = new CliContainerUI(readline);
-        generateKeys = new GenerateKeys(repository);
+        generateKeys = new GenerateKeyPair(repository);
         getKey = new GetKey(repository);
         encrypt = new Encrypt(repository);
         decrypt = new Decrypt(repository);
