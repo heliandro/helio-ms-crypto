@@ -1,4 +1,4 @@
-import KeyPair from "../entity/KeyPair";
+import KeyPair from "../entities/KeyPair";
 
 export default interface CryptoRepository {
 

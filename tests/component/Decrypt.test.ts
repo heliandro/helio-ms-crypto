@@ -1,10 +1,10 @@
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem"
-import CryptoRepository from "@app/domain/repository/CryptoRepository"
+import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem"
+import CryptoRepository from "@app/domain/repositories/CryptoRepository"
 import sinon from 'sinon';
 import FileSystem from 'node:fs';
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
-import Decrypt from "@app/application/usecase/Decrypt";
-import Crypto from "@app/domain/entity/Crypto";
+import Decrypt from "@app/application/usecases/Decrypt";
+import Crypto from "@app/domain/entities/Crypto";
 
 describe('Decrypt', () => {
 

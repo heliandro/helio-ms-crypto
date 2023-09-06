@@ -1,5 +1,5 @@
-import Crypto from '@app/domain/entity/Crypto';
-import CryptoRepository from '../../domain/repository/CryptoRepository';
+import Crypto from '@app/domain/entities/Crypto';
+import CryptoRepository from '../../domain/repositories/CryptoRepository';
 
 export default class Decrypt {
     

@@ -1,4 +1,4 @@
-import Crypto from "@app/domain/entity/Crypto"
+import Crypto from "@app/domain/entities/Crypto"
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants"
 import sinon from "sinon"
 import NodeCrypto from "crypto";

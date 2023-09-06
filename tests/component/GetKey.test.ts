@@ -1,8 +1,8 @@
-import GenerateKeyPair from "@app/application/usecase/GenerateKeyPair";
-import CryptoRepository from "@app/domain/repository/CryptoRepository";
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem";
+import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair";
+import CryptoRepository from "@app/domain/repositories/CryptoRepository";
+import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem";
 import * as FileSystemHelper from '../utils/FileSystemHelper';
-import GetKey from "@app/application/usecase/GetKey";
+import GetKey from "@app/application/usecases/GetKey";
 
 describe('GetKey', () => {
 

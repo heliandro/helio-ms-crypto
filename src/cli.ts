@@ -1,11 +1,11 @@
 import Readline from 'readline';
-import GenerateKeyPair from '@app/application/usecase/GenerateKeyPair'; // Importe seu use case de geração de chave
-import GetKey from '@app/application/usecase/GetKey'; // Importe seu use case de leitura de chave
-import CryptoRepositoryFileSystem from '@app/infra/repository/CryptoRepositoryFileSystem'; // Importe seu repositório
+import GenerateKeyPair from '@app/application/usecases/GenerateKeyPair';
+import GetKey from '@app/application/usecases/GetKey';
+import CryptoRepositoryFileSystem from '@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem';
 import { CliContainerUI } from './shared/presentation/CliContainerUI';
 import { log } from './shared/utils/function/log';
-import Encrypt from './application/usecase/Encrypt';
-import Decrypt from './application/usecase/Decrypt';
+import Encrypt from './application/usecases/Encrypt';
+import Decrypt from './application/usecases/Decrypt';
 
 export class CLI {
 

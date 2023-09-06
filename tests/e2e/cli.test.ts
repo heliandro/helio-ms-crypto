@@ -1,16 +1,16 @@
-import GenerateKeys from "@app/application/usecase/GenerateKeyPair";
-import GetKey from "@app/application/usecase/GetKey";
+import GenerateKeys from "@app/application/usecases/GenerateKeyPair";
+import GetKey from "@app/application/usecases/GetKey";
 import { CLI, init } from "@app/cli";
-import CryptoRepository from "@app/domain/repository/CryptoRepository";
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem";
+import CryptoRepository from "@app/domain/repositories/CryptoRepository";
+import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem";
 import { CliContainerUI } from "@app/shared/presentation/CliContainerUI";
 import Readline from "readline";
 import sinon from 'sinon';
 import { deleteFolder } from '../utils/FileSystemHelper';
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
 import FileSystem from 'node:fs';
-import Encrypt from "@app/application/usecase/Encrypt";
-import Decrypt from "@app/application/usecase/Decrypt";
+import Encrypt from "@app/application/usecases/Encrypt";
+import Decrypt from "@app/application/usecases/Decrypt";
 
 const sleep = async (milisseconds: number) => new Promise((resolve) => setTimeout(resolve, milisseconds));
 

@@ -1,6 +1,6 @@
-import GenerateKeyPair from "@app/application/usecase/GenerateKeyPair"
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem"
-import CryptoRepository from "@app/domain/repository/CryptoRepository"
+import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair"
+import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem"
+import CryptoRepository from "@app/domain/repositories/CryptoRepository"
 import * as FileSystemHelper from '../utils/FileSystemHelper';
 
 describe('GenerateKeyPair', () => {

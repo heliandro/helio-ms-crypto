@@ -1,10 +1,10 @@
 import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../utils/KeyPair.constants';
-import CryptoRepository from "@app/domain/repository/CryptoRepository";
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem";
+import CryptoRepository from "@app/domain/repositories/CryptoRepository";
+import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem";
 import * as FileSystemHelper from '../utils/FileSystemHelper';
 import sinon from "sinon";
 import FileSystem from 'node:fs';
-import KeyPair from '@app/domain/entity/KeyPair';
+import KeyPair from '@app/domain/entities/KeyPair';
 
 describe('CryptoRepositoryFileSystem', () => {
 

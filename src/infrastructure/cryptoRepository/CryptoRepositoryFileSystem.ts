@@ -1,5 +1,5 @@
-import KeyPair from "@app/domain/entity/KeyPair";
-import CryptoRepository from "@app/domain/repository/CryptoRepository";
+import KeyPair from "@app/domain/entities/KeyPair";
+import CryptoRepository from "@app/domain/repositories/CryptoRepository";
 import * as FileSystem from "node:fs";
 
 const PATH_KEY_FOLDER = './keys'

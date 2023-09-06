@@ -1,6 +1,6 @@
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem"
-import CryptoRepository from "@app/domain/repository/CryptoRepository"
-import Encrypt from "@app/application/usecase/Encrypt";
+import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem"
+import CryptoRepository from "@app/domain/repositories/CryptoRepository"
+import Encrypt from "@app/application/usecases/Encrypt";
 import sinon from 'sinon';
 import FileSystem from 'node:fs';
 import { MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";

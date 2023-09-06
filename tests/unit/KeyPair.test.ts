@@ -1,4 +1,4 @@
-import KeyPair from "@app/domain/entity/KeyPair"
+import KeyPair from "@app/domain/entities/KeyPair"
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants"
 
 describe('KeyPair', () => {
