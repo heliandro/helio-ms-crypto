@@ -1,5 +1,6 @@
 import KeyPair from "@app/domain/entities/KeyPair";
 import CryptoRepository from "@app/domain/repositories/CryptoRepository";
+import { CryptoKeyType } from "@app/domain/types/CryptoKeyType";
 import * as FileSystem from "node:fs";
 
 const PATH_KEY_FOLDER = './keys'
@@ -9,8 +10,6 @@ const PATH_PRIVATE_KEY = `${PATH_KEY_FOLDER}/private_key.pem`
 const isAnyKeyPairExistsInPath = (): boolean => {
     return FileSystem.existsSync(PATH_PUBLIC_KEY) || FileSystem.existsSync(PATH_PRIVATE_KEY)
 }
-
-export type KeyType = 'public' | 'private';
 
 export default class CryptoRepositoryFileSystem implements CryptoRepository {
 
@@ -28,7 +27,7 @@ export default class CryptoRepositoryFileSystem implements CryptoRepository {
         }
     }
 
-    async getKey(type: KeyType): Promise<KeyPair> {
+    async getKey(type: CryptoKeyType): Promise<KeyPair> {
         if (!isAnyKeyPairExistsInPath())
             throw new Error('A chave de criptografia não existe no caminho especificado.')
 

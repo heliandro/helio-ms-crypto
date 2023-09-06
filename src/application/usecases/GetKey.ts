@@ -1,5 +1,6 @@
 import KeyPair from "@app/domain/entities/KeyPair";
 import CryptoRepository from "@app/domain/repositories/CryptoRepository";
+import { CryptoKeyType } from "@app/domain/types/CryptoKeyType";
 
 export default class GetKey {
     
@@ -14,7 +15,7 @@ export default class GetKey {
 }
 
 type Input = {
-    keyType: KeyType
+    keyType: CryptoKeyType
 }
 
 type Output = {

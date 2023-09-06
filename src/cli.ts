@@ -6,6 +6,7 @@ import { CliContainerUI } from './shared/presentation/CliContainerUI';
 import { log } from './shared/utils/log';
 import Encrypt from './application/usecases/Encrypt';
 import Decrypt from './application/usecases/Decrypt';
+import { CryptoKeyType } from './domain/types/CryptoKeyType';
 
 export class CLI {
 
@@ -58,7 +59,7 @@ export class CLI {
                     await this.continueQuestion();
                     break;
                 }
-                const type = <KeyType>chosenSecondArg;
+                const type = <CryptoKeyType>chosenSecondArg;
                 await this.choiceGetKey(type);
                 break;
             }
@@ -101,7 +102,7 @@ export class CLI {
             .finally(() => { this.continueQuestion().then() })
     }
 
-    async choiceGetKey(type: KeyType) {
+    async choiceGetKey(type: CryptoKeyType) {
         return this.getKey.execute({ keyType: type })
             .then(this.outputSuccess)
             .catch(this.outputError)

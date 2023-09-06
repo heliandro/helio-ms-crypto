@@ -5,6 +5,7 @@ import * as FileSystemHelper from '../utils/FileSystemHelper';
 import sinon from "sinon";
 import FileSystem from 'node:fs';
 import KeyPair from '@app/domain/entities/KeyPair';
+import { CryptoKeyType } from '@app/domain/types/CryptoKeyType';
 
 describe('CryptoRepositoryFileSystem', () => {
 
@@ -44,7 +45,7 @@ describe('CryptoRepositoryFileSystem', () => {
                 sinon.stub(FileSystem, 'existsSync').returns(true),
                 sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PUBLIC_KEY)
             );
-            const keyType: KeyType = 'public';
+            const keyType: CryptoKeyType = 'public';
             // When
             const output = await repository.getKey(keyType);
             // Then
@@ -57,7 +58,7 @@ describe('CryptoRepositoryFileSystem', () => {
                 sinon.stub(FileSystem, 'existsSync').returns(true),
                 sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PRIVATE_KEY)
             );
-            const keyType: KeyType = 'private';
+            const keyType: CryptoKeyType = 'private';
             // When
             const output = await repository.getKey(keyType);
             // Then
@@ -71,7 +72,7 @@ describe('CryptoRepositoryFileSystem', () => {
             stubs.registry.push(
                 sinon.stub(FileSystem, 'existsSync').returns(false)
             );
-            const keyType: KeyType = 'public';
+            const keyType: CryptoKeyType = 'public';
             // When - Then
             await expect(() => repository.getKey(keyType)).rejects.toThrow(new Error('A chave de criptografia não existe no caminho especificado.'));
         })
@@ -82,7 +83,7 @@ describe('CryptoRepositoryFileSystem', () => {
                 sinon.stub(FileSystem, 'existsSync').returns(true),
                 sinon.stub(FileSystem, 'readFileSync').throwsException('Erro de leitura')
             );
-            const keyType: KeyType = 'private';
+            const keyType: CryptoKeyType = 'private';
             // When - Then
             await expect(() => repository.getKey(keyType)).rejects.toThrow(new Error('A chave de criptografia não pode ser recuperada devido a uma falha no serviço.'));
         });
