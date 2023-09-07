@@ -1,51 +1,28 @@
-import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair";
-import GetKey from "@app/application/usecases/GetKey";
-import { CLI, init } from "@app/cli";
-import CryptoRepository from "@app/domain/repositories/CryptoRepository";
-import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem";
-import { CliContainerUI } from "@app/shared/presentation/CliContainerUI";
+import FileSystem from 'node:fs';
 import Readline from "readline";
 import sinon from 'sinon';
+import DIContainer from '../../src/config/DependencyInjectionConfig';
+
+import { CLI } from "@app/cli";
+import { CliContainerUI } from "@app/shared/presentation/CliContainerUI";
 import { deleteFolder } from '../utils/FileSystemHelper';
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
-import FileSystem from 'node:fs';
-import Encrypt from "@app/application/usecases/Encrypt";
-import Decrypt from "@app/application/usecases/Decrypt";
 
 const sleep = async (milisseconds: number) => new Promise((resolve) => setTimeout(resolve, milisseconds));
 
 describe('CLI', () => {
 
-    let readline: Readline.Interface;
+    let readlineQuestionStub: sinon.SinonStub;
     let consoleLogSpy: sinon.SinonSpy
 
-    let repository: CryptoRepository;
-    let readlineQuestionStub: sinon.SinonStub;
-    let ui: CliContainerUI;
-    let generateKeys: GenerateKeyPair;
-    let getKey: GetKey;
-    let encrypt: Encrypt;
-    let decrypt: Decrypt;
-    let cli: CLI;
+    let readline: Readline.Interface = DIContainer.get<Readline.Interface>(Readline.Interface);
+    let ui: CliContainerUI = DIContainer.get<CliContainerUI>(CliContainerUI);
+    let cli: CLI = DIContainer.get<CLI>(CLI);
 
     beforeEach(() => {
         consoleLogSpy = sinon.spy(console, 'log');
-        readline = Readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
-        // init stubs
         readlineQuestionStub = sinon.stub();
         sinon.replace(readline, 'question', readlineQuestionStub);
-        // init dependencies
-        repository = new CryptoRepositoryFileSystem();
-        ui = new CliContainerUI(readline);
-        generateKeys = new GenerateKeyPair(repository);
-        getKey = new GetKey(repository);
-        encrypt = new Encrypt(repository);
-        decrypt = new Decrypt(repository);
-        // init cli
-        cli = new CLI(ui, generateKeys, getKey, encrypt, decrypt);
     })
 
     afterEach(() => {
@@ -191,22 +168,6 @@ describe('CLI', () => {
             expect(uiFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true)
         });
-
-        test('Deve testar a funcao init do arquivo', async () => {
-            // Given
-            const { dependency, instance } = await init();
-            sinon.replace(dependency.readline, 'question', readlineQuestionStub);
-            const cliStartSpy = sinon.spy(instance.cli, 'start');
-            const cliStartShowMenuSpy = sinon.spy(instance.cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(dependency.ui, 'finish');
-            // When
-            readlineQuestionStub.onFirstCall().callsArgWith(1, 'close');
-            await instance.cli.start();
-            // Then
-            expect(cliStartSpy.callCount).toBe(1);
-            expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
-        })
     })
 
     describe('Cenários de Erro', () => {

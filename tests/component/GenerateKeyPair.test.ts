@@ -1,17 +1,13 @@
 import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair"
-import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem"
-import CryptoRepository from "@app/domain/repositories/CryptoRepository"
 import * as FileSystemHelper from '../utils/FileSystemHelper';
+import DIContainer from "@app/config/DependencyInjectionConfig";
 
 describe('GenerateKeyPair', () => {
 
-    let repository: CryptoRepository;
-    let usecase: GenerateKeyPair;
+    let usecase: GenerateKeyPair = DIContainer.get<GenerateKeyPair>(GenerateKeyPair);
 
     beforeEach(() => {
-        FileSystemHelper.deleteFolder('./keys')
-        repository = new CryptoRepositoryFileSystem();
-        usecase = new GenerateKeyPair(repository);
+        FileSystemHelper.deleteFolder('./keys');
     })
 
     describe('Cenários de Sucesso', () => {

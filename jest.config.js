@@ -8,6 +8,7 @@ module.exports = {
   },
   coveragePathIgnorePatterns: [
     "/node_modules/"
-  ]
+  ],
+  testTimeout: 5000
 };
                                                 

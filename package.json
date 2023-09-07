@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Crypto Microsservice",
   "scripts": {
-    "start:cli": "npx ts-node -e \"import { init } from './src/cli'; init().then((data) => data.instance.cli.start());\"",
+    "start:cli": "npx ts-node -e \"import DIContainer from './src/config/DependencyInjectionConfig'; import { CLI } from './src/cli'; const cli = DIContainer.get<CLI>(CLI); cli.start();\"",
     "test": "jest --runInBand --coverage"
   },
   "keywords": [
@@ -30,6 +30,8 @@
     "body-parser": "^1.20.2",
     "crypto": "^1.0.1",
     "express": "^4.18.2",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "inversify": "^6.0.1",
+    "reflect-metadata": "^0.1.13"
   }
 }

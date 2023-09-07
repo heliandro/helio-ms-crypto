@@ -1,18 +1,15 @@
-import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem"
-import CryptoRepository from "@app/domain/repositories/CryptoRepository"
-import Encrypt from "@app/application/usecases/Encrypt";
-import sinon from 'sinon';
 import FileSystem from 'node:fs';
+import sinon from 'sinon';
+import DIContainer from "@app/config/DependencyInjectionConfig";
+
+import Encrypt from "@app/application/usecases/Encrypt";
 import { MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
 
 describe('Encrypt', () => {
 
-    let repository: CryptoRepository;
-    let usecase: Encrypt;
+    let usecase: Encrypt = DIContainer.get<Encrypt>(Encrypt);
 
     beforeEach(() => {
-        repository = new CryptoRepositoryFileSystem();
-        usecase = new Encrypt(repository);
         sinon.stub(FileSystem, 'existsSync').returns(true);
     })
 

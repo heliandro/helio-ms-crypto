@@ -1,7 +1,10 @@
+import { injectable } from "inversify";
+import "reflect-metadata";
+import * as FileSystem from "node:fs";
+
 import KeyPair from "@app/domain/entities/KeyPair";
 import CryptoRepository from "@app/domain/repositories/CryptoRepository";
-import { CryptoKeyType } from "@app/domain/types/CryptoKeyType";
-import * as FileSystem from "node:fs";
+import CryptoKeyType from "@app/domain/types/CryptoKeyType";
 
 const PATH_KEY_FOLDER = './keys'
 const PATH_PUBLIC_KEY = `${PATH_KEY_FOLDER}/public_key.pem`
@@ -11,6 +14,7 @@ const isAnyKeyPairExistsInPath = (): boolean => {
     return FileSystem.existsSync(PATH_PUBLIC_KEY) || FileSystem.existsSync(PATH_PRIVATE_KEY)
 }
 
+@injectable()
 export default class CryptoRepositoryFileSystem implements CryptoRepository {
 
     async save(keyPair: KeyPair): Promise<void> {
@@ -21,6 +25,7 @@ export default class CryptoRepositoryFileSystem implements CryptoRepository {
             FileSystem.mkdirSync(PATH_KEY_FOLDER)
             FileSystem.writeFileSync(PATH_PUBLIC_KEY, keyPair.publicKey);
             FileSystem.writeFileSync(PATH_PRIVATE_KEY, keyPair.privateKey);
+            Promise.resolve();
         } catch (error: any) {
             console.error(error.message)
             throw new Error('Falha ao salvar o par de chaves de criptografia.', error.message)

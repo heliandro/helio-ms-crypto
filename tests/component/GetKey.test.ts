@@ -1,31 +1,33 @@
-import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair";
-import CryptoRepository from "@app/domain/repositories/CryptoRepository";
-import CryptoRepositoryFileSystem from "@app/infrastructure/cryptoRepository/CryptoRepositoryFileSystem";
+import sinon from "sinon";
+import FileSystem from 'node:fs'
 import * as FileSystemHelper from '../utils/FileSystemHelper';
+
+import DIContainer from "@app/config/DependencyInjectionConfig";
 import GetKey from "@app/application/usecases/GetKey";
-import { CryptoKeyType } from "@app/domain/types/CryptoKeyType";
+import CryptoKeyType from "@app/domain/types/CryptoKeyType";
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
 
 describe('GetKey', () => {
 
-    let repository: CryptoRepository;
-    let generateKeyPair: GenerateKeyPair;
-    let usecase: GetKey;
+    let usecase: GetKey = DIContainer.get<GetKey>(GetKey);
 
     beforeEach(async () => {
-        repository = new CryptoRepositoryFileSystem();
-        generateKeyPair = new GenerateKeyPair(repository);
         FileSystemHelper.deleteFolder('./keys');
-        usecase = new GetKey(repository);
+    })
+
+    afterEach(() => {
+        sinon.restore();
     })
 
     describe('Cenários de Sucesso', () => {
 
-        beforeEach(async () => {
-            await generateKeyPair.execute();
+        beforeEach(() => {
+            sinon.stub(FileSystem, 'existsSync').returns(true);
         })
 
         test('Deve recuperar a chave de criptografia publica', async () => {
             // Given
+            sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PUBLIC_KEY);
             const input: { keyType: CryptoKeyType } = { keyType: 'public' }
             // When
             const output = await usecase.execute(input);
@@ -35,6 +37,7 @@ describe('GetKey', () => {
 
         test('Deve recuperar a chave de criptografia privada', async () => {
             // Given
+            sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PRIVATE_KEY);
             const input: { keyType: CryptoKeyType } = { keyType: 'private' }
             // When
             const output = await usecase.execute(input);
@@ -44,6 +47,11 @@ describe('GetKey', () => {
     })
 
     describe('Cenários de Erro', () => {
+
+        beforeEach(() => {
+            sinon.stub(FileSystem, 'existsSync').returns(false);
+        })
+
         test('Deve lançar um erro ao tentar recuperar uma chave de criptografia que não existe', async () => {
             // Given
             const input: { keyType: CryptoKeyType } = { keyType: 'public' }

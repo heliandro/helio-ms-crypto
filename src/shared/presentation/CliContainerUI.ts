@@ -1,12 +1,18 @@
+import { inject, injectable } from 'inversify';
+import "reflect-metadata";
+
 import Readline from "node:readline"
 import { HeaderComponentUI } from "./HeaderComponentUI"
 import { MenuComponentUI } from "./MenuComponentUI"
 import { log } from "../utils/log"
 import { LogColor } from "../enum/LogColor.enum"
 
+@injectable()
 export class CliContainerUI {
 
-    constructor(readonly readline: Readline.Interface) {}
+    constructor(
+        @inject(Readline.Interface) readonly readline: Readline.Interface
+    ) {}
     
     start() {
         HeaderComponentUI();

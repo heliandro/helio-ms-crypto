@@ -1,13 +1,21 @@
+import { inject, injectable } from 'inversify';
+import { TYPES } from '@app/config/Types';
+import "reflect-metadata";
+
 import Crypto from '@app/domain/entities/Crypto'
 import CryptoRepository from '@app/domain/repositories/CryptoRepository';
+import { UseCase } from './interfaces/UseCase';
 
-export default class GenerateKeyPair {
+@injectable()
+export default class GenerateKeyPair implements UseCase {
 
-    constructor(readonly cryptoRepository: CryptoRepository) {}
+    constructor(
+        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepository
+    ) {}
 
     async execute (): Promise<Output> {
         const crypto = await Crypto.create()
-        await this.cryptoRepository.save(crypto.keyPair)
+        await this.repository.save(crypto.keyPair)
         return { 
             message: 'O par de chaves de criptografia foi criado e salvo com sucesso!',
         };

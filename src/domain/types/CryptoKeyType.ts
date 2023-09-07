@@ -1,1 +1,3 @@
-export type CryptoKeyType = 'public' | 'private';
+type CryptoKeyType = 'public' | 'private';
+
+export default CryptoKeyType
