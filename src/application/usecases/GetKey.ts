@@ -1,11 +1,12 @@
 import { inject, injectable } from 'inversify';
-import { TYPES } from '@app/config/Types';
+import TYPES from '@app/config/Types';
 import "reflect-metadata";
+
+import UseCase from './interfaces/UseCase';
 
 import KeyPair from "@app/domain/entities/KeyPair";
 import CryptoRepository from "@app/domain/repositories/CryptoRepository";
 import CryptoKeyType from "@app/domain/types/CryptoKeyType";
-import { UseCase } from './interfaces/UseCase';
 
 @injectable()
 export default class GetKey implements UseCase {

@@ -25,7 +25,6 @@ export default class CryptoRepositoryFileSystem implements CryptoRepository {
             FileSystem.mkdirSync(PATH_KEY_FOLDER)
             FileSystem.writeFileSync(PATH_PUBLIC_KEY, keyPair.publicKey);
             FileSystem.writeFileSync(PATH_PRIVATE_KEY, keyPair.privateKey);
-            Promise.resolve();
         } catch (error: any) {
             console.error(error.message)
             throw new Error('Falha ao salvar o par de chaves de criptografia.', error.message)

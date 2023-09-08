@@ -5,14 +5,14 @@ import { log } from './shared/utils/log';
 
 import GenerateKeyPair from '@app/application/usecases/GenerateKeyPair';
 import GetKey from '@app/application/usecases/GetKey';
-import { CliContainerUI } from './shared/presentation/CliContainerUI';
+import CliContainerUI from './shared/presentation/CliContainerUI';
 
 import Encrypt from './application/usecases/Encrypt';
 import Decrypt from './application/usecases/Decrypt';
 import CryptoKeyType from './domain/types/CryptoKeyType';
 
 @injectable()
-export class CLI {
+export default class CLI {
 
     constructor(
         @inject(CliContainerUI) readonly cliContainerUI: CliContainerUI,

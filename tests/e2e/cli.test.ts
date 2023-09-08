@@ -1,31 +1,40 @@
+import { Container } from 'inversify';
 import FileSystem from 'node:fs';
 import Readline from "readline";
 import sinon from 'sinon';
-import DIContainer from '../../src/config/DependencyInjectionConfig';
 
-import { CLI } from "@app/cli";
-import { CliContainerUI } from "@app/shared/presentation/CliContainerUI";
-import { deleteFolder } from '../utils/FileSystemHelper';
-import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
+import DependencyInjectionConfig from '@app/config/DependencyInjectionConfig';
 
-const sleep = async (milisseconds: number) => new Promise((resolve) => setTimeout(resolve, milisseconds));
+import CLI from "@app/cli";
+import CliContainerUI from "@app/shared/presentation/CliContainerUI";
+
+import { deleteFolder } from '../shared/utils/FileSystemHelper';
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants";
 
 describe('CLI', () => {
 
     let readlineQuestionStub: sinon.SinonStub;
-    let consoleLogSpy: sinon.SinonSpy
+    let consoleLogSpy: sinon.SinonSpy;
 
-    let readline: Readline.Interface = DIContainer.get<Readline.Interface>(Readline.Interface);
-    let ui: CliContainerUI = DIContainer.get<CliContainerUI>(CliContainerUI);
-    let cli: CLI = DIContainer.get<CLI>(CLI);
+    let container: Container;
+    let readline: Readline.Interface;
+    let ui: CliContainerUI;
+    let cli: CLI;
 
     beforeEach(() => {
-        consoleLogSpy = sinon.spy(console, 'log');
+        container = DependencyInjectionConfig.create();
+        readline = container.get<Readline.Interface>(Readline.Interface);
+        ui = container.get<CliContainerUI>(CliContainerUI);
+        cli = container.get<CLI>(CLI);
+
+        consoleLogSpy = sinon.spy(console, 'log')
+        // sinon.stub(console, 'error').returns()
         readlineQuestionStub = sinon.stub();
         sinon.replace(readline, 'question', readlineQuestionStub);
     })
 
     afterEach(() => {
+        container.unbindAll();
         sinon.restore();
     })
 

@@ -1,12 +1,14 @@
 import { inject, injectable } from 'inversify';
-import { TYPES } from '@app/config/Types';
+import TYPES from '@app/config/Types';
 import "reflect-metadata";
+
+import UseCase from './interfaces/UseCase';
 
 import Crypto from '@app/domain/entities/Crypto';
 import CryptoRepository from '../../domain/repositories/CryptoRepository';
 
 @injectable()
-export default class Decrypt {
+export default class Decrypt implements UseCase {
     
     constructor(
         @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepository

@@ -1,21 +1,21 @@
 import { Container } from "inversify";
 import FileSystem from 'node:fs';
 import sinon from "sinon";
-import { TYPES } from '../../src/config/Types';
+import TYPES from '../../src/config/Types';
 
-import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../utils/KeyPair.constants';
+import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../shared/types/KeyPair.constants';
 import CryptoRepository from "@app/domain/repositories/CryptoRepository";
 import KeyPair from '@app/domain/entities/KeyPair';
 import CryptoKeyType from '@app/domain/types/CryptoKeyType';
-import CryptoRepositoryFileSystem from '../../src/infrastructure/cryptoRepository/CryptoRepositoryFileSystem';
+import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
 
 describe('CryptoRepositoryFileSystem', () => {
 
     let repository: CryptoRepository;
-    let container: Container = new Container();
+    let container: Container;
 
     beforeEach(() => {
-        container.bind<CryptoRepository>(TYPES.CryptoRepositoryFileSystem).to(CryptoRepositoryFileSystem);
+        container = DependencyInjectionConfig.create();
         repository = container.get<CryptoRepository>(TYPES.CryptoRepositoryFileSystem);
     })
 

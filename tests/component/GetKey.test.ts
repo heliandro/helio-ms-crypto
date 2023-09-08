@@ -1,21 +1,29 @@
+import { Container } from "inversify";
 import sinon from "sinon";
 import FileSystem from 'node:fs'
-import * as FileSystemHelper from '../utils/FileSystemHelper';
+import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
 
-import DIContainer from "@app/config/DependencyInjectionConfig";
+import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
+
 import GetKey from "@app/application/usecases/GetKey";
 import CryptoKeyType from "@app/domain/types/CryptoKeyType";
-import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
+
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants";
+
 
 describe('GetKey', () => {
 
-    let usecase: GetKey = DIContainer.get<GetKey>(GetKey);
+    let container: Container;
+    let usecase: GetKey;
 
     beforeEach(async () => {
+        container = DependencyInjectionConfig.create();
+        usecase = container.get<GetKey>(GetKey);
         FileSystemHelper.deleteFolder('./keys');
     })
 
     afterEach(() => {
+        container.unbindAll();
         sinon.restore();
     })
 

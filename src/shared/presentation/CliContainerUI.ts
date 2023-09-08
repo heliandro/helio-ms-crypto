@@ -8,7 +8,7 @@ import { log } from "../utils/log"
 import { LogColor } from "../enum/LogColor.enum"
 
 @injectable()
-export class CliContainerUI {
+export default class CliContainerUI {
 
     constructor(
         @inject(Readline.Interface) readonly readline: Readline.Interface

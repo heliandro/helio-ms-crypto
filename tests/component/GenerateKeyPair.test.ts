@@ -1,13 +1,23 @@
+import { Container } from "inversify";
+
+import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
+
+import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
 import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair"
-import * as FileSystemHelper from '../utils/FileSystemHelper';
-import DIContainer from "@app/config/DependencyInjectionConfig";
 
 describe('GenerateKeyPair', () => {
 
-    let usecase: GenerateKeyPair = DIContainer.get<GenerateKeyPair>(GenerateKeyPair);
+    let container: Container;
+    let usecase: GenerateKeyPair;
 
     beforeEach(() => {
+        container = DependencyInjectionConfig.create();
+        usecase = container.get<GenerateKeyPair>(GenerateKeyPair);
         FileSystemHelper.deleteFolder('./keys');
+    })
+
+    afterEach(() => {
+        container.unbindAll();
     })
 
     describe('Cenários de Sucesso', () => {
