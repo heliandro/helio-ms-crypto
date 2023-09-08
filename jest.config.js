@@ -7,7 +7,10 @@ module.exports = {
     '^@tests/(.*)$': '<rootDir>/tests/$1'
   },
   coveragePathIgnorePatterns: [
-    "/node_modules/"
-  ]
+    '/node_modules/',
+    './src/config/'
+  ],
+  setupFilesAfterEnv: ['./tests/setup.ts'],
+  globalSetup: './tests/global-setup.ts',
+  globalTeardown: './tests/global-teardown.ts'
 };
-                                                
