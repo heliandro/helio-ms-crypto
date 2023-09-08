@@ -12,25 +12,34 @@ import CryptoRepositoryFileSystem from "../infrastructure/cryptoRepository/Crypt
 import CliContainerUI from "@app/shared/presentation/CliContainerUI";
 import CLI from "@app/cli";
 
-const readline = Readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
-readline.close();
+const diBindCore = (container: Container) => {
+    if (!container) throw new Error('DI iniciado incorretamente.');
+
+    // UseCases
+    container.bind<GenerateKeyPair>(GenerateKeyPair).to(GenerateKeyPair).inSingletonScope();
+    container.bind<GetKey>(GetKey).to(GetKey).inSingletonScope();
+    container.bind<Encrypt>(Encrypt).to(Encrypt).inSingletonScope();
+    container.bind<Decrypt>(Decrypt).to(Decrypt).inSingletonScope();
+    // Repositories
+    container.bind<CryptoRepository>(TYPES.CryptoRepositoryFileSystem).to(CryptoRepositoryFileSystem).inSingletonScope();
+}
 
 export default class DependencyInjectionConfig {
 
     static create(): Container {
         const container = new Container();
+        diBindCore(container);
+        return container;
+    }
 
-        // UseCases
-        container.bind<GenerateKeyPair>(GenerateKeyPair).to(GenerateKeyPair).inSingletonScope();
-        container.bind<GetKey>(GetKey).to(GetKey).inSingletonScope();
-        container.bind<Encrypt>(Encrypt).to(Encrypt).inSingletonScope();
-        container.bind<Decrypt>(Decrypt).to(Decrypt).inSingletonScope();
-        // Repositories
-        container.bind<CryptoRepository>(TYPES.CryptoRepositoryFileSystem).to(CryptoRepositoryFileSystem).inSingletonScope();
+    static createCLI(): Container {
+        const container = new Container();
+        diBindCore(container);
         // Readline
+        const readline = Readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
         container.bind<Readline.Interface>(Readline.Interface).toConstantValue(readline);
         // UI
         container.bind<CliContainerUI>(CliContainerUI).to(CliContainerUI).inSingletonScope();

@@ -22,7 +22,7 @@ describe('CLI', () => {
     let cli: CLI;
 
     beforeEach(() => {
-        container = DependencyInjectionConfig.create();
+        container = DependencyInjectionConfig.createCLI();
         readline = container.get<Readline.Interface>(Readline.Interface);
         ui = container.get<CliContainerUI>(CliContainerUI);
         cli = container.get<CLI>(CLI);
