@@ -1,34 +1,42 @@
-import Crypto from "@app/domain/entity/Crypto"
-import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants"
 import sinon from "sinon"
 import NodeCrypto from "crypto";
 
+import Crypto from "@app/domain/entities/Crypto"
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants"
+
 describe('Crypto', () => {
+
+    let crypto: Crypto;
     
+    beforeAll(async () => {
+        crypto = await Crypto.create()
+    })
+
+    afterEach(() => {
+        sinon.restore();
+    })
+
     describe('Cenários de Sucesso', () => {
         
         test('Deve gerar o par de chaves de criptografia', async () => {
-            // Given - When
-            const output = await Crypto.create()
             // Then
-            expect(output.publicKey).toBeTruthy()
-            expect(output.privateKey).toBeTruthy()
+            expect(crypto.publicKey).toBeTruthy()
+            expect(crypto.privateKey).toBeTruthy()
         })
 
         test('Deve criar uma instancia com o par de chaves válido', async () => {
             // Given - When
             let output: Crypto = new Crypto(MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY);
             // Then
-            expect(output.publicKey).toBeTruthy()
-            expect(output.privateKey).toBeTruthy()
+            expect(output.publicKey).toBeTruthy();
+            expect(output.privateKey).toBeTruthy();
         })
 
         test('Deve encriptar um dado', async () => {
             // Given
             const data = JSON.stringify({ name: 'Heliandro' });
-            const crypto = await Crypto.create()
             // When
-            const encrypted = crypto.encrypt(data);            
+            const encrypted = crypto.encrypt(data);
             // Then
             expect(encrypted).toBeTruthy();
         })
@@ -37,7 +45,6 @@ describe('Crypto', () => {
             // Given
             const data = { name: 'Heliandro' };
             const jsonData = JSON.stringify(data)
-            const crypto = await Crypto.create()
             const encrypted = crypto.encrypt(jsonData);
             // When
             const desencripted = crypto.decrypt(encrypted);

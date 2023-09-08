@@ -1,6 +1,10 @@
-import KeyPair from "@app/domain/entity/KeyPair";
-import CryptoRepository from "@app/domain/repository/CryptoRepository";
+import { injectable } from "inversify";
+import "reflect-metadata";
 import * as FileSystem from "node:fs";
+
+import KeyPair from "@app/domain/entities/KeyPair";
+import CryptoRepository from "@app/domain/repositories/CryptoRepository";
+import CryptoKeyType from "@app/domain/types/CryptoKeyType";
 
 const PATH_KEY_FOLDER = './keys'
 const PATH_PUBLIC_KEY = `${PATH_KEY_FOLDER}/public_key.pem`
@@ -10,8 +14,7 @@ const isAnyKeyPairExistsInPath = (): boolean => {
     return FileSystem.existsSync(PATH_PUBLIC_KEY) || FileSystem.existsSync(PATH_PRIVATE_KEY)
 }
 
-export type KeyType = 'public' | 'private';
-
+@injectable()
 export default class CryptoRepositoryFileSystem implements CryptoRepository {
 
     async save(keyPair: KeyPair): Promise<void> {
@@ -28,7 +31,7 @@ export default class CryptoRepositoryFileSystem implements CryptoRepository {
         }
     }
 
-    async getKey(type: KeyType): Promise<KeyPair> {
+    async getKey(type: CryptoKeyType): Promise<KeyPair> {
         if (!isAnyKeyPairExistsInPath())
             throw new Error('A chave de criptografia não existe no caminho especificado.')
 

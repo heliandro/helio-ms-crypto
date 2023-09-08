@@ -3,7 +3,7 @@ import { RSAKeyPairOptions } from "crypto";
 type KeyType = 'rsa';
 
 const defaultOptions: RSAKeyPairOptions<'pem', 'pem'> = {
-    modulusLength: 1024,
+    modulusLength: 2048,
     publicKeyEncoding: { 
         type: 'spki',
         format: 'pem' 

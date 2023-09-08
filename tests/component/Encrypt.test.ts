@@ -1,22 +1,25 @@
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem"
-import CryptoRepository from "@app/domain/repository/CryptoRepository"
-import Encrypt from "@app/application/usecase/Encrypt";
-import sinon from 'sinon';
 import FileSystem from 'node:fs';
-import { MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
+import sinon from 'sinon';
+
+import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
+
+import Encrypt from "@app/application/usecases/Encrypt";
+import { MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants";
+import { Container } from 'inversify';
 
 describe('Encrypt', () => {
 
-    let repository: CryptoRepository;
+    let container: Container;
     let usecase: Encrypt;
 
     beforeEach(() => {
-        repository = new CryptoRepositoryFileSystem();
-        usecase = new Encrypt(repository);
+        container = DependencyInjectionConfig.create();
+        usecase = container.get<Encrypt>(Encrypt);
         sinon.stub(FileSystem, 'existsSync').returns(true);
     })
 
     afterEach(() => {
+        container.unbindAll();
         sinon.restore();
     })
 

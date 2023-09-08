@@ -1,23 +1,27 @@
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem"
-import CryptoRepository from "@app/domain/repository/CryptoRepository"
-import sinon from 'sinon';
+import { Container } from "inversify";
 import FileSystem from 'node:fs';
-import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/utils/KeyPair.constants";
-import Decrypt from "@app/application/usecase/Decrypt";
-import Crypto from "@app/domain/entity/Crypto";
+import sinon from 'sinon';
+
+import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
+
+import Decrypt from "@app/application/usecases/Decrypt";
+import Crypto from "@app/domain/entities/Crypto";
+
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants";
 
 describe('Decrypt', () => {
 
-    let repository: CryptoRepository;
+    let container: Container;
     let usecase: Decrypt;
 
     beforeEach(() => {
-        repository = new CryptoRepositoryFileSystem();
-        usecase = new Decrypt(repository);
+        container = DependencyInjectionConfig.create();
+        usecase = container.get<Decrypt>(Decrypt);
         sinon.stub(FileSystem, 'existsSync').returns(true);
     })
 
     afterEach(() => {
+        container.unbindAll();
         sinon.restore();
     })
 

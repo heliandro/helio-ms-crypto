@@ -1,20 +1,25 @@
-import Readline from 'readline';
-import GenerateKeyPair from '@app/application/usecase/GenerateKeyPair'; // Importe seu use case de geração de chave
-import GetKey from '@app/application/usecase/GetKey'; // Importe seu use case de leitura de chave
-import CryptoRepositoryFileSystem from '@app/infra/repository/CryptoRepositoryFileSystem'; // Importe seu repositório
-import { CliContainerUI } from './shared/presentation/CliContainerUI';
-import { log } from './shared/utils/function/log';
-import Encrypt from './application/usecase/Encrypt';
-import Decrypt from './application/usecase/Decrypt';
+import { inject, injectable } from 'inversify';
+import "reflect-metadata";
 
-export class CLI {
+import { log } from './shared/utils/log';
+
+import GenerateKeyPair from '@app/application/usecases/GenerateKeyPair';
+import GetKey from '@app/application/usecases/GetKey';
+import CliContainerUI from './shared/presentation/CliContainerUI';
+
+import Encrypt from './application/usecases/Encrypt';
+import Decrypt from './application/usecases/Decrypt';
+import CryptoKeyType from './domain/types/CryptoKeyType';
+
+@injectable()
+export default class CLI {
 
     constructor(
-        readonly cliContainerUI: CliContainerUI,
-        readonly generateKeyPair: GenerateKeyPair,
-        readonly getKey: GetKey,
-        readonly encrypt: Encrypt,
-        readonly decrypt: Decrypt
+        @inject(CliContainerUI) readonly cliContainerUI: CliContainerUI,
+        @inject(GenerateKeyPair) readonly generateKeyPair: GenerateKeyPair,
+        @inject(GetKey) readonly getKey: GetKey,
+        @inject(Encrypt) readonly encrypt: Encrypt,
+        @inject(Decrypt) readonly decrypt: Decrypt
     ) {}
 
     async start() {
@@ -58,7 +63,7 @@ export class CLI {
                     await this.continueQuestion();
                     break;
                 }
-                const type = <KeyType>chosenSecondArg;
+                const type = <CryptoKeyType>chosenSecondArg;
                 await this.choiceGetKey(type);
                 break;
             }
@@ -101,7 +106,7 @@ export class CLI {
             .finally(() => { this.continueQuestion().then() })
     }
 
-    async choiceGetKey(type: KeyType) {
+    async choiceGetKey(type: CryptoKeyType) {
         return this.getKey.execute({ keyType: type })
             .then(this.outputSuccess)
             .catch(this.outputError)
@@ -130,24 +135,3 @@ export class CLI {
         log.error(`\n${error.message}`);
     }
 }
-
-export async function init() {
-    const readline = Readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-    
-    const ui = new CliContainerUI(readline)
-    const repository = new CryptoRepositoryFileSystem();
-    const generateKeyPair = new GenerateKeyPair(repository);
-    const getKey = new GetKey(repository);
-    const encrypt = new Encrypt(repository);
-    const decrypt = new Decrypt(repository);
-
-    const cli = new CLI(ui, generateKeyPair, getKey, encrypt, decrypt);
-
-    return {
-        dependency: { readline, ui },
-        instance: { cli }
-    }
-};

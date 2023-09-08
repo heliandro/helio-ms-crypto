@@ -1,17 +1,23 @@
-import GenerateKeyPair from "@app/application/usecase/GenerateKeyPair"
-import CryptoRepositoryFileSystem from "@app/infra/repository/CryptoRepositoryFileSystem"
-import CryptoRepository from "@app/domain/repository/CryptoRepository"
-import * as FileSystemHelper from '../utils/FileSystemHelper';
+import { Container } from "inversify";
+
+import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
+
+import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
+import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair"
 
 describe('GenerateKeyPair', () => {
 
-    let repository: CryptoRepository;
+    let container: Container;
     let usecase: GenerateKeyPair;
 
     beforeEach(() => {
-        FileSystemHelper.deleteFolder('./keys')
-        repository = new CryptoRepositoryFileSystem();
-        usecase = new GenerateKeyPair(repository);
+        container = DependencyInjectionConfig.create();
+        usecase = container.get<GenerateKeyPair>(GenerateKeyPair);
+        FileSystemHelper.deleteFolder('./keys');
+    })
+
+    afterEach(() => {
+        container.unbindAll();
     })
 
     describe('Cenários de Sucesso', () => {
