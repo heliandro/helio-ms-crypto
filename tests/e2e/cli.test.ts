@@ -9,7 +9,7 @@ import CLI from "@app/cli";
 import CliContainerUI from "@app/shared/presentation/CliContainerUI";
 
 import { deleteFolder } from '../shared/utils/FileSystemHelper';
-import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants";
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
 
 describe('CLI', () => {
 

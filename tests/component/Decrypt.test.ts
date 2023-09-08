@@ -7,7 +7,7 @@ import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
 import Decrypt from "@app/application/usecases/Decrypt";
 import Crypto from "@app/domain/entities/Crypto";
 
-import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants";
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
 
 describe('Decrypt', () => {
 

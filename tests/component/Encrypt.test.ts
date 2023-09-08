@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
 
 import Encrypt from "@app/application/usecases/Encrypt";
-import { MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants";
+import { MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
 import { Container } from 'inversify';
 
 describe('Encrypt', () => {

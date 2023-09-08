@@ -8,7 +8,7 @@ import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
 import GetKey from "@app/application/usecases/GetKey";
 import CryptoKeyType from "@app/domain/types/CryptoKeyType";
 
-import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants";
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
 
 
 describe('GetKey', () => {
