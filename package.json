@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Crypto Microsservice",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
     "start:cli": "npx ts-node -e \"import { initCLI } from './src/main'; initCLI();\"",
+    "start:cli-prod": "node -e \"require('./dist/main').initCLI()\"",
     "test": "jest --runInBand --coverage",
     "test:mutation": "stryker run"
   },

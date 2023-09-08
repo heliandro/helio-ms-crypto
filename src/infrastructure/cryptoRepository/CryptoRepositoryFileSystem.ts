@@ -2,9 +2,9 @@ import { injectable } from "inversify";
 import "reflect-metadata";
 import * as FileSystem from "node:fs";
 
-import KeyPair from "@app/domain/entities/KeyPair";
-import CryptoRepository from "@app/domain/repositories/CryptoRepository";
-import CryptoKeyType from "@app/domain/types/CryptoKeyType";
+import KeyPair from "../../domain/entities/KeyPair";
+import CryptoRepository from "../../domain/repositories/CryptoRepository";
+import CryptoKeyType from "../../domain/types/CryptoKeyType";
 
 const PATH_KEY_FOLDER = './keys'
 const PATH_PUBLIC_KEY = `${PATH_KEY_FOLDER}/public_key.pem`

@@ -2,10 +2,9 @@ import { Container } from "inversify";
 import FileSystem from 'node:fs';
 import sinon from 'sinon';
 
-import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
-
-import Decrypt from "@app/application/usecases/Decrypt";
-import Crypto from "@app/domain/entities/Crypto";
+import DependencyInjectionConfig from '../../src/config/DependencyInjectionConfig';
+import Crypto from '../../src/domain/entities/Crypto';
+import Decrypt from '../../src/application/usecases/Decrypt';
 
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
 

@@ -4,3 +4,4 @@ coverage
 # stryker
 .stryker-tmp
 reports
+dist

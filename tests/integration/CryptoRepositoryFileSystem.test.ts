@@ -4,10 +4,10 @@ import sinon from "sinon";
 import TYPES from '../../src/config/Types';
 
 import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../shared/types/KeyPair.constants';
-import CryptoRepository from "@app/domain/repositories/CryptoRepository";
-import KeyPair from '@app/domain/entities/KeyPair';
-import CryptoKeyType from '@app/domain/types/CryptoKeyType';
-import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
+import CryptoRepository from "../../src/domain/repositories/CryptoRepository";
+import KeyPair from '../../src/domain/entities/KeyPair';
+import CryptoKeyType from '../../src/domain/types/CryptoKeyType';
+import DependencyInjectionConfig from "../../src/config/DependencyInjectionConfig";
 
 describe('CryptoRepositoryFileSystem', () => {
 

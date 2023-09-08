@@ -3,13 +3,11 @@ import sinon from "sinon";
 import FileSystem from 'node:fs'
 import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
 
-import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
-
-import GetKey from "@app/application/usecases/GetKey";
-import CryptoKeyType from "@app/domain/types/CryptoKeyType";
+import DependencyInjectionConfig from "../../src/config/DependencyInjectionConfig";
+import GetKey from "../../src/application/usecases/GetKey";
+import CryptoKeyType from "../../src/domain/types/CryptoKeyType";
 
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
-
 
 describe('GetKey', () => {
 

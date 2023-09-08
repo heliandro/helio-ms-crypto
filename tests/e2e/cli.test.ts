@@ -3,10 +3,10 @@ import FileSystem from 'node:fs';
 import Readline from "readline";
 import sinon from 'sinon';
 
-import DependencyInjectionConfig from '@app/config/DependencyInjectionConfig';
+import DependencyInjectionConfig from '../../src/config/DependencyInjectionConfig';
 
-import CLI from "@app/cli";
-import CliContainerUI from "@app/shared/presentation/CliContainerUI";
+import CLI from "../../src/cli";
+import CliContainerUI from "../../src/shared/presentation/CliContainerUI";
 
 import { deleteFolder } from '../shared/utils/FileSystemHelper';
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
