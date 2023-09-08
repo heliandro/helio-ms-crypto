@@ -25,7 +25,7 @@ describe('EncryptionAlgorithm', () => {
 
     test('Deve criar o algoritmo de encriptacao usando o metodo estatico', () => {
         // Given
-        const expectedOtions = { ...mockDefaultOptions, modulusLength: 1024 }
+        const expectedOtions = { ...mockDefaultOptions, modulusLength: 2048 }
         // When
         const encryptionAlgorithm = EncryptionAlgorithm.create();
         // Then

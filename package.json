@@ -13,7 +13,7 @@
     "hexagonal arch"
   ],
   "author": "Heliandro Lavôr",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@stryker-mutator/core": "^7.1.1",
     "@stryker-mutator/jest-runner": "^7.1.1",
