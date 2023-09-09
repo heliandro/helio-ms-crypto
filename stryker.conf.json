@@ -11,6 +11,7 @@
   "testRunner": "jest",
   "reporters": ["html", "clear-text", "progress", "dashboard"],  
   "coverageAnalysis": "perTest",
+  "ignoreStatic": true,
   "tsconfigFile": "tsconfig.json",
   "jest": {
     "configFile": "jest.config.json"
