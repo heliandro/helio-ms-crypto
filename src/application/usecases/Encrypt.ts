@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify';
 import TYPES from '../../config/Types';
-import "reflect-metadata";
 
 import UseCase from './interfaces/UseCase';
 

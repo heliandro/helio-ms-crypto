@@ -1,6 +1,7 @@
 import Readline from "node:readline";
 import { Container } from "inversify";
 import TYPES from "./Types";
+import "reflect-metadata"
 
 import GenerateKeyPair from "../application/usecases/GenerateKeyPair";
 import GetKey from "../application/usecases/GetKey";

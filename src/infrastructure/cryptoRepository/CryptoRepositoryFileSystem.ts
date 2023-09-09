@@ -1,5 +1,4 @@
 import { injectable } from "inversify";
-import "reflect-metadata";
 import * as FileSystem from "node:fs";
 
 import KeyPair from "../../domain/entities/KeyPair";

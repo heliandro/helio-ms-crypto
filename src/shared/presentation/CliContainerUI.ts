@@ -1,5 +1,4 @@
 import { inject, injectable } from 'inversify';
-import "reflect-metadata";
 
 import Readline from "node:readline"
 import { HeaderComponentUI } from "./HeaderComponentUI"
