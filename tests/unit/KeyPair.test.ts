@@ -1,5 +1,5 @@
-import KeyPair from "@app/domain/entities/KeyPair"
-import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "@tests/shared/types/KeyPair.constants"
+import KeyPair from "../../src/domain/entities/KeyPair"
+import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants"
 
 describe('KeyPair', () => {
 

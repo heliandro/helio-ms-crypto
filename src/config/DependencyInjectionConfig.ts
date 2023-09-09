@@ -1,16 +1,17 @@
 import Readline from "node:readline";
 import { Container } from "inversify";
 import TYPES from "./Types";
+import "reflect-metadata"
 
 import GenerateKeyPair from "../application/usecases/GenerateKeyPair";
-import GetKey from "@app/application/usecases/GetKey";
-import Encrypt from "@app/application/usecases/Encrypt";
-import Decrypt from "@app/application/usecases/Decrypt";
+import GetKey from "../application/usecases/GetKey";
+import Encrypt from "../application/usecases/Encrypt";
+import Decrypt from "../application/usecases/Decrypt";
 import CryptoRepository from "../domain/repositories/CryptoRepository";
 import CryptoRepositoryFileSystem from "../infrastructure/cryptoRepository/CryptoRepositoryFileSystem";
 
-import CliContainerUI from "@app/shared/presentation/CliContainerUI";
-import CLI from "@app/cli";
+import CliContainerUI from "../shared/presentation/CliContainerUI";
+import CLI from "../cli";
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');

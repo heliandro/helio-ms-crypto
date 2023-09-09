@@ -2,9 +2,9 @@
   "preset": "ts-jest",
   "testEnvironment": "node",
   "moduleNameMapper": {
-    "^@app/(.*)$": "<rootDir>/src/$1",
-    "^@tests/(.*)$": "<rootDir>/tests/$1"
+    "^@app/(.*)$": "<rootDir>/src/$1"
   },
+  "testMatch": ["<rootDir>/tests/**/*.test.ts"],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
     "./src/config/"

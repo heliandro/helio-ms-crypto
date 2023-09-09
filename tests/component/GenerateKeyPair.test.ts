@@ -2,8 +2,8 @@ import { Container } from "inversify";
 
 import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
 
-import DependencyInjectionConfig from "@app/config/DependencyInjectionConfig";
-import GenerateKeyPair from "@app/application/usecases/GenerateKeyPair"
+import DependencyInjectionConfig from "../../src/config/DependencyInjectionConfig";
+import GenerateKeyPair from "../../src/application/usecases/GenerateKeyPair"
 
 describe('GenerateKeyPair', () => {
 

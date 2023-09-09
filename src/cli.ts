@@ -3,8 +3,8 @@ import "reflect-metadata";
 
 import { log } from './shared/utils/log';
 
-import GenerateKeyPair from '@app/application/usecases/GenerateKeyPair';
-import GetKey from '@app/application/usecases/GetKey';
+import GenerateKeyPair from './application/usecases/GenerateKeyPair';
+import GetKey from './application/usecases/GetKey';
 import CliContainerUI from './shared/presentation/CliContainerUI';
 
 import Encrypt from './application/usecases/Encrypt';
