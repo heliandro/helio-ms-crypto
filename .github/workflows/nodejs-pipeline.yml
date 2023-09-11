@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -27,7 +26,6 @@ jobs:
   tests:
     needs: build
     runs-on: ubuntu-latest
-    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -49,10 +47,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  release:
-    # needs: tests
+  update-version:
+    needs: tests
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
@@ -63,35 +60,35 @@ jobs:
           git config --global user.email "pipeline@actions.com"
 
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
-        id: determine_version_type
+        id: determinar_tipo_de_versao
         run: |
-          # Encontra o commit de merge mais recente na branch main
-          MERGE_COMMIT=$(git log --merges -n 1 --pretty=format:'%H' main)
-          echo "$MERGE_COMMIT"
-          # Obtém o nome da branch mesclada a partir do commit de merge
-          MERGED_BRANCH=$(git branch --contains $MERGE_COMMIT | grep -v "main" | awk '{print $2}')
-          echo "$MERGED_BRANCH"
-          BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
+          GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
+          echo $(git log --merges -n 1)
+          BRANCH_NAME=$(echo $(git log --merges -n 1 | awk -Fheliandro/ '{print $2}'))
+          echo "$GITHUB_OWNER_NAME"
+          echo "$BRANCH_NAME"
           if [[ $BRANCH_NAME == "bugfix" ]]; then
-            echo "version_type=patch" >> $GITHUB_OUTPUT
+            echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature" ]]; then
-            echo "version_type=minor" >> $GITHUB_OUTPUT
+            echo "tipo_de_versao=minor" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "release" ]]; then
-            echo "version_type=major" >> $GITHUB_OUTPUT
+            echo "tipo_de_versao=major" >> $GITHUB_OUTPUT
           else
             echo "Branch não especificada ou incorreta. Result=$BRANCH_NAME"
           fi
 
       - name: Criar versão do projeto
-        if: false
+        if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
+        id: criar_versao_do_projeto
         run: |
-          npm version ${{ steps.determine_version_type.outputs.version_type }}
+          npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
-          git commit -am "Atualizar versão do projeto para $VERSION"
+          git commit -am "Atualizar versão do projeto"
           git push origin main
+          echo "versao=$VERSION" >> GITHUB_OUTPUT
 
       - name: Criar Tag
-        if: false
+        if: steps.criar_versao_do_projeto.outputs.versao != ''
         run: |
           VERSION=$(node -p -e "require('./package.json').version")
           git tag "v$VERSION"
