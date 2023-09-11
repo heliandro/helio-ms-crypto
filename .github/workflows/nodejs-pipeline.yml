@@ -50,7 +50,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    if: true
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
@@ -58,7 +58,7 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determine_version_type
         run: |
-          BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
+          BRANCH_NAME=$(echo "${{ github.base_ref }}" | awk -F/ '{print $3}')
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
             echo "patch"
@@ -73,10 +73,17 @@ jobs:
           echo $GITHUB_OUTPUT.outputs.version_type
 
       - name: Executar npm version
-        # if: steps.check_changes.outputs.changes == 'true' && github.ref == 'refs/heads/main'
-        # npm version ${{ steps.determine_version_type.outputs.version_type }}
+        if: false
         run: |
-          echo ${{ steps.determine_version_type.outputs.version_type }}
-          echo "OU"
-          echo $GITHUB_OUTPUT
+          npm version ${{ steps.determine_version_type.outputs.version_type }}
+          VERSION=$(node -p -e "require('./package.json').version")
+          git commit -am "Atualizar versão do projeto para $VERSION"
+          git push origin main
+
+      - name: Criar Tag
+        if: false
+        run: |
+          VERSION=$(node -p -e "require('./package.json').version")
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
 
