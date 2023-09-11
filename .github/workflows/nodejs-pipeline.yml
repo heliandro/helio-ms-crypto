@@ -67,6 +67,7 @@ jobs:
           else
             echo "version_type=major" >> $GITHUB_OUTPUT
           fi
+          
 
 
 
