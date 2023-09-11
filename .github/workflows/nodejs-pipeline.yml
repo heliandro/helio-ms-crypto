@@ -79,9 +79,10 @@ jobs:
         run: |
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
-          echo "versao=$VERSION" >> GITHUB_OUTPUT
-          git commit -am "Atualizar versão do projeto para $VERSION"
+          git add package.json package-lock.json
+          git commit -am "Atualizar versão do projeto"
           git push origin ${{ github.head_ref }}
+          echo "versao=$VERSION" >> GITHUB_OUTPUT
 
       - name: Criar Tag
         if: steps.criar_versao_do_projeto.outputs.versao != ''
