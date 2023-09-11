@@ -7,6 +7,7 @@ on:
       - main
 jobs:
   build:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
@@ -25,6 +26,7 @@ jobs:
 
   tests:
     needs: build
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
@@ -47,8 +49,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  release:
-    needs: tests
+  update-version:
+    # needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projecto
@@ -62,7 +64,10 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determinar_tipo_de_versao
         run: |
-          BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
+          GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
+          BRANCH_NAME=$(git log --merges -n 1 | awk -F'heliandro/' '{print $2}')
+          echo "$GITHUB_OWNER_NAME"
+          echo "BRANCH_NAME"
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature" ]]; then
@@ -74,18 +79,19 @@ jobs:
           fi
 
       - name: Criar versão do projeto
-        if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
+        if: false
+        # if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
         id: criar_versao_do_projeto
         run: |
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
-          git add package.json package-lock.json
           git commit -am "Atualizar versão do projeto"
-          git push origin ${{ github.head_ref }}
+          git push origin main
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
       - name: Criar Tag
-        if: steps.criar_versao_do_projeto.outputs.versao != ''
+        if: false
+        # if: steps.criar_versao_do_projeto.outputs.versao != ''
         run: |
           VERSION=$(node -p -e "require('./package.json').version")
           git tag "v$VERSION"
