@@ -63,10 +63,9 @@ jobs:
         id: determinar_tipo_de_versao
         run: |
           GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
-          echo $(git log --merges -n 1) | awk -Fheliandro/ '{print $2}' | awk -F' ' '{print $1}'
-          BRANCH_NAME=$(echo $(git log --merges -n 1) | awk -Fheliandro/ '{print $2}' | awk -F' ' '{print $1}')
-          echo "$GITHUB_OWNER_NAME"
-          echo "$BRANCH_NAME"
+          echo $(git log --merges -n 1)
+          MY_BRANCH=$(echo $(git log --merges -n 1) | awk -Fheliandro/ '{print $2}' | awk -F' ' '{print $1}')
+          echo "MY_BRANCH =>  $MY_BRANCH"
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature" ]]; then
