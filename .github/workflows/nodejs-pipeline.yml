@@ -67,7 +67,7 @@ jobs:
           GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
           BRANCH_NAME=$(git log --merges -n 1 | awk -F'heliandro/' '{print $2}')
           echo "$GITHUB_OWNER_NAME"
-          echo "BRANCH_NAME"
+          echo "$BRANCH_NAME"
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature" ]]; then
