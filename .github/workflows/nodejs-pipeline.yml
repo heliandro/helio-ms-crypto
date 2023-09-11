@@ -6,10 +6,10 @@ on:
     branches:
       - main
 jobs:
-  tests:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout project
+      - name: Checkout do projeto
         uses: actions/checkout@v3
 
       - name: Setup Nodejs
@@ -17,10 +17,29 @@ jobs:
         with:
           node-version: 20.5.1
 
-      - name: Install packages
+      - name: Instala as dependências
         run: npm install
 
-      - name: Test and coverage
+      - name: Build da aplicação
+        run: npm run build
+
+  tests:
+    needs: build
+    runs-on: ubuntu-latest
+    if: false
+    steps:
+      - name: Checkout do projeto
+        uses: actions/checkout@v3
+
+      - name: Setup Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.5.1
+
+      - name: Instala as dependências
+        run: npm install
+
+      - name: Executa os testes com coverage
         run: npm run test
 
       - name: SonarCloud Scan
@@ -28,3 +47,42 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout do projecto
+        uses: actions/checkout@v3
+
+      - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
+        id: determine_version_type
+        run: |
+          BRANCH_NAME=$(echo "${{ github.base_ref }}" | awk -F/ '{print $3}')
+          if [[ $BRANCH_NAME == "bugfix" ]]; then
+            echo "version_type=patch" >> $GITHUB_OUTPUT
+            echo "patch"
+          elif [[ $BRANCH_NAME == "feature" ]]; then
+            echo "version_type=minor" >> $GITHUB_OUTPUT
+            echo "minor"
+          else
+            echo "version_type=major" >> $GITHUB_OUTPUT
+            echo "major"
+          fi
+          echo $BRANCH_NAME
+          echo $GITHUB_OUTPUT.outputs.version_type
+
+      - name: Criar versão do projeto
+        if: false
+        run: |
+          npm version ${{ steps.determine_version_type.outputs.version_type }}
+          VERSION=$(node -p -e "require('./package.json').version")
+          git commit -am "Atualizar versão do projeto para $VERSION"
+          git push origin main
+
+      - name: Criar Tag
+        if: false
+        run: |
+          VERSION=$(node -p -e "require('./package.json').version")
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
