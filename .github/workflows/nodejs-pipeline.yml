@@ -78,5 +78,5 @@ jobs:
         run: |
           echo ${{ steps.determine_version_type.outputs.version_type }}
           echo "OU"
-          echo ${{ steps.determine_version_type.$GITHUB_OUTPUT }}
+          echo $GITHUB_OUTPUT
 
