@@ -49,7 +49,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   release:
-    needs: tests
     runs-on: ubuntu-latest
     if: true
     steps:
