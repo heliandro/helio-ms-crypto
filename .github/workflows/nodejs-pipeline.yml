@@ -59,7 +59,6 @@ jobs:
         id: determine_version_type
         run: |
           BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $3}')
-          echo $BRANCH_NAME
           if [[ $BRANCH_NAME == "bugfix"* ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
             echo "patch"
@@ -70,5 +69,6 @@ jobs:
             echo "version_type=major" >> $GITHUB_OUTPUT
             echo "major"
           fi
+          echo $BRANCH_NAME
           echo $GITHUB_OUTPUT.outputs.version_type
 
