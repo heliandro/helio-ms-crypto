@@ -65,9 +65,9 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determine_version_type
         run: |
-          BRANCH_NAME_TESTE=$(git for-each-ref --format '%(upstream:short)' "$(git symbolic-ref -q HEAD)")
+          MERGED_BRANCH=$(git log --merges -n 1 --pretty=format:'%s' | awk -F'/' '{print $2}')
           echo "${{github.ref}}"
-          echo "$BRANCH_NAME_TESTE"
+          echo "$MERGED_BRANCH"
           BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
