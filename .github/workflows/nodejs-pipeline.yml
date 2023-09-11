@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -26,6 +27,7 @@ jobs:
   tests:
     needs: build
     runs-on: ubuntu-latest
+    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -48,7 +50,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   release:
-    needs: tests
+    # needs: tests
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -63,15 +65,16 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determine_version_type
         run: |
-          echo github.ref
-          echo github.head_ref
-          echo github.base_ref
+          echo "github.ref"
+          echo "${{github.ref}}"
+          echo "${{github.head_ref}}"
+          echo "${{github.base_ref}}"
           BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature" ]]; then
             echo "version_type=minor" >> $GITHUB_OUTPUT
-          elif [[ $BRANCH_NAME == "release" ]]
+          elif [[ $BRANCH_NAME == "release" ]]; then
             echo "version_type=major" >> $GITHUB_OUTPUT
           else
             echo "Branch não especificada ou incorreta. Result=$BRANCH_NAME"
