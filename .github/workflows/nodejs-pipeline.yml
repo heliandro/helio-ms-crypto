@@ -65,7 +65,7 @@ jobs:
         id: determinar_tipo_de_versao
         run: |
           GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
-          BRANCH_NAME=$(git log --merges -n 1 | awk -F'heliandro/' '{print $2}')
+          BRANCH_NAME=$(git log --merges -n 1 | awk -Fheliandro/ '{print $2}')
           echo "$GITHUB_OWNER_NAME"
           echo "$BRANCH_NAME"
           if [[ $BRANCH_NAME == "bugfix" ]]; then
