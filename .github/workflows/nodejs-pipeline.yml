@@ -63,13 +63,18 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determine_version_type
         run: |
+          echo github.ref
+          echo github.head_ref
+          echo github.base_ref
           BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature" ]]; then
             echo "version_type=minor" >> $GITHUB_OUTPUT
-          else
+          elif [[ $BRANCH_NAME == "release" ]]
             echo "version_type=major" >> $GITHUB_OUTPUT
+          else
+            echo "Branch não especificada ou incorreta. Result=$BRANCH_NAME"
           fi
 
       - name: Criar versão do projeto
