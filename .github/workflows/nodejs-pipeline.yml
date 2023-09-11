@@ -65,10 +65,9 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determine_version_type
         run: |
-          echo "github.ref"
+          BRANCH_NAME_TESTE=$(git for-each-ref --format '%(upstream:short)' "$(git symbolic-ref -q HEAD)")
           echo "${{github.ref}}"
-          echo "${{github.head_ref}}"
-          echo "${{github.base_ref}}"
+          echo "$BRANCH_NAME_TESTE"
           BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
@@ -81,6 +80,7 @@ jobs:
           fi
 
       - name: Criar versão do projeto
+        if: false
         run: |
           npm version ${{ steps.determine_version_type.outputs.version_type }}
           VERSION=$(node -p -e "require('./package.json').version")
@@ -88,6 +88,7 @@ jobs:
           git push origin main
 
       - name: Criar Tag
+        if: false
         run: |
           VERSION=$(node -p -e "require('./package.json').version")
           git tag "v$VERSION"
