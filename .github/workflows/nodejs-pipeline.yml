@@ -65,8 +65,11 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determine_version_type
         run: |
-          MERGED_BRANCH=$(git log --merges -n 1 --pretty=format:'%s' | awk -F'/' '{print $2}')
-          echo "${{github.ref}}"
+          # Encontra o commit de merge mais recente na branch main
+          MERGE_COMMIT=$(git log --merges -n 1 --pretty=format:'%H' main)
+          echo "$MERGE_COMMIT"
+          # Obtém o nome da branch mesclada a partir do commit de merge
+          MERGED_BRANCH=$(git branch --contains $MERGE_COMMIT | grep -v "main" | awk '{print $2}')
           echo "$MERGED_BRANCH"
           BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
           if [[ $BRANCH_NAME == "bugfix" ]]; then
