@@ -72,3 +72,11 @@ jobs:
           echo $BRANCH_NAME
           echo $GITHUB_OUTPUT.outputs.version_type
 
+      - name: Executar npm version
+        # if: steps.check_changes.outputs.changes == 'true' && github.ref == 'refs/heads/main'
+        # npm version ${{ steps.determine_version_type.outputs.version_type }}
+        run: |
+          echo ${{ steps.determine_version_type.outputs.version_type }}
+          echo "OU"
+          echo ${{ steps.determine_version_type.$GITHUB_OUTPUT }}
+
