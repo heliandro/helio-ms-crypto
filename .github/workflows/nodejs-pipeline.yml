@@ -58,7 +58,7 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determine_version_type
         run: |
-          BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $3}')
+          BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $2}')
           if [[ $BRANCH_NAME == "bugfix"* ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
             echo "patch"
