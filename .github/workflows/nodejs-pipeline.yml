@@ -61,16 +61,11 @@ jobs:
           BRANCH_NAME=$(echo "${{ github.base_ref }}" | awk -F/ '{print $3}')
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
-            echo "patch"
           elif [[ $BRANCH_NAME == "feature" ]]; then
             echo "version_type=minor" >> $GITHUB_OUTPUT
-            echo "minor"
           else
             echo "version_type=major" >> $GITHUB_OUTPUT
-            echo "major"
           fi
-          echo $BRANCH_NAME
-          echo $GITHUB_OUTPUT.outputs.version_type
 
       - name: Criar versão do projeto
         run: |
