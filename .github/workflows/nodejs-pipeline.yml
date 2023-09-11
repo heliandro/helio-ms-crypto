@@ -76,17 +76,17 @@ jobs:
           fi
 
       - name: Criar versão do projeto
-        if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao exists
+        if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
         id: criar_versao_do_projeto
         run: |
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
-          echo "version=$VERSION" >> GITHUB_OUTPUT
+          echo "versao=$VERSION" >> GITHUB_OUTPUT
           git commit -am "Atualizar versão do projeto para $VERSION"
           git push origin ${{ github.head_ref }}
 
       - name: Criar Tag
-        if: steps.criar_versao_do_projeto.outputs.version exists
+        if: steps.criar_versao_do_projeto.outputs.versao != ''
         run: |
           VERSION=$(node -p -e "require('./package.json').version")
           git tag "v$VERSION"
