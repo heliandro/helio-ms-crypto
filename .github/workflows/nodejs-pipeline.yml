@@ -48,6 +48,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   release:
+    needs: tests
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -60,19 +61,13 @@ jobs:
           BRANCH_NAME=$(echo "${{ github.base_ref }}" | awk -F/ '{print $3}')
           if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "version_type=patch" >> $GITHUB_OUTPUT
-            echo "patch"
           elif [[ $BRANCH_NAME == "feature" ]]; then
             echo "version_type=minor" >> $GITHUB_OUTPUT
-            echo "minor"
           else
             echo "version_type=major" >> $GITHUB_OUTPUT
-            echo "major"
           fi
-          echo $BRANCH_NAME
-          echo $GITHUB_OUTPUT.outputs.version_type
 
       - name: Criar versão do projeto
-        if: false
         run: |
           npm version ${{ steps.determine_version_type.outputs.version_type }}
           VERSION=$(node -p -e "require('./package.json').version")
@@ -80,7 +75,6 @@ jobs:
           git push origin main
 
       - name: Criar Tag
-        if: false
         run: |
           VERSION=$(node -p -e "require('./package.json').version")
           git tag "v$VERSION"
