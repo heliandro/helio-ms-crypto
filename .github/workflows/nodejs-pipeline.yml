@@ -9,6 +9,14 @@ jobs:
   pre-run:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout do projecto
+        uses: actions/checkout@v3
+
+      - name: Configurar Git
+        run: |
+          git config --global user.name "Github Actions"
+          git config --global user.email "pipeline@actions.com"
+          
       - name: Verificar se há merges no log
         run: |
           HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
