@@ -1,7 +1,7 @@
 name: Nodejs Pipeline
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize]
   push:
     branches:
       - main
@@ -100,10 +100,9 @@ jobs:
         if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
         id: criar_versao_do_projeto
         run: |
-          npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
+          npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }} -m "Atualizar versão do projeto"
           VERSION=$(node -p -e "require('./package.json').version")
-          git commit -am "Atualizar versão do projeto"
-          git push origin ${{ github.ref }}
+          git push origin ${{ github.head_ref }}
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
       # - name: Criar Tag
