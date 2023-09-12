@@ -1,6 +1,6 @@
 {
   "name": "helio-ms-crypto",
-  "version": "0.100.0",
+  "version": "0.101.0",
   "description": "Crypto Microsservice",
   "scripts": {
     "build": "tsc --build",
