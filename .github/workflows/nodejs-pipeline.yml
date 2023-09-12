@@ -1,7 +1,7 @@
 name: Nodejs Pipeline
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened]
   push:
     branches:
       - main
