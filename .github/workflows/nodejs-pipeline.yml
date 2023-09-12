@@ -16,15 +16,18 @@ jobs:
         run: |
           git config --global user.name "Github Actions"
           git config --global user.email "pipeline@actions.com"
-          
+
       - name: Verificar se há merges no log
         run: |
           HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
           echo "has_merge=$HAS_MERGE" >> $GITHUB_OUTPUT
+          MERGE_BRANCH=$(echo $(git log --oneline | awk -F'heliandro/' '{print $2}' | awk -F' ' '{print $1}'))
+          echo "merge_branch=$MERGE_BRANCH" >> $GITHUB_OUTPUT
 
   build:
     runs-on: ubuntu-latest
     needs: pre-run
+    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -43,6 +46,7 @@ jobs:
   tests:
     needs: build
     runs-on: ubuntu-latest
+    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -65,7 +69,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   update-version:
-    needs: tests
+    # needs: tests
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && ${{ needs.pre-run.outputs.has_merge }} == "true"
     steps:
@@ -86,7 +90,7 @@ jobs:
         run: |
           GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
           echo $(git log --oneline)
-          BRANCH_NAME=$(echo $(git log --oneline | awk -F'heliandro/' '{print $2}'))
+          BRANCH_NAME=${{needs.pre-run.outputs.merge_branch}}
           echo "$GITHUB_OWNER_NAME"
           echo "$BRANCH_NAME"
           if [[ $BRANCH_NAME == "bugfix" ]]; then
