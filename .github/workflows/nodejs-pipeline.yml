@@ -7,7 +7,7 @@ on:
       - main
 jobs:
   build:
-    if: "github.event.head_commit.message != 'Atualizar versão do projeto'"
+    if: github.event.head_commit.message != 'Atualizar versão do projeto'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
