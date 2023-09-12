@@ -6,24 +6,24 @@ on:
     branches:
       - main
 jobs:
-  pre-run:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout do projecto
-        uses: actions/checkout@v3
+  # pre-run:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout do projecto
+  #       uses: actions/checkout@v3
 
-      - name: Configurar Git
-        run: |
-          git config --global user.name "Github Actions"
-          git config --global user.email "pipeline@actions.com"
+  #     - name: Configurar Git
+  #       run: |
+  #         git config --global user.name "Github Actions"
+  #         git config --global user.email "pipeline@actions.com"
 
-      - name: Verificar se há merges no log
-        run: |
-          HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
-          echo "$HAS_MERGE"
-          echo "has_merge=$HAS_MERGE" >> $GITHUB_OUTPUT
-          MERGE_BRANCH=$(echo $(git log --oneline | awk -F'heliandro/' '{print $2}'))
-          echo "merge_branch=$MERGE_BRANCH" >> $GITHUB_OUTPUT
+  #     - name: Verificar se há merges no log
+  #       run: |
+  #         HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
+  #         echo "$HAS_MERGE"
+  #         echo "has_merge=$HAS_MERGE" >> $GITHUB_OUTPUT
+  #         MERGE_BRANCH=$(echo $(git log --oneline | awk -F'heliandro/' '{print $2}'))
+  #         echo "merge_branch=$MERGE_BRANCH" >> $GITHUB_OUTPUT
 
   build:
     runs-on: ubuntu-latest
@@ -70,13 +70,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   update-version:
-    needs: pre-run
+    # needs: pre-run
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      # - name: Push na mesma branch
-      #   if: github.ref == 'refs/heads/main' && $(git log --oneline | awk -F'Merge' '{print $1}') == ""'
-      #   run: exit 0
 
       - name: Checkout do projecto
         uses: actions/checkout@v3
@@ -92,7 +89,7 @@ jobs:
           GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
           echo $(git log --oneline)
           echo $(git log --oneline | awk -F'heliandro/' '{print $2}')
-          BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
+          BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
           echo "$GITHUB_OWNER_NAME"
           echo "$BRANCH_NAME"
           if [[ $BRANCH_NAME == "bugfix/"* ]]; then
