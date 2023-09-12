@@ -102,7 +102,7 @@ jobs:
         run: |
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }} -m "Atualizar versão do projeto"
           VERSION=$(node -p -e "require('./package.json').version")
-          git push origin ${{ github.head_ref }}
+          git push -u origin ${{ github.head_ref }}
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
       # - name: Criar Tag
