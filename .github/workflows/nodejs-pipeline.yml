@@ -1,19 +1,19 @@
 name: Nodejs Pipeline
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
   push:
     branches:
       - main
 jobs:
   build:
-    if: contains(github.event.head_commit.message, 'Atualizar versão do projeto') == false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
 
       - name: Setup Nodejs
+        if: ${{ github.event.head_commit.message != 'Atualizar versão do projeto' }}
         uses: actions/setup-node@v3
         with:
           node-version: 20.5.1
