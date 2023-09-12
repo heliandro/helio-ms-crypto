@@ -91,7 +91,8 @@ jobs:
         run: |
           GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
           echo $(git log --oneline)
-          BRANCH_NAME=${{needs.pre-run.outputs.merge_branch}}
+          echo $(git log --oneline | awk -F'heliandro/' '{print $2}')
+          BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
           echo "$GITHUB_OWNER_NAME"
           echo "$BRANCH_NAME"
           if [[ $BRANCH_NAME == "bugfix" ]]; then
