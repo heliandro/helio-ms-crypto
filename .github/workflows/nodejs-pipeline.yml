@@ -6,28 +6,8 @@ on:
     branches:
       - main
 jobs:
-  # pre-run:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout do projecto
-  #       uses: actions/checkout@v3
-
-  #     - name: Configurar Git
-  #       run: |
-  #         git config --global user.name "Github Actions"
-  #         git config --global user.email "pipeline@actions.com"
-
-  #     - name: Verificar se há merges no log
-  #       run: |
-  #         HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
-  #         echo "$HAS_MERGE"
-  #         echo "has_merge=$HAS_MERGE" >> $GITHUB_OUTPUT
-  #         MERGE_BRANCH=$(echo $(git log --oneline | awk -F'heliandro/' '{print $2}'))
-  #         echo "merge_branch=$MERGE_BRANCH" >> $GITHUB_OUTPUT
-
   build:
     runs-on: ubuntu-latest
-    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -46,7 +26,6 @@ jobs:
   tests:
     needs: build
     runs-on: ubuntu-latest
-    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -69,15 +48,14 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   update-version:
-    # needs: pre-run
+    needs: tests
     runs-on: ubuntu-latest
     # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-
       - name: Checkout do projecto
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
+        # with:
+        #   token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
 
       - name: Configurar Git
         run: |
