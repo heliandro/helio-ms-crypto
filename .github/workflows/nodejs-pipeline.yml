@@ -21,7 +21,7 @@ jobs:
       - name: Instala as dependências
         run: |
           npm install
-          ${{ github.event.head_commit.message }}
+          echo ${{ github.event.head_commit.message }}
 
       - name: Build da aplicação
         run: npm run build
