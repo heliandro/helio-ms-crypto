@@ -61,9 +61,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && ${{ needs.pre-run.outputs.has_merge }} == "true"
     steps:
-      - name: Push na mesma branch
-        if: github.ref == 'refs/heads/main' && $(git log --oneline | awk -F'Merge' '{print $1}') == ""'
-        run: exit 0
+      # - name: Push na mesma branch
+      #   if: github.ref == 'refs/heads/main' && $(git log --oneline | awk -F'Merge' '{print $1}') == ""'
+      #   run: exit 0
 
       - name: Checkout do projecto
         uses: actions/checkout@v3
