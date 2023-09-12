@@ -59,6 +59,9 @@ jobs:
           git config --global user.name "Github Actions"
           git config --global user.email "pipeline@actions.com"
 
+      - name: Configurar variável de ambiente BRANCH_NAME
+        run: echo "BRANCH_NAME=$(git log --merges -n 1 | awk -Fheliandro/ '{print $2}')" >> GITHUB_OUTPUT
+
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determinar_tipo_de_versao
         run: |
