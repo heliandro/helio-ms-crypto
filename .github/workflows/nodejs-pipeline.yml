@@ -70,7 +70,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   update-version:
-    # needs: tests
+    needs: pre-run
     runs-on: ubuntu-latest
     if: github.base_ref == 'main' && ${{ needs.pre-run.outputs.has_merge }} == "true"
     steps:
