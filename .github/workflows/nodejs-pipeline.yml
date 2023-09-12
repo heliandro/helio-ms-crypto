@@ -85,17 +85,12 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determinar_tipo_de_versao
         run: |
-          GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
-          echo $(git log --oneline)
-          echo $(git log --oneline | awk -F'heliandro/' '{print $2}')
           BRANCH_NAME=$(echo "${{ github.head_ref }}" | awk -F/ '{print $1}')
-          echo "$GITHUB_OWNER_NAME"
-          echo "$BRANCH_NAME"
-          if [[ $BRANCH_NAME == "bugfix/"* ]]; then
+          if [[ $BRANCH_NAME == "bugfix" ]]; then
             echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
-          elif [[ $BRANCH_NAME == "feature/"* ]]; then
+          elif [[ $BRANCH_NAME == "feature" ]]; then
             echo "tipo_de_versao=minor" >> $GITHUB_OUTPUT
-          elif [[ $BRANCH_NAME == "release/"* ]]; then
+          elif [[ $BRANCH_NAME == "release" ]]; then
             echo "tipo_de_versao=major" >> $GITHUB_OUTPUT
           else
             echo "Branch não especificada ou incorreta. Result=$BRANCH_NAME"
@@ -111,9 +106,9 @@ jobs:
           git push
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
-      - name: Criar Tag
-        if: steps.criar_versao_do_projeto.outputs.versao != ''
-        run: |
-          VERSION=$(node -p -e "require('./package.json').version")
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
+      # - name: Criar Tag
+      #   if: steps.criar_versao_do_projeto.outputs.versao != ''
+      #   run: |
+      #     VERSION=$(node -p -e "require('./package.json').version")
+      #     git tag "v$VERSION"
+      #     git push origin "v$VERSION"
