@@ -1,12 +1,13 @@
 name: Nodejs Pipeline
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
   push:
     branches:
       - main
 jobs:
   build:
+    if: "github.event.head_commit.message != 'Atualizar versão do projeto'"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
@@ -54,8 +55,8 @@ jobs:
     steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
-        # with:
-        #   token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
+        with:
+          token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
 
       - name: Configurar Git
         run: |
