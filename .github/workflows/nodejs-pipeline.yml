@@ -20,6 +20,7 @@ jobs:
       - name: Verificar se há merges no log
         run: |
           HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
+          echo "$HAS_MERGE"
           echo "has_merge=$HAS_MERGE" >> $GITHUB_OUTPUT
           MERGE_BRANCH=$(echo $(git log --oneline | awk -F'heliandro/' '{print $2}' | awk -F' ' '{print $1}'))
           echo "merge_branch=$MERGE_BRANCH" >> $GITHUB_OUTPUT
@@ -71,7 +72,7 @@ jobs:
   update-version:
     # needs: tests
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && ${{ needs.pre-run.outputs.has_merge }} == "true"
+    if: github.base_ref == 'main' && ${{ needs.pre-run.outputs.has_merge }} == "true"
     steps:
       # - name: Push na mesma branch
       #   if: github.ref == 'refs/heads/main' && $(git log --oneline | awk -F'Merge' '{print $1}') == ""'
