@@ -76,13 +76,16 @@ jobs:
 
       - name: Checkout do projecto
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configurar Git
         run: |
           git config --global user.name "Github Actions"
           git config --global user.email "pipeline@actions.com"
+
+      - name: Checkout PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
 
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determinar_tipo_de_versao
@@ -101,10 +104,12 @@ jobs:
       - name: Criar versão do projeto
         if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
         id: criar_versao_do_projeto
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }} -m "Atualizar versão do projeto"
           VERSION=$(node -p -e "require('./package.json').version")
-          git push origin main
+          git push
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
       # - name: Criar Tag
