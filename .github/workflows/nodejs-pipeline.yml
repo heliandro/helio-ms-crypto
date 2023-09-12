@@ -6,6 +6,14 @@ on:
     branches:
       - main
 jobs:
+  pre-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar se há merges no log
+        run: |
+          HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
+          echo "HAS_MERGE=$HAS_MERGE" >> $GITHUB_ENV
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -50,8 +58,12 @@ jobs:
   update-version:
     needs: tests
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && ${{ env.HAS_MERGE }} == "true"
     steps:
+      - name: Push na mesma branch
+        if: github.ref == 'refs/heads/main' && $(git log --oneline | awk -F'Merge' '{print $1}') == ""'
+        run: exit 0
+
       - name: Checkout do projecto
         uses: actions/checkout@v3
 
