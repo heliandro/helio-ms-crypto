@@ -6,28 +6,8 @@ on:
     branches:
       - main
 jobs:
-  pre-run:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout do projecto
-        uses: actions/checkout@v3
-
-      - name: Configurar Git
-        run: |
-          git config --global user.name "Github Actions"
-          git config --global user.email "pipeline@actions.com"
-
-      - name: Verificar se há merges no log
-        run: |
-          HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
-          echo "$HAS_MERGE"
-          echo "has_merge=$HAS_MERGE" >> $GITHUB_OUTPUT
-          MERGE_BRANCH=$(echo $(git log --oneline | awk -F'heliandro/' '{print $2}'))
-          echo "merge_branch=$MERGE_BRANCH" >> $GITHUB_OUTPUT
-
   build:
     runs-on: ubuntu-latest
-    needs: pre-run
     if: false
     steps:
       - name: Checkout do projeto
@@ -69,17 +49,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  update-version:
-    needs: pre-run
+  log-github-event-goodies:
+    name: "LOG Everything on GitHub Event"
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      # - name: Push na mesma branch
-      #   if: github.ref == 'refs/heads/main' && $(git log --oneline | awk -F'Merge' '{print $1}') == ""'
-      #   run: exit 0
+      - name: Logging
+        run: |
+          echo "${{toJSON(github.event)}}"
 
+  update-version:
+    runs-on: ubuntu-latest
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: ${{ github.event.head_commit.message.not_contains('[github-actions]') }}
+    steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
 
       - name: Configurar Git
         run: |
@@ -89,12 +75,8 @@ jobs:
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determinar_tipo_de_versao
         run: |
-          GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
-          echo $(git log --oneline)
           echo $(git log --oneline | awk -F'heliandro/' '{print $2}')
           BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
-          echo "$GITHUB_OWNER_NAME"
-          echo "$BRANCH_NAME"
           if [[ $BRANCH_NAME == "bugfix/"* ]]; then
             echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature/"* ]]; then
@@ -111,13 +93,13 @@ jobs:
         run: |
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
-          git commit -am "Atualizar versão do projeto"
+          git commit -am "[github-actions]: atualizar versão do projeto"
           git push origin main
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
-      - name: Criar Tag
-        if: steps.criar_versao_do_projeto.outputs.versao != ''
-        run: |
-          VERSION=$(node -p -e "require('./package.json').version")
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
+      # - name: Criar Tag
+      #   if: steps.criar_versao_do_projeto.outputs.versao != ''
+      #   run: |
+      #     VERSION=$(node -p -e "require('./package.json').version")
+      #     git tag "v$VERSION"
+      #     git push origin "v$VERSION"
