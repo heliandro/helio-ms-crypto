@@ -62,6 +62,8 @@ jobs:
           echo "${{ github.event.commits }}"
           echo "${{ github.event_name }}"
           echo "${{ github.ref }}"
+          echo "${{ github.event.head_ref }}"
+          echo "${{ github.head_ref }}"
 
   update-version:
     runs-on: ubuntu-latest
@@ -78,11 +80,14 @@ jobs:
           git config --global user.name "Github Actions"
           git config --global user.email "pipeline@actions.com"
 
+      # BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
+
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determinar_tipo_de_versao
         run: |
           echo $(git log --oneline | awk -F'heliandro/' '{print $2}')
-          BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
+          
+          BRANCH_NAME=$(github.head_ref)
           if [[ $BRANCH_NAME == "bugfix/"* ]]; then
             echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature/"* ]]; then
