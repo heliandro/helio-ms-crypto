@@ -101,6 +101,8 @@ jobs:
       - name: Criar versão do projeto
         if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
         id: criar_versao_do_projeto
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
         run: |
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
