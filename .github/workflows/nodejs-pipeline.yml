@@ -4,7 +4,7 @@ on:
     types: [opened, synchronize, reopened]
   push:
     branches:
-      - main
+      - '*'
 
 jobs:
   check_actions_commit:
@@ -90,7 +90,7 @@ jobs:
 
   build:
     name: Build da aplicação
-    if: github.event_action == 'synchronize' || github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'synchronize'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
