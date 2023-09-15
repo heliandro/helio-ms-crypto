@@ -5,6 +5,10 @@ on:
   push:
     branches:
       - main
+
+env: 
+  ultros: ${{ github.event.head_commit.message }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -73,12 +77,12 @@ jobs:
   #         echo "${{ github.base_ref }}"
 
   update-version:
-    env:
-      ultros: ${{ github.event.head_commit.message }}
+    # env:
+    #   ultros: ${{ github.event.head_commit.message }}
     runs-on: ubuntu-latest
     # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # se a mensagem do commit não contém '[github-actions]' então executa o job
-    if: contains(github.event.head_commit.message, '[github-actions]') == false
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[github-actions]') == false
     steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
@@ -102,9 +106,9 @@ jobs:
           echo "$ultros"
           echo ${{ env.ultros }}
           echo "$outro"
-          echo "${{ github.event.commit_message }}"
-          echo "${{ github.event.head_commit.message }}"
-          echo "${{ github.event.head_commit.message[0] }}"
+          echo "commit = ${{ github.event.commit_message }}"
+          echo "head =  ${{ github.event.head_commit.message }}"
+          echo "[0] = ${{ github.event.head_commit.message[0] }}"
           echo "${{ toJSON(github.event.head_commit.message) }}"
           echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
           echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
