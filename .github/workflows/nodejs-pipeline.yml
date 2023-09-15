@@ -19,7 +19,7 @@ jobs:
         id: get_head_commit_message
         run: |
           git fetch
-          LATEST_COMMIT=$(echo $(git log $(git merge-base origin/${{github.base_ref}} origin/${{github.head_ref}})..origin/${{github.head_ref}}) | grep -o "\[github-actions\]" | head -n 1)
+          LATEST_COMMIT=$(echo $(git log $(git merge-base origin/${{github.base_ref}} origin/${{github.head_ref}})..origin/${{github.head_ref}}) | grep -o "github-actions" | head -n 1)
           echo "$LATEST_COMMIT"
           echo "LATEST_COMMIT=${LATEST_COMMIT}" >> $GITHUB_OUTPUT
 
@@ -36,7 +36,7 @@ jobs:
     name: Atualizar versão do projeto
     needs: check_actions_commit
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') }}
+    if: github.event_name == 'pull_request' && ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, 'github-actions') }}
     steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
