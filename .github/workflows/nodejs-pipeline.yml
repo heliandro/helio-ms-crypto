@@ -27,7 +27,7 @@ jobs:
           OMEGA2=$(echo $(git show -s --format=%s))
           echo "$OMEGA2"
           echo "OMEGA=${OMEGA2}">> $GITHUB_ENV
-          echo "OMEGA=1234" >> $GITHUB_ENV
+          echo "OMEGA=1234" >> $GITHUB_OUTPUT
 
   print:
     name: Print
