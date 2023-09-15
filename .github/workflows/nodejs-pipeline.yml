@@ -26,7 +26,7 @@ jobs:
         run: |
           OMEGA=$(echo $(git show -s --format=%s))
           echo "$OMEGA"
-          echo "OMEGA=${{OMEGA}}" >> $GITHUB_OUTPUT
+          echo "OMEGA=$OMEGA" >> $GITHUB_OUTPUT
 
   print:
     name: Print
