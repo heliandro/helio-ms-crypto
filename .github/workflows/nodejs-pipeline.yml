@@ -21,7 +21,7 @@ jobs:
         id: get_head_commit_message
         run: |
           git fetch
-          LATEST_COMMIT=$(echo $(git log $(git merge-base origin/${{github.base_ref}} origin/${{github.head_ref}})..origin/${{github.head_ref}}) | grep -o "567" | head -n 1)
+          LATEST_COMMIT=$(echo $(git log $(git merge-base origin/${{github.base_ref}} origin/${{github.head_ref}})..origin/${{github.head_ref}}) | grep -o "github-actions" | head -n 1)
           echo "$LATEST_COMMIT"
           echo "LATEST_COMMIT=${LATEST_COMMIT}" >> $GITHUB_OUTPUT
 
