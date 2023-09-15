@@ -103,7 +103,6 @@ jobs:
         env:
           outro: ${{ github.event.head_commit.message }}
         run: |
-          echo ${{ git merge}}
           echo "$ultros"
           echo ${{ env.ultros }}
           echo "$outro"
