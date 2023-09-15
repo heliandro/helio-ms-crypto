@@ -90,7 +90,7 @@ jobs:
 
   build:
     name: Build da aplicação
-    if: github.event_action == 'synchronize'
+    if: github.event_action == 'synchronize' || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
@@ -111,7 +111,7 @@ jobs:
     needs: build
     name: Testes da aplicação
     runs-on: ubuntu-latest
-    if: github.event_action == 'synchronize'
+    if: github.event_action == 'synchronize' || github.event_name == 'push'
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
