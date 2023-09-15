@@ -44,7 +44,7 @@ jobs:
     name: Job Juvenal
     needs: print
     runs-on: ubuntu-latest
-    if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, '[github-actions]') }}
+    if: ${{ !contains(needs.check_skip_flags.outputs.head-commit-message, '[github-actions]') }}
     steps:
       - name: Print head git commit message
         run: |
@@ -54,7 +54,7 @@ jobs:
     name: Job Omega
     needs: print
     runs-on: ubuntu-latest
-    if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}
+    if: ${{ !contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}
     steps:
       - name: Print head git commit message
         run: |
