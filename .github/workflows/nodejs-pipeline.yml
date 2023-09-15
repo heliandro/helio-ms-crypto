@@ -8,6 +8,7 @@ on:
 
 env: 
   ultros: ${{ github.event.head_commit.message }}
+  OMEGA: teste
 
 jobs:
   check_skip_flags:
@@ -22,7 +23,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
         id: get_head_commit_message
-        run: echo "ultros=$(git show -s --format=%s)" >> $GITHUB_ENV
+        run: |
+          echo "ultros=$(git show -s --format=%s)" >> $GITHUB_ENV
+          echo "OMEGA=1234" >> $GITHUB_ENV
 
   print:
     name: Print
@@ -30,7 +33,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print head git commit message
-        run: echo "$ultros"
+        run: |
+          echo "$ultros"
+          echo "$OMEGA"
+          echo "${{ env.ultros }}"
+          echo "${{ env.OMEGA }}"
 
   build:
     runs-on: ubuntu-latest
