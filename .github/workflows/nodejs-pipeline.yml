@@ -20,14 +20,24 @@ jobs:
       - name: Print head git commit message
         id: get_head_commit_message
         run: |
-          LATEST_COMMIT=$(echo $(git show -s --format=%s))
+          LATEST_COMMIT=$(echo $(git log --pretty=%B $(git merge-base main feature/ci)..feature/ci) | grep -o "567" | head -n 1)
           echo "$LATEST_COMMIT"
           echo "LATEST_COMMIT=${LATEST_COMMIT}" >> $GITHUB_OUTPUT
+
+  print:
+    name: Print
+    needs: check_actions_commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print
+        run: |
+          echo "${{ needs.check_actions_commit.outputs.head-commit-message }}"
 
   build:
     needs: check_actions_commit
     name: Build da aplicação
-    if: ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') }}
+    if: false
+    # if: ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
