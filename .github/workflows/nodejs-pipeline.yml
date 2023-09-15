@@ -41,6 +41,7 @@ jobs:
           echo "${{ env.ultros }}"
           echo "${{ env.OMEGA }}"
           echo "$OMEGA2"
+          echo ${{ env.OMEGA2 }}
           echo "${{ steps.get_head_commit_message.outputs.head-commit-message }}"
 
   build:
