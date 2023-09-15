@@ -89,7 +89,6 @@ jobs:
       #     git push origin "v$VERSION"
 
   build:
-    needs: check_actions_commit
     name: Build da aplicação
     if: github.event_action == 'synchronize' || github.event_name == 'push'
     runs-on: ubuntu-latest
