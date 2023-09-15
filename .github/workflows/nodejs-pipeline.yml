@@ -28,7 +28,7 @@ jobs:
           latest_commit_pr_message_2: ${{ github.event.pull_request.head_commit.message }}
         run: |
           git config --global user.name "Github Actions"
-          git config --global user.email "
+          git config --global user.email "pipeline@actions.com"
           echo "$latest_commit_pr"
           echo "$latest_commit_pr_message"
           echo "$latest_commit_pr_message_2"
