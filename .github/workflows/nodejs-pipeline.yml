@@ -15,7 +15,7 @@ jobs:
     name: Check skip flags
     runs-on: ubuntu-latest
     outputs:
-      head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+      head-commit-message: ${{ steps.get_head_commit_message.outputs.OMEGA2 }}
     steps:
       - name: Get repo
         uses: actions/checkout@v3
@@ -41,6 +41,7 @@ jobs:
           echo "${{ env.ultros }}"
           echo "${{ env.OMEGA }}"
           echo "$OMEGA2"
+          echo "${{ steps.get_head_commit_message.outputs.head-commit-message }}"
 
   build:
     runs-on: ubuntu-latest
