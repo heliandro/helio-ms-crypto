@@ -36,6 +36,10 @@ jobs:
       - name: Print head git commit message
         run: |
           echo "${{ needs.check_skip_flags.outputs.head-commit-message }}"
+          echo "${{ !contains(needs.check_skip_flags.outputs.head-commit-message, '[github-actions]') }}"
+          echo "${{ !contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}"
+          echo "${{ contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}"
+
 
   build:
     runs-on: ubuntu-latest
