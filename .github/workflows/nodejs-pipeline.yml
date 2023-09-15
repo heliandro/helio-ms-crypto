@@ -34,6 +34,8 @@ jobs:
           echo "$latest_commit_pr_message"
           echo "$latest_commit_pr_message_2"
           echo "$last_commit_pr"
+          echo ${{ github.event.pull_request.commits }}
+          echo ${{ github.event.pull_request.commits[0].commit.message }}
           echo ${{ toJson(github.event.pull_request) }}
 
   build:
