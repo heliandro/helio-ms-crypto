@@ -64,6 +64,7 @@ jobs:
           echo "${{ github.ref }}"
           echo "${{ github.event.head_ref }}"
           echo "${{ github.head_ref }}"
+          echo "${{ github.base_ref }}"
 
   update-version:
     runs-on: ubuntu-latest
@@ -112,7 +113,7 @@ jobs:
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
           git commit -am "[github-actions]: atualizar versão do projeto"
-          git push
+          git push ${{ github.event.pull_request.head.repo.clone_url }} HEAD:${{ github.event.pull_request.head.ref }
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
       # - name: Criar Tag
