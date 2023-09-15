@@ -5,29 +5,13 @@ on:
   push:
     branches:
       - main
+
+env: 
+  ultros: ${{ github.event.head_commit.message }}
+
 jobs:
-  pre-run:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout do projecto
-        uses: actions/checkout@v3
-
-      - name: Configurar Git
-        run: |
-          git config --global user.name "Github Actions"
-          git config --global user.email "pipeline@actions.com"
-
-      - name: Verificar se há merges no log
-        run: |
-          HAS_MERGE=$([[ $(git log --oneline | grep -o "Merge") ]] && echo "true" || echo "false")
-          echo "$HAS_MERGE"
-          echo "has_merge=$HAS_MERGE" >> $GITHUB_OUTPUT
-          MERGE_BRANCH=$(echo $(git log --oneline | awk -F'heliandro/' '{print $2}'))
-          echo "merge_branch=$MERGE_BRANCH" >> $GITHUB_OUTPUT
-
   build:
     runs-on: ubuntu-latest
-    needs: pre-run
     if: false
     steps:
       - name: Checkout do projeto
@@ -69,32 +53,82 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  update-version:
-    needs: pre-run
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      # - name: Push na mesma branch
-      #   if: github.ref == 'refs/heads/main' && $(git log --oneline | awk -F'Merge' '{print $1}') == ""'
-      #   run: exit 0
+  # log-github-event-goodies:
+  #   name: "LOG Everything on GitHub Event"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Logging
+  #       run: |
+  #         echo $ultros
+  #         echo ${{ env.ultros }}
+  #         echo "${{ github.event.commit_message }}"
+  #         echo "${{ github.event.head_commit.message }}"
+  #         echo "${{ github.event.head_commit.message[0] }}"
+  #         echo "${{ toJSON(github.event.head_commit.message) }}"
+  #         echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
+  #         echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
+  #         echo "${{ github.event.head_commit.id }}"
+  #         echo "${{ github.commit_message }}"
+  #         echo "${{ github.event.commits }}"
+  #         echo "${{ github.event_name }}"
+  #         echo "${{ github.ref }}"
+  #         echo "${{ github.event.head_ref }}"
+  #         echo "${{ github.head_ref }}"
+  #         echo "${{ github.base_ref }}"
 
+  update-version:
+    # env:
+    #   ultros: ${{ github.event.head_commit.message }}
+    runs-on: ubuntu-latest
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # se a mensagem do commit não contém '[github-actions]' então executa o job
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[github-actions]') == false
+    steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
 
       - name: Configurar Git
         run: |
           git config --global user.name "Github Actions"
           git config --global user.email "pipeline@actions.com"
 
+      - name: Checkout PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
+
+      - name: Logging
+        env:
+          outro: ${{ github.event.head_commit.message }}
+        run: |
+          echo "$ultros"
+          echo ${{ env.ultros }}
+          echo "$outro"
+          echo "commit = ${{ github.event.commit_message }}"
+          echo "head =  ${{ github.event.head_commit.message }}"
+          echo "[0] = ${{ github.event.head_commit.message[0] }}"
+          echo "${{ toJSON(github.event.head_commit.message) }}"
+          echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
+          echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
+          echo "${{ github.event.head_commit.id }}"
+          echo "${{ github.commit_message }}"
+          echo "${{ github.event.commits }}"
+          echo "${{ github.event_name }}"
+          echo "${{ github.ref }}"
+          echo "${{ github.event.head_ref }}"
+          echo "${{ github.head_ref }}"
+          echo "${{ github.base_ref }}"
+
+      # BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
+
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determinar_tipo_de_versao
         run: |
-          GITHUB_OWNER_NAME=$(git remote get-url origin | awk -F/ '{print $4}')
-          echo $(git log --oneline)
           echo $(git log --oneline | awk -F'heliandro/' '{print $2}')
-          BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
-          echo "$GITHUB_OWNER_NAME"
-          echo "$BRANCH_NAME"
+          
+          BRANCH_NAME=$(echo "${{ github.head_ref }}")
           if [[ $BRANCH_NAME == "bugfix/"* ]]; then
             echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature/"* ]]; then
@@ -108,16 +142,17 @@ jobs:
       - name: Criar versão do projeto
         if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
         id: criar_versao_do_projeto
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
         run: |
-          npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
+          npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }} -m "[github-actions]: atualizar versão do projeto"
           VERSION=$(node -p -e "require('./package.json').version")
-          git commit -am "Atualizar versão do projeto"
-          git push origin main
+          git push
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
-      - name: Criar Tag
-        if: steps.criar_versao_do_projeto.outputs.versao != ''
-        run: |
-          VERSION=$(node -p -e "require('./package.json').version")
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
+      # - name: Criar Tag
+      #   if: steps.criar_versao_do_projeto.outputs.versao != ''
+      #   run: |
+      #     VERSION=$(node -p -e "require('./package.json').version")
+      #     git tag "v$VERSION"
+      #     git push origin "v$VERSION"
