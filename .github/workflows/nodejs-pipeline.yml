@@ -73,6 +73,8 @@ jobs:
   #         echo "${{ github.base_ref }}"
 
   update-version:
+    env:
+      ultros: ${{ github.event.head_commit.message }}
     runs-on: ubuntu-latest
     # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # se a mensagem do commit não contém '[github-actions]' então executa o job
@@ -91,7 +93,6 @@ jobs:
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
-          ultros: ${{ github.event.head_commit.message }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
       - name: Logging
