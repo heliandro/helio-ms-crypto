@@ -48,7 +48,7 @@ jobs:
     needs: build
     name: Testes da aplicação
     runs-on: ubuntu-latest
-    if: false
+    if: true
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
