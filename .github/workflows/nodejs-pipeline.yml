@@ -22,7 +22,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
         id: get_head_commit_message
-        run: echo "::set-env name=ultros::$(git show -s --format=%s)"
+        run: echo "ultros=$(git show -s --format=%s)" >> $GITHUB_ENV
 
   print:
     name: Print
