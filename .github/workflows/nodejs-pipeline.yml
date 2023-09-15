@@ -69,7 +69,7 @@ jobs:
   update-version:
     runs-on: ubuntu-latest
     # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    if: ${{ contains(github.event.head_commit.message, '[github-actions]') }} == false
+    if: ${{ contains(github.event.head_commit.message, '[github-actions]') }} == 'false'
     steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
