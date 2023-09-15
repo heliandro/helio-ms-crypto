@@ -104,8 +104,6 @@ jobs:
           echo ${{ env.ultros }}
           echo "commit = ${{ github.event.commit_message }}"
           echo "head =  ${{ github.event.head_commit.message }}"
-          echo "[0] = ${{ github.event.head_commit.message[0] }}"
-          echo "${{ toJSON(github.event.head_commit.message) }}"
           echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
           echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
           echo "${{ github.event.head_commit.id }}"
