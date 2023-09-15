@@ -4,7 +4,7 @@ on:
     types: [opened, synchronize, reopened]
   push:
     branches:
-      - '*'
+      - 'main'
 
 jobs:
   check_actions_commit:
@@ -90,7 +90,7 @@ jobs:
 
   build:
     name: Build da aplicação
-    if: github.event_name == 'push' || github.event_name == 'synchronize'
+    if: github.event_action == 'synchronize'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do projeto
@@ -111,7 +111,7 @@ jobs:
     needs: build
     name: Testes da aplicação
     runs-on: ubuntu-latest
-    if: github.event_action == 'synchronize' || github.event_name == 'push'
+    if: github.event_action == 'synchronize'
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -132,28 +132,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  # log-github-event-goodies:
-  #   name: "LOG Everything on GitHub Event"
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Logging
-  #       run: |
-  #         echo $ultros
-  #         echo ${{ env.ultros }}
-  #         echo "${{ github.event.commit_message }}"
-  #         echo "${{ github.event.head_commit.message }}"
-  #         echo "${{ github.event.head_commit.message[0] }}"
-  #         echo "${{ toJSON(github.event.head_commit.message) }}"
-  #         echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
-  #         echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
-  #         echo "${{ github.event.head_commit.id }}"
-  #         echo "${{ github.commit_message }}"
-  #         echo "${{ github.event.commits }}"
-  #         echo "${{ github.event_name }}"
-  #         echo "${{ github.ref }}"
-  #         echo "${{ github.event.head_ref }}"
-  #         echo "${{ github.head_ref }}"
-  #         echo "${{ github.base_ref }}"
-
-
