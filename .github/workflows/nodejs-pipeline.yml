@@ -71,10 +71,10 @@ jobs:
     # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     if: ${{ contains(github.event.head_commit.message, '[github-actions]') }} == false
     steps:
-      - name: Checkout do projecto
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
+      # - name: Checkout do projecto
+      #   uses: actions/checkout@v3
+      #   with:
+      #     token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
 
       - name: Checkout PR
         env:
@@ -113,7 +113,7 @@ jobs:
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
           git commit -am "[github-actions]: atualizar versão do projeto"
-          git push HEAD:${{ github.head_ref }}
+          git push
           echo "versao=$VERSION" >> GITHUB_OUTPUT
 
       # - name: Criar Tag
