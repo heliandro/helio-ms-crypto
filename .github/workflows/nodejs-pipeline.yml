@@ -26,12 +26,15 @@ jobs:
           latest_commit_pr: ${{ github.event.pull_request.head.sha }}
           latest_commit_pr_message: ${{ github.event.pull_request.head.commit.message }}
           latest_commit_pr_message_2: ${{ github.event.pull_request.head_commit.message }}
+          last_commit_pr: ${{ github.event.pull_request.head.commit.message }}
         run: |
           git config --global user.name "Github Actions"
           git config --global user.email "pipeline@actions.com"
           echo "$latest_commit_pr"
           echo "$latest_commit_pr_message"
           echo "$latest_commit_pr_message_2"
+          echo "$last_commit_pr"
+          echo ${{ toJson(github.event.pull_request) }}
 
   build:
     runs-on: ubuntu-latest
