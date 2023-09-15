@@ -52,9 +52,14 @@ jobs:
   log-github-event-goodies:
     name: "LOG Everything on GitHub Event"
     runs-on: ubuntu-latest
+    env:
+      ultros: ${{ github.event.head_commit.message }}
     steps:
       - name: Logging
         run: |
+          echo $ultros
+          echo ${{ env.ultros }}
+          echo "${{ github.event.commit_message }}"
           echo "${{ github.event.head_commit.message }}"
           echo "${{ github.event.head_commit.message[0] }}"
           echo "${{ toJSON(github.event.head_commit.message) }}"
