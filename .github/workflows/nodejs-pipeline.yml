@@ -40,6 +40,26 @@ jobs:
           echo "${{ !contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}"
           echo "${{ contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}"
 
+  job_juvenal:
+    name: Job Juvenal
+    needs: print
+    runs-on: ubuntu-latest
+    if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, '[github-actions]') }}
+    steps:
+      - name: Print head git commit message
+        run: |
+          echo "Juvenal"
+
+  job_omega:
+    name: Job Omega
+    needs: print
+    runs-on: ubuntu-latest
+    if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}
+    steps:
+      - name: Print head git commit message
+        run: |
+          echo "Omega"
+
 
   build:
     runs-on: ubuntu-latest
