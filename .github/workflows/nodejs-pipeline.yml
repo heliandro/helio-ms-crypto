@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Get repo
         uses: actions/checkout@v3
-        # with:
-        #   ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
         id: get_head_commit_message
         run: |
@@ -34,78 +32,9 @@ jobs:
   #       run: |
   #         echo "${{ needs.check_actions_commit.outputs.head-commit-message }}"
 
-  build:
-    needs: check_actions_commit
-    name: Build da aplicação
-    if: ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout do projeto
-        uses: actions/checkout@v3
-
-      - name: Setup Nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.5.1
-
-      - name: Instala as dependências
-        run: npm install
-
-      - name: Build da aplicação
-        run: npm run build
-
-  tests:
-    needs: build
-    name: Testes da aplicação
-    runs-on: ubuntu-latest
-    if: ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') }}
-    steps:
-      - name: Checkout do projeto
-        uses: actions/checkout@v3
-
-      - name: Setup Nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.5.1
-
-      - name: Instala as dependências
-        run: npm install
-
-      - name: Executa os testes com coverage
-        run: npm run test
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  # log-github-event-goodies:
-  #   name: "LOG Everything on GitHub Event"
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Logging
-  #       run: |
-  #         echo $ultros
-  #         echo ${{ env.ultros }}
-  #         echo "${{ github.event.commit_message }}"
-  #         echo "${{ github.event.head_commit.message }}"
-  #         echo "${{ github.event.head_commit.message[0] }}"
-  #         echo "${{ toJSON(github.event.head_commit.message) }}"
-  #         echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
-  #         echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
-  #         echo "${{ github.event.head_commit.id }}"
-  #         echo "${{ github.commit_message }}"
-  #         echo "${{ github.event.commits }}"
-  #         echo "${{ github.event_name }}"
-  #         echo "${{ github.ref }}"
-  #         echo "${{ github.event.head_ref }}"
-  #         echo "${{ github.head_ref }}"
-  #         echo "${{ github.base_ref }}"
-
   update-version:
     name: Atualizar versão do projeto
-    needs: tests
+    needs: check_actions_commit
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') }}
     steps:
@@ -158,3 +87,74 @@ jobs:
       #     VERSION=$(node -p -e "require('./package.json').version")
       #     git tag "v$VERSION"
       #     git push origin "v$VERSION"
+
+  build:
+    needs: check_actions_commit
+    name: Build da aplicação
+    if: github.event_action == 'synchronize' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do projeto
+        uses: actions/checkout@v3
+
+      - name: Setup Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.5.1
+
+      - name: Instala as dependências
+        run: npm install
+
+      - name: Build da aplicação
+        run: npm run build
+
+  tests:
+    needs: build
+    name: Testes da aplicação
+    runs-on: ubuntu-latest
+    if: github.event_action == 'synchronize' || github.event_name == 'push'
+    steps:
+      - name: Checkout do projeto
+        uses: actions/checkout@v3
+
+      - name: Setup Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.5.1
+
+      - name: Instala as dependências
+        run: npm install
+
+      - name: Executa os testes com coverage
+        run: npm run test
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # log-github-event-goodies:
+  #   name: "LOG Everything on GitHub Event"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Logging
+  #       run: |
+  #         echo $ultros
+  #         echo ${{ env.ultros }}
+  #         echo "${{ github.event.commit_message }}"
+  #         echo "${{ github.event.head_commit.message }}"
+  #         echo "${{ github.event.head_commit.message[0] }}"
+  #         echo "${{ toJSON(github.event.head_commit.message) }}"
+  #         echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
+  #         echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
+  #         echo "${{ github.event.head_commit.id }}"
+  #         echo "${{ github.commit_message }}"
+  #         echo "${{ github.event.commits }}"
+  #         echo "${{ github.event_name }}"
+  #         echo "${{ github.ref }}"
+  #         echo "${{ github.event.head_ref }}"
+  #         echo "${{ github.head_ref }}"
+  #         echo "${{ github.base_ref }}"
+
+
