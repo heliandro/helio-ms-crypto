@@ -72,7 +72,7 @@ jobs:
     name: Atualizar versão do projeto
     needs: tests
     runs-on: ubuntu-latest
-    if: ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') }}
+    if: ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') && github.event_name == 'pull_request' }} 
     steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
