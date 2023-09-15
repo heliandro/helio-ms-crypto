@@ -15,12 +15,12 @@ jobs:
     steps:
       - name: Get repo
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        # with:
+        #   ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
         id: get_head_commit_message
         run: |
-          LATEST_COMMIT=$(echo $(git log --pretty=%B $(git merge-base ${{github.base_ref}} ${{github.head_ref}})..${{github.head_ref}}) | grep -o "567" | head -n 1)
+          LATEST_COMMIT=$(echo $(git log $(git merge-base ${{github.base_ref}} ${{github.head_ref}})..${{github.head_ref}}) | grep -o "567" | head -n 1)
           echo "$LATEST_COMMIT"
           echo "LATEST_COMMIT=${LATEST_COMMIT}" >> $GITHUB_OUTPUT
 
