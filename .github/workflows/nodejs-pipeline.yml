@@ -57,7 +57,7 @@ jobs:
         run: |
           echo "${{ github.event.head_commit.message }}"
           echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
-          echo "expression2: ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}"
+          echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
           echo "${{ github.event.head_commit.id }}"
           echo "${{ github.commit_message }}"
           echo "${{ github.event.commits }}"
@@ -70,7 +70,8 @@ jobs:
   update-version:
     runs-on: ubuntu-latest
     # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    if: ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
+    # se a mensagem do commit não contém '[github-actions]' então executa o job
+    if: "${{ contains(github.event.head_commit.message, '[github-actions]') == false }}"
     steps:
       - name: Checkout do projecto
         uses: actions/checkout@v3
