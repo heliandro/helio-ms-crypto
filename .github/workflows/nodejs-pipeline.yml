@@ -10,35 +10,6 @@ env:
   ultros: ${{ github.event.head_commit.message }}
 
 jobs:
-  # quero capturar o ultimo commit do pr ao executar o job
-  # https://github.community/t/how-to-get-the-last-commit-message-of-a-pull-request/17830/2
-  # my_latest_commit_pr:
-  #   runs-on: ubuntu-latest
-  #   if: github.event_name == 'pull_request'
-  #   steps:
-  #     - name: Checkout do projeto
-  #       uses: actions/checkout@v3
-  #       with:
-  #         token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
-
-  #     - name: Configurar Git
-  #       env:
-  #         latest_commit_pr: ${{ github.event.pull_request.head.sha }}
-  #         latest_commit_pr_message: ${{ github.event.pull_request.head.commit.message }}
-  #         latest_commit_pr_message_2: ${{ github.event.pull_request.head_commit.message }}
-  #         last_commit_pr: ${{ github.event.pull_request.head.commit.message }}
-  #       run: |
-  #         git config --global user.name "Github Actions"
-  #         git config --global user.email "pipeline@actions.com"
-  #         echo "$latest_commit_pr"
-  #         echo "$latest_commit_pr_message"
-  #         echo "$latest_commit_pr_message_2"
-  #         echo "$last_commit_pr"
-  #         echo ${{ github.event.pull_request.commits }}
-  #         echo ${{ github.event.pull_request.commits_url }}
-  #         echo $(github.event.pull_request.commits_url | jq '.[0].commit.message')
-  #         echo ${{ toJson(github.event.pull_request) }}
-
   check_skip_flags:
     name: Check skip flags
     runs-on: ubuntu-latest
@@ -51,7 +22,15 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
         id: get_head_commit_message
-        run: echo "$(git show -s --format=%s)"
+        run: echo "::set-env name=ultros::$(git show -s --format=%s)"
+
+  print:
+    name: Print
+    needs: check_skip_flags
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print head git commit message
+        run: echo "$ultros"
 
   build:
     runs-on: ubuntu-latest
