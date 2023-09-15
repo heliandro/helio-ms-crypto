@@ -95,9 +95,12 @@ jobs:
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
       - name: Logging
+        env:
+          outro: ${{ github.event.head_commit.message }}
         run: |
-          echo $ultros
+          echo "$ultros"
           echo ${{ env.ultros }}
+          echo "$outro"
           echo "${{ github.event.commit_message }}"
           echo "${{ github.event.head_commit.message }}"
           echo "${{ github.event.head_commit.message[0] }}"
