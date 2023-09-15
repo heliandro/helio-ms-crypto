@@ -38,11 +38,12 @@ jobs:
         run: |
           echo "$ultros"
           echo "$OMEGA"
+          echo $OMEGA
           echo "${{ env.ultros }}"
-          echo "${{ env.OMEGA }}"
+          echo ${{ env.OMEGA }}
           echo "$OMEGA2"
           echo ${{ env.OMEGA2 }}
-          echo "${{ steps.get_head_commit_message.outputs.head-commit-message }}"
+          echo ${{ job.check_skip_flags.outputs.head-commit-message }}
 
   build:
     runs-on: ubuntu-latest
