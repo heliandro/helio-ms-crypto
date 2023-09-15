@@ -6,16 +6,12 @@ on:
     branches:
       - main
 
-env: 
-  ultros: ${{ github.event.head_commit.message }}
-  # OMEGA: teste
-
 jobs:
-  check_skip_flags:
-    name: Check skip flags
+  check_actions_commit:
+    name: Checa os commits do Github Actions
     runs-on: ubuntu-latest
     outputs:
-      head-commit-message: ${{ steps.get_head_commit_message.outputs.OMEGA }}
+      head-commit-message: ${{ steps.get_head_commit_message.outputs.LATEST_COMMIT }}
     steps:
       - name: Get repo
         uses: actions/checkout@v3
@@ -24,46 +20,15 @@ jobs:
       - name: Print head git commit message
         id: get_head_commit_message
         run: |
-          OMEGA=$(echo $(git show -s --format=%s))
-          echo "$OMEGA"
-          echo "OMEGA=${OMEGA}" >> $GITHUB_OUTPUT
-
-  print:
-    name: Print
-    needs: check_skip_flags
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print head git commit message
-        run: |
-          echo "${{ needs.check_skip_flags.outputs.head-commit-message }}"
-          echo "${{ !contains(needs.check_skip_flags.outputs.head-commit-message, '[github-actions]') }}"
-          echo "${{ !contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}"
-          echo "${{ contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}"
-
-  job_juvenal:
-    name: Job Juvenal
-    needs: print
-    runs-on: ubuntu-latest
-    if: ${{ !contains(needs.check_skip_flags.outputs.head-commit-message, '[github-actions]') }}
-    steps:
-      - name: Print head git commit message
-        run: |
-          echo "Juvenal"
-
-  job_omega:
-    name: Job Omega
-    needs: print
-    runs-on: ubuntu-latest
-    if: ${{ !contains(needs.check_skip_flags.outputs.head-commit-message, 'wip(ci)') }}
-    steps:
-      - name: Print head git commit message
-        run: |
-          echo "Omega"
-
+          LATEST_COMMIT=$(echo $(git show -s --format=%s))
+          echo "$LATEST_COMMIT"
+          echo "LATEST_COMMIT=${LATEST_COMMIT}" >> $GITHUB_OUTPUT
 
   build:
+    needs: check_actions_commit
+    name: Build da aplicação
+    if: ${{ !contains(needs.check_actions_commit.outputs.head-commit-message, '[github-actions]') }}
     runs-on: ubuntu-latest
-    if: false
     steps:
       - name: Checkout do projeto
         uses: actions/checkout@v3
@@ -81,6 +46,7 @@ jobs:
 
   tests:
     needs: build
+    name: Testes da aplicação
     runs-on: ubuntu-latest
     if: false
     steps:
