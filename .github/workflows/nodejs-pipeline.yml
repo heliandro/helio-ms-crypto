@@ -122,13 +122,16 @@ jobs:
           echo "${{ github.base_ref }}"
 
       # BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
+      # BRANCH_NAME=$(echo "${{ github.head_ref }}")
 
       - name: Determinar Tipo de Versão (Major, Minor, ou Patch)
         id: determinar_tipo_de_versao
         run: |
           echo $(git log --oneline | awk -F'heliandro/' '{print $2}')
+          echo $(git log --merges -n 1)
+          echo $(git log --merges -n 1 | awk -F'heliandro/' '{print $2}')
           
-          BRANCH_NAME=$(echo "${{ github.head_ref }}")
+          BRANCH_NAME=$(git log --merges -n 1 | awk -F'heliandro/' '{print $2}' | xargs)
           if [[ $BRANCH_NAME == "bugfix/"* ]]; then
             echo "tipo_de_versao=patch" >> $GITHUB_OUTPUT
           elif [[ $BRANCH_NAME == "feature/"* ]]; then
