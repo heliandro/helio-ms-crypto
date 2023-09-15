@@ -20,7 +20,7 @@ jobs:
       - name: Print head git commit message
         id: get_head_commit_message
         run: |
-          LATEST_COMMIT=$(echo $(git log $(git merge-base ${{github.base_ref}} ${{github.head_ref}})..${{github.head_ref}}) | grep -o "567" | head -n 1)
+          LATEST_COMMIT=$(echo $(git log $(git merge-base origin/${{github.base_ref}} origin/${{github.head_ref}})..origin/${{github.head_ref}}) | grep -o "567" | head -n 1)
           echo "$LATEST_COMMIT"
           echo "LATEST_COMMIT=${LATEST_COMMIT}" >> $GITHUB_OUTPUT
 
