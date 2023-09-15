@@ -99,22 +99,6 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
       #   run: gh pr checkout ${{ github.event.pull_request.number }}
 
-      - name: Logging
-        run: |
-          echo ${{ env.ultros }}
-          echo "commit = ${{ github.event.commit_message }}"
-          echo "head =  ${{ github.event.head_commit.message }}"
-          echo "expression: ${{ contains(github.event.head_commit.message, '[github-actions]') }}"
-          echo ${{ contains(github.event.head_commit.message, '[github-actions]') == false }}
-          echo "${{ github.event.head_commit.id }}"
-          echo "${{ github.commit_message }}"
-          echo "${{ github.event.commits }}"
-          echo "${{ github.event_name }}"
-          echo "${{ github.ref }}"
-          echo "${{ github.event.head_ref }}"
-          echo "${{ github.head_ref }}"
-          echo "${{ github.base_ref }}"
-
       # BRANCH_NAME=$(git log --oneline | awk -F'heliandro/' '{print $2}')
       # BRANCH_NAME=$(echo "${{ github.head_ref }}")
 
