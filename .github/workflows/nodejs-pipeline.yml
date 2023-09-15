@@ -8,7 +8,7 @@ on:
 
 env: 
   ultros: ${{ github.event.head_commit.message }}
-  OMEGA: teste
+  # OMEGA: teste
 
 jobs:
   check_skip_flags:
@@ -24,10 +24,9 @@ jobs:
       - name: Print head git commit message
         id: get_head_commit_message
         run: |
-          OMEGA2=$(echo $(git show -s --format=%s))
-          echo "$OMEGA2"
-          echo "OMEGA=${OMEGA2}">> $GITHUB_ENV
-          echo "OMEGA=1234" >> $GITHUB_OUTPUT
+          OMEGA=$(echo $(git show -s --format=%s))
+          echo "$OMEGA"
+          echo "OMEGA=${OMEGA}" >> $GITHUB_OUTPUT
 
   print:
     name: Print
