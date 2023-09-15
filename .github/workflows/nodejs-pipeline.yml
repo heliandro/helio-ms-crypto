@@ -71,14 +71,14 @@ jobs:
     # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     if: ${{ contains(github.event.head_commit.message, '[github-actions]') }} == false
     steps:
-      # - name: Checkout do projecto
-      #   uses: actions/checkout@v3
-      #   with:
-      #     token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
+      - name: Checkout do projecto
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
 
       - name: Checkout PR
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
       - name: Configurar Git
@@ -108,7 +108,7 @@ jobs:
         if: steps.determinar_tipo_de_versao.outputs.tipo_de_versao != ''
         id: criar_versao_do_projeto
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_ACTIONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm version ${{ steps.determinar_tipo_de_versao.outputs.tipo_de_versao }}
           VERSION=$(node -p -e "require('./package.json').version")
