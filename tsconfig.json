@@ -3,7 +3,7 @@
     "require": ["tsconfig-paths/register"]
   },
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "outDir": "./dist",
     "target": "ES2020",
     "lib": ["ESNext"],
