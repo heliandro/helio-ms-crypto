@@ -3,7 +3,7 @@ import FileSystem from 'node:fs';
 import Readline from "readline";
 import sinon from 'sinon';
 
-import DependencyInjectionConfig from '../../src/config/DependencyInjectionConfig';
+import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 
 import CLI from "../../src/cli";
 import CliContainerUI from "../../src/shared/presentation/CliContainerUI";
@@ -22,7 +22,7 @@ describe('CLI', () => {
     let cli: CLI;
 
     beforeEach(() => {
-        container = DependencyInjectionConfig.createCLI();
+        container = DependencyInjection.createCLI();
         readline = container.get<Readline.Interface>(Readline.Interface);
         ui = container.get<CliContainerUI>(CliContainerUI);
         cli = container.get<CLI>(CLI);

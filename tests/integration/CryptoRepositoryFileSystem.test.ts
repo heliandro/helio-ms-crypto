@@ -1,13 +1,15 @@
 import { Container } from "inversify";
 import FileSystem from 'node:fs';
 import sinon from "sinon";
-import TYPES from '../../src/config/Types';
+import TYPES from '../../src/infrastructure/configuration/Types';
 
-import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../shared/types/KeyPair.constants';
-import CryptoRepository from "../../src/domain/repositories/CryptoRepository";
+import CryptoRepositoryPort from "../../src/application/ports/repository/CryptoRepositoryPort";
+import CryptoRepository from "../../src/application/ports/repository/CryptoRepositoryPort";
 import KeyPair from '../../src/domain/entities/KeyPair';
 import CryptoKeyType from '../../src/domain/types/CryptoKeyType';
-import DependencyInjectionConfig from "../../src/config/DependencyInjectionConfig";
+import DependencyInjection from "../../src/infrastructure/configuration/DependencyInjection";
+
+import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../shared/types/KeyPair.constants';
 
 describe('CryptoRepositoryFileSystem', () => {
 
@@ -15,8 +17,8 @@ describe('CryptoRepositoryFileSystem', () => {
     let container: Container;
 
     beforeEach(() => {
-        container = DependencyInjectionConfig.create();
-        repository = container.get<CryptoRepository>(TYPES.CryptoRepositoryFileSystem);
+        container = DependencyInjection.create();
+        repository = container.get<CryptoRepositoryPort>(TYPES.CryptoRepositoryFileSystem);
     })
 
     afterEach(async () => {

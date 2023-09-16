@@ -1,9 +1,9 @@
 import { injectable } from "inversify";
 import * as FileSystem from "node:fs";
 
-import KeyPair from "../../domain/entities/KeyPair";
-import CryptoRepository from "../../domain/repositories/CryptoRepository";
-import CryptoKeyType from "../../domain/types/CryptoKeyType";
+import KeyPair from "../../../domain/entities/KeyPair";
+import CryptoRepositoryPort from "../../../application/ports/repository/CryptoRepositoryPort";
+import CryptoKeyType from "../../../domain/types/CryptoKeyType";
 
 const PATH_KEY_FOLDER = './keys'
 const PATH_PUBLIC_KEY = `${PATH_KEY_FOLDER}/public_key.pem`
@@ -14,7 +14,7 @@ const isAnyKeyPairExistsInPath = (): boolean => {
 }
 
 @injectable()
-export default class CryptoRepositoryFileSystem implements CryptoRepository {
+export default class CryptoRepositoryFileSystem implements CryptoRepositoryPort {
 
     async save(keyPair: KeyPair): Promise<void> {
         if (isAnyKeyPairExistsInPath())

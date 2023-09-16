@@ -1,8 +1,8 @@
 import CLI from "./cli";
-import DependencyInjectionConfig from "./config/DependencyInjectionConfig";
+import DependencyInjection from "./infrastructure/configuration/DependencyInjection";
 
 export const initCLI = () => {
-    const di = DependencyInjectionConfig.createCLI();
+    const di = DependencyInjection.createCLI();
     const cli = di.get(CLI);
     cli.start();
 }

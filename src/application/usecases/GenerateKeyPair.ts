@@ -1,16 +1,16 @@
 import { inject, injectable } from 'inversify';
-import TYPES from '../../config/Types';
+import TYPES from '../../infrastructure/configuration/Types';
 
-import UseCase from './interfaces/UseCase';
+import GenerateKeyPairPort from '../ports/GenerateKeyPairPort';
 
 import Crypto from '../../domain/entities/Crypto'
-import CryptoRepository from '../../domain/repositories/CryptoRepository';
+import CryptoRepositoryPort from '../ports/repository/CryptoRepositoryPort';
 
 @injectable()
-export default class GenerateKeyPair implements UseCase {
+export default class GenerateKeyPair implements GenerateKeyPairPort {
 
     constructor(
-        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepository
+        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
     ) {}
 
     async execute (): Promise<Output> {
@@ -22,8 +22,8 @@ export default class GenerateKeyPair implements UseCase {
     }
 }
 
-type Input = {}
+export type Input = {}
 
-type Output = {
+export type Output = {
     message: string
 }

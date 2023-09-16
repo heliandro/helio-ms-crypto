@@ -2,11 +2,12 @@ import { Container } from "inversify";
 import FileSystem from 'node:fs';
 import sinon from 'sinon';
 
-import DependencyInjectionConfig from '../../src/config/DependencyInjectionConfig';
+import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 import Crypto from '../../src/domain/entities/Crypto';
 import Decrypt from '../../src/application/usecases/Decrypt';
 
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
+import DecryptPort from "../../src/application/ports/DecryptPort";
 
 describe('Decrypt', () => {
 
@@ -14,8 +15,8 @@ describe('Decrypt', () => {
     let usecase: Decrypt;
 
     beforeEach(() => {
-        container = DependencyInjectionConfig.create();
-        usecase = container.get<Decrypt>(Decrypt);
+        container = DependencyInjection.create();
+        usecase = container.get<DecryptPort>(Decrypt);
         sinon.stub(FileSystem, 'existsSync').returns(true);
     })
 

@@ -1,4 +1,4 @@
-import EncryptionAlgorithm from "../../src/domain/valueObjects/EncryptionAlgorithm"
+import EncryptionAlgorithm from "../../src/domain/value-objects/EncryptionAlgorithm"
 import { RSAKeyPairOptions } from "node:crypto"
 
 const mockDefaultOptions: RSAKeyPairOptions<'pem', 'pem'> = {

@@ -3,8 +3,9 @@ import sinon from "sinon";
 import FileSystem from 'node:fs'
 import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
 
-import DependencyInjectionConfig from "../../src/config/DependencyInjectionConfig";
+import DependencyInjection from "../../src/infrastructure/configuration/DependencyInjection";
 import GetKey from "../../src/application/usecases/GetKey";
+import GetKeyPort from "../../src/application/ports/GetKeyPort";
 import CryptoKeyType from "../../src/domain/types/CryptoKeyType";
 
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
@@ -15,8 +16,8 @@ describe('GetKey', () => {
     let usecase: GetKey;
 
     beforeEach(async () => {
-        container = DependencyInjectionConfig.create();
-        usecase = container.get<GetKey>(GetKey);
+        container = DependencyInjection.create();
+        usecase = container.get<GetKeyPort>(GetKey);
         FileSystemHelper.deleteFolder('./keys');
     })
 

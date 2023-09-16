@@ -1,9 +1,10 @@
 import FileSystem from 'node:fs';
 import sinon from 'sinon';
 
-import DependencyInjectionConfig from "../../src/config/DependencyInjectionConfig";
-
+import DependencyInjection from "../../src/infrastructure/configuration/DependencyInjection";
+import EncryptPort from '../../src/application/ports/EncryptPort';
 import Encrypt from "../../src/application/usecases/Encrypt";
+
 import { MOCK_PUBLIC_KEY } from "../shared/types/KeyPair.constants";
 import { Container } from 'inversify';
 
@@ -13,8 +14,8 @@ describe('Encrypt', () => {
     let usecase: Encrypt;
 
     beforeEach(() => {
-        container = DependencyInjectionConfig.create();
-        usecase = container.get<Encrypt>(Encrypt);
+        container = DependencyInjection.create();
+        usecase = container.get<EncryptPort>(Encrypt);
         sinon.stub(FileSystem, 'existsSync').returns(true);
     })
 

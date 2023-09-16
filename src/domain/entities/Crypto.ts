@@ -1,4 +1,4 @@
-import EncryptionAlgorithm from '../valueObjects/EncryptionAlgorithm';
+import EncryptionAlgorithm from '../value-objects/EncryptionAlgorithm';
 import KeyPair from './KeyPair';
 import NodeCrypto from 'crypto'
 

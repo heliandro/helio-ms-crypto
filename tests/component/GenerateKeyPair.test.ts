@@ -2,8 +2,9 @@ import { Container } from "inversify";
 
 import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
 
-import DependencyInjectionConfig from "../../src/config/DependencyInjectionConfig";
+import DependencyInjection from "../../src/infrastructure/configuration/DependencyInjection";
 import GenerateKeyPair from "../../src/application/usecases/GenerateKeyPair"
+import GenerateKeyPairPort from "../../src/application/ports/GenerateKeyPairPort";
 
 describe('GenerateKeyPair', () => {
 
@@ -11,8 +12,8 @@ describe('GenerateKeyPair', () => {
     let usecase: GenerateKeyPair;
 
     beforeEach(() => {
-        container = DependencyInjectionConfig.create();
-        usecase = container.get<GenerateKeyPair>(GenerateKeyPair);
+        container = DependencyInjection.create();
+        usecase = container.get<GenerateKeyPairPort>(GenerateKeyPair);
         FileSystemHelper.deleteFolder('./keys');
     })
 
