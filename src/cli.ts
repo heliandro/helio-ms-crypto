@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import "reflect-metadata";
+import 'reflect-metadata';
 
 import { log } from './shared/utils/log';
 
@@ -13,7 +13,6 @@ import CryptoKeyType from './domain/types/CryptoKeyType';
 
 @injectable()
 export default class CLI {
-
     constructor(
         @inject(CliContainerUI) readonly cliContainerUI: CliContainerUI,
         @inject(GenerateKeyPair) readonly generateKeyPair: GenerateKeyPair,
@@ -29,14 +28,14 @@ export default class CLI {
     }
 
     async continueQuestion(): Promise<void> {
-        const chosen = await this.cliContainerUI.continueAndChooseAnOption()
-    
+        const chosen = await this.cliContainerUI.continueAndChooseAnOption();
+
         if (chosen === 'n') {
             this.cliContainerUI.finish();
             return;
         }
 
-        await this.showMenu()
+        await this.showMenu();
     }
 
     isInvalidArg(arg: string): boolean {
@@ -48,16 +47,18 @@ export default class CLI {
     }
 
     async showMenu(isHeaderUI: boolean = true): Promise<void> {
-        const chosen = await this.cliContainerUI.showMenuAndChooseAnOption(isHeaderUI)
-        
-        const [chosenFirstArg, chosenSecondArg] = /\s/.test(chosen) ? chosen.replace(' ', '--').split('--') : [chosen];
+        const chosen = await this.cliContainerUI.showMenuAndChooseAnOption(isHeaderUI);
 
-        switch(chosenFirstArg) {
+        const [chosenFirstArg, chosenSecondArg] = /\s/.test(chosen)
+            ? chosen.replace(' ', '--').split('--')
+            : [chosen];
+
+        switch (chosenFirstArg) {
             case 'generate': {
                 await this.choiceGenerateKeys();
                 break;
             }
-    
+
             case 'get': {
                 if (this.isInvalidArg(chosenSecondArg)) {
                     await this.continueQuestion();
@@ -85,12 +86,12 @@ export default class CLI {
                 await this.choiceDecrypt(chosenSecondArg);
                 break;
             }
-    
+
             case 'close': {
                 this.cliContainerUI.finish();
                 break;
             }
-    
+
             default: {
                 log.error('\nOpção inválida.');
                 await this.continueQuestion();
@@ -100,31 +101,43 @@ export default class CLI {
     }
 
     async choiceGenerateKeys() {
-        return this.generateKeyPair.execute()
+        return this.generateKeyPair
+            .execute()
             .then(this.outputSuccess)
             .catch(this.outputError)
-            .finally(() => { this.continueQuestion().then() })
+            .finally(() => {
+                this.continueQuestion().then();
+            });
     }
 
     async choiceGetKey(type: CryptoKeyType) {
-        return this.getKey.execute({ keyType: type })
+        return this.getKey
+            .execute({ keyType: type })
             .then(this.outputSuccess)
             .catch(this.outputError)
-            .finally(() => { this.continueQuestion().then() })
+            .finally(() => {
+                this.continueQuestion().then();
+            });
     }
 
     async choiceEncrypt(data: any) {
-        return this.encrypt.execute({data})
+        return this.encrypt
+            .execute({ data })
             .then(this.outputSuccess)
             .catch(this.outputError)
-            .finally(() => { this.continueQuestion().then() })
+            .finally(() => {
+                this.continueQuestion().then();
+            });
     }
 
     async choiceDecrypt(data: string) {
-        return this.decrypt.execute({data})
+        return this.decrypt
+            .execute({ data })
             .then(this.outputSuccess)
             .catch(this.outputError)
-            .finally(() => { this.continueQuestion().then() })
+            .finally(() => {
+                this.continueQuestion().then();
+            });
     }
 
     outputSuccess(data: any) {

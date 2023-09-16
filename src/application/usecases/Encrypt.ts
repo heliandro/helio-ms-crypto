@@ -8,7 +8,6 @@ import CryptoRepositoryPort from '../ports/repository/CryptoRepositoryPort';
 
 @injectable()
 export default class Encrypt implements EncryptPort {
-    
     constructor(
         @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
     ) {}
@@ -19,14 +18,14 @@ export default class Encrypt implements EncryptPort {
         const encryptedData = crypto.encrypt(input.data);
         return {
             data: encryptedData
-        }
+        };
     }
 }
 
 export type Input = {
-    data: string
-}
+    data: string;
+};
 
 export type Output = {
-    data: any
-}
+    data: any;
+};

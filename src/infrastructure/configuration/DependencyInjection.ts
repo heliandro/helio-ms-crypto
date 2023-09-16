@@ -1,22 +1,22 @@
-import Readline from "node:readline";
-import { Container } from "inversify";
-import TYPES from "./Types";
-import "reflect-metadata"
+import Readline from 'node:readline';
+import { Container } from 'inversify';
+import TYPES from './Types';
+import 'reflect-metadata';
 
 import GenerateKeyPairPort from '../../application/ports/GenerateKeyPairPort';
 import GetKeyPort from '../../application/ports/GetKeyPort';
 import EncryptPort from '../../application/ports/EncryptPort';
-import DecryptPort from "../../application/ports/DecryptPort";
+import DecryptPort from '../../application/ports/DecryptPort';
 
-import GenerateKeyPair from "../../application/usecases/GenerateKeyPair";
-import GetKey from "../../application/usecases/GetKey";
-import Encrypt from "../../application/usecases/Encrypt";
-import Decrypt from "../../application/usecases/Decrypt";
-import CryptoRepositoryPort from "../../application/ports/repository/CryptoRepositoryPort";
-import CryptoRepositoryFileSystem from "../adapters/repository/CryptoRepositoryFileSystem";
+import GenerateKeyPair from '../../application/usecases/GenerateKeyPair';
+import GetKey from '../../application/usecases/GetKey';
+import Encrypt from '../../application/usecases/Encrypt';
+import Decrypt from '../../application/usecases/Decrypt';
+import CryptoRepositoryPort from '../../application/ports/repository/CryptoRepositoryPort';
+import CryptoRepositoryFileSystem from '../adapters/repository/CryptoRepositoryFileSystem';
 
-import CliContainerUI from "../../shared/presentation/CliContainerUI";
-import CLI from "../../cli";
+import CliContainerUI from '../../shared/presentation/CliContainerUI';
+import CLI from '../../cli';
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
@@ -27,11 +27,13 @@ const diBindCore = (container: Container) => {
     container.bind<EncryptPort>(Encrypt).to(Encrypt).inSingletonScope();
     container.bind<DecryptPort>(Decrypt).to(Decrypt).inSingletonScope();
     // Adapters
-    container.bind<CryptoRepositoryPort>(TYPES.CryptoRepositoryFileSystem).to(CryptoRepositoryFileSystem).inSingletonScope();
-}
+    container
+        .bind<CryptoRepositoryPort>(TYPES.CryptoRepositoryFileSystem)
+        .to(CryptoRepositoryFileSystem)
+        .inSingletonScope();
+};
 
 export default class DependencyInjection {
-
     static create(): Container {
         const container = new Container();
         diBindCore(container);
@@ -41,10 +43,10 @@ export default class DependencyInjection {
     static createCLI(): Container {
         const container = new Container();
         diBindCore(container);
-        
+
         const readline = Readline.createInterface({
             input: process.stdin,
-            output: process.stdout,
+            output: process.stdout
         });
         container.bind<Readline.Interface>(Readline.Interface).toConstantValue(readline);
         container.bind<CliContainerUI>(CliContainerUI).to(CliContainerUI).inSingletonScope();

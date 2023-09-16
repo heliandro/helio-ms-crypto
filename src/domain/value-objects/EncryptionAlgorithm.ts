@@ -1,21 +1,20 @@
-import { RSAKeyPairOptions } from "crypto";
+import { RSAKeyPairOptions } from 'crypto';
 
 type KeyType = 'rsa';
 
 const defaultOptions: RSAKeyPairOptions<'pem', 'pem'> = {
     modulusLength: 2048,
-    publicKeyEncoding: { 
+    publicKeyEncoding: {
         type: 'spki',
-        format: 'pem' 
+        format: 'pem'
     },
-    privateKeyEncoding: { 
+    privateKeyEncoding: {
         type: 'pkcs8',
         format: 'pem'
     }
-}
+};
 
 export default class EncryptionAlgorithm {
-
     readonly keyType: KeyType;
     readonly options: RSAKeyPairOptions<'pem', 'pem'>;
 
@@ -24,7 +23,7 @@ export default class EncryptionAlgorithm {
         this.options = options;
     }
 
-    static create () {
-        return new EncryptionAlgorithm('rsa', defaultOptions)
+    static create() {
+        return new EncryptionAlgorithm('rsa', defaultOptions);
     }
 }

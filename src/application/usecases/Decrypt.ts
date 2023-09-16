@@ -8,7 +8,6 @@ import CryptoRepositoryPort from '../ports/repository/CryptoRepositoryPort';
 
 @injectable()
 export default class Decrypt implements DecryptPort {
-    
     constructor(
         @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
     ) {}
@@ -19,14 +18,14 @@ export default class Decrypt implements DecryptPort {
         const decryptedData = crypto.decrypt(input.data);
         return {
             data: JSON.parse(decryptedData)
-        }
+        };
     }
 }
 
 export type Input = {
-    data: string
-}
+    data: string;
+};
 
 export type Output = {
-    data: any
-}
+    data: any;
+};
