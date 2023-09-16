@@ -5,7 +5,7 @@ import sinon from 'sinon';
 
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 
-import CLI from '../../src/cli';
+import CLIDriver from '../../src/CLIDriver';
 import CliContainerUI from '../../src/shared/presentation/CliContainerUI';
 
 import { deleteFolder } from '../shared/utils/FileSystemHelper';
@@ -19,16 +19,15 @@ describe('CLI', () => {
     let container: Container;
     let readline: Readline.Interface;
     let ui: CliContainerUI;
-    let cli: CLI;
+    let cli: CLIDriver;
 
     beforeEach(() => {
         container = DependencyInjection.createCLI();
         readline = container.get<Readline.Interface>(Readline.Interface);
         ui = container.get<CliContainerUI>(TYPES.CliContainerUI);
-        cli = container.get<CLI>(CLI);
+        cli = container.get<CLIDriver>(CLIDriver);
 
         consoleLogSpy = sinon.spy(console, 'log');
-        // sinon.stub(console, 'error').returns()
         readlineQuestionStub = sinon.stub();
         sinon.replace(readline, 'question', readlineQuestionStub);
     });

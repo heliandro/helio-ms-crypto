@@ -4,8 +4,8 @@
   "description": "Crypto Microsservice",
   "scripts": {
     "build": "tsc --build",
-    "start:cli": "npx ts-node -e \"import { initCLI } from './src/main'; initCLI();\"",
-    "start:cli-prod": "node -e \"require('./dist/main').initCLI()\"",
+    "start:cli": "npx ts-node -e \"import { initCLI } from './src/CLIDriver'; initCLI();\"",
+    "start:cli-prod": "node -e \"require('./dist/CLIDriver').initCLI()\"",
     "test": "jest --runInBand --coverage",
     "test:mutation": "stryker run",
     "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts'"

@@ -16,7 +16,7 @@ import CryptoRepositoryPort from '../../application/ports/repository/CryptoRepos
 import CryptoRepositoryFileSystem from '../adapters/repository/CryptoRepositoryFileSystem';
 
 import CliContainerUI from '../../shared/presentation/CliContainerUI';
-import CLI from '../../cli';
+import CLIDriver from '../../CLIDriver';
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
@@ -51,7 +51,7 @@ export default class DependencyInjection {
         container.bind<Readline.Interface>(Readline.Interface).toConstantValue(readline);
         container.bind<CliContainerUI>(TYPES.CliContainerUI).to(CliContainerUI).inSingletonScope();
         // CLI Driver
-        container.bind<CLI>(CLI).to(CLI).inSingletonScope();
+        container.bind<CLIDriver>(CLIDriver).to(CLIDriver).inSingletonScope();
 
         return container;
     }

@@ -7,7 +7,7 @@
   "testMatch": ["<rootDir>/tests/**/*.test.ts"],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
-    "./src/config/"
+    "./src/infrastructure/configuration/"
   ],
   "setupFilesAfterEnv": ["./tests/setup.ts"],
   "globalSetup": "./tests/global-setup.ts",

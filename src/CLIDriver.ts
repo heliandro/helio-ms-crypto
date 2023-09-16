@@ -9,11 +9,14 @@ import GenerateKeyPairPort from './application/ports/GenerateKeyPairPort';
 import GetKeyPort from './application/ports/GetKeyPort';
 import EncryptPort from './application/ports/EncryptPort';
 import DecryptPort from './application/ports/DecryptPort';
-import TYPES from './infrastructure/configuration/Types';
+
 import CliContainerUI from './shared/presentation/CliContainerUI';
 
+import DependencyInjection from './infrastructure/configuration/DependencyInjection';
+import TYPES from './infrastructure/configuration/Types';
+
 @injectable()
-export default class CLI {
+export default class CLIDriver {
     constructor(
         @inject(TYPES.CliContainerUI) readonly cliContainerUI: CliContainerUI,
         @inject(TYPES.GenerateKeyPair) readonly generateKeyPair: GenerateKeyPairPort,
@@ -28,80 +31,61 @@ export default class CLI {
         await this.showMenu(isHeaderUI);
     }
 
-    async continueQuestion(): Promise<void> {
+    private async continueQuestion(): Promise<void> {
         const chosen = await this.cliContainerUI.continueAndChooseAnOption();
 
-        if (chosen === 'n') {
-            this.cliContainerUI.finish();
-            return;
-        }
+        if (chosen === 'n')
+            return this.cliContainerUI.finish();
 
         await this.showMenu();
     }
 
-    isInvalidArg(arg: string): boolean {
-        if (!arg) {
-            log.error('\nOpção inválida.');
-            return true;
-        }
-        return false;
-    }
-
     async showMenu(isHeaderUI: boolean = true): Promise<void> {
         const chosen = await this.cliContainerUI.showMenuAndChooseAnOption(isHeaderUI);
+        const [chosenFirstArg, chosenSecondArg] = this.extractArguments(chosen);
 
-        const [chosenFirstArg, chosenSecondArg] = /\s/.test(chosen)
-            ? chosen.replace(' ', '--').split('--')
-            : [chosen];
+        if (this.isInvalidOptions(chosenFirstArg, chosenSecondArg)) {
+            log.error('\nOpção inválida.');
+            return await this.continueQuestion();
+        }
 
         switch (chosenFirstArg) {
-            case 'generate': {
+            case 'generate':
                 await this.choiceGenerateKeys();
                 break;
-            }
 
-            case 'get': {
-                if (this.isInvalidArg(chosenSecondArg)) {
-                    await this.continueQuestion();
-                    break;
-                }
+            case 'get':
                 const type = <CryptoKeyType>chosenSecondArg;
                 await this.choiceGetKey(type);
                 break;
-            }
 
-            case 'encrypt': {
-                if (this.isInvalidArg(chosenSecondArg)) {
-                    await this.continueQuestion();
-                    break;
-                }
+            case 'encrypt':
                 await this.choiceEncrypt(chosenSecondArg);
                 break;
-            }
 
-            case 'decrypt': {
-                if (this.isInvalidArg(chosenSecondArg)) {
-                    await this.continueQuestion();
-                    break;
-                }
+            case 'decrypt':
                 await this.choiceDecrypt(chosenSecondArg);
                 break;
-            }
 
-            case 'close': {
+            case 'close':
                 this.cliContainerUI.finish();
                 break;
-            }
 
-            default: {
+            default:
                 log.error('\nOpção inválida.');
                 await this.continueQuestion();
-                break;
-            }
         }
     }
 
-    async choiceGenerateKeys() {
+    private extractArguments(chosen: string) {
+        return /\s/.test(chosen) ? chosen.replace(' ', '--').split('--') : [chosen];
+    }
+
+    private isInvalidOptions(first: string, second: string): boolean {
+        return !first || first !== 'generate' && first !== 'close' && !second;
+    }
+
+    private async choiceGenerateKeys() {
         return this.generateKeyPair
             .execute()
             .then(this.outputSuccess)
@@ -111,7 +95,7 @@ export default class CLI {
             });
     }
 
-    async choiceGetKey(type: CryptoKeyType) {
+    private async choiceGetKey(type: CryptoKeyType) {
         return this.getKey
             .execute({ keyType: type })
             .then(this.outputSuccess)
@@ -121,7 +105,7 @@ export default class CLI {
             });
     }
 
-    async choiceEncrypt(data: any) {
+    private async choiceEncrypt(data: any) {
         return this.encrypt
             .execute({ data })
             .then(this.outputSuccess)
@@ -131,7 +115,7 @@ export default class CLI {
             });
     }
 
-    async choiceDecrypt(data: string) {
+    private async choiceDecrypt(data: string) {
         return this.decrypt
             .execute({ data })
             .then(this.outputSuccess)
@@ -141,11 +125,17 @@ export default class CLI {
             });
     }
 
-    outputSuccess(data: any) {
+    private outputSuccess(data: any) {
         log.info('\n' + JSON.stringify(data, null, 2));
     }
 
-    outputError(error: any) {
+    private outputError(error: any) {
         log.error(`\n${error.message}`);
     }
 }
+
+export const initCLI = () => {
+    const di = DependencyInjection.createCLI();
+    const cli = di.get(CLIDriver);
+    cli.start();
+};
