@@ -3,6 +3,11 @@
 @baseUrl = http://{{hostname}}:{{port}}
 @contentType = application/json
 
+### Health Check
+# @name health
+GET {{baseUrl}}/health HTTP/1.1
+
+
 ### Encrypt Data
 # @name encrypt
 POST {{baseUrl}}/api/encrypt HTTP/1.1

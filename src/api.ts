@@ -10,7 +10,7 @@ interface CustomRequest extends Express.Request {
     container: Container;
 }
 
-class AppConfig {
+class Application {
 
     private static app: Express.Application;
     private static container: Container;
@@ -47,20 +47,20 @@ class AppConfig {
         }
     }
 
-    static registerRoute(router: Express.Router) {
-        this.app.use('/api', router);
+    static registerRouter(apiPath: string, router: Express.Router) {
+        this.app.use(apiPath, router);
         return this;
     }
 
-    static server() {
+    static runServer() {
         this.app.listen(3000, () => {
             console.log('Server running on port 3000');
         });
     }
 }
 
-const router = Express.Router();
-const encryptRouter = router.post('/encrypt', async (req: CustomRequest, res: any) => {
+const cryptoRouter = Express.Router();
+cryptoRouter.post('/encrypt', async (req: CustomRequest, res: any) => {
     let { data } = req.body;
 
     if (typeof data !== 'string')
@@ -72,7 +72,7 @@ const encryptRouter = router.post('/encrypt', async (req: CustomRequest, res: an
     res.json(encryptedData);
 });
 
-const decryptRouter = router.post('/decrypt', async (req: CustomRequest, res: any) => {
+cryptoRouter.post('/decrypt', async (req: CustomRequest, res: any) => {
     let { data } = req.body;
 
     if (typeof data !== 'string')
@@ -84,8 +84,13 @@ const decryptRouter = router.post('/decrypt', async (req: CustomRequest, res: an
     res.json(decryptedData);
 });
 
-AppConfig
+const healthRouter = Express.Router();
+healthRouter.get('/health', (req: Express.Request, res: any) => {
+    res.json({ message: 'OK' });
+});
+
+Application
     .init()
-    .registerRoute(encryptRouter)
-    .registerRoute(decryptRouter)
-    .server();
+    .registerRouter('', healthRouter)
+    .registerRouter('/api', cryptoRouter)
+    .runServer();
