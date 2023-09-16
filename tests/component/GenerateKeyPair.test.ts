@@ -5,6 +5,7 @@ import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 import GenerateKeyPair from '../../src/application/usecases/GenerateKeyPair';
 import GenerateKeyPairPort from '../../src/application/ports/GenerateKeyPairPort';
+import TYPES from '../../src/infrastructure/configuration/Types';
 
 describe('GenerateKeyPair', () => {
     let container: Container;
@@ -12,7 +13,7 @@ describe('GenerateKeyPair', () => {
 
     beforeEach(() => {
         container = DependencyInjection.create();
-        usecase = container.get<GenerateKeyPairPort>(GenerateKeyPair);
+        usecase = container.get<GenerateKeyPairPort>(TYPES.GenerateKeyPair);
         FileSystemHelper.deleteFolder('./keys');
     });
 

@@ -7,6 +7,7 @@ import Encrypt from '../../src/application/usecases/Encrypt';
 
 import { MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.constants';
 import { Container } from 'inversify';
+import TYPES from '../../src/infrastructure/configuration/Types';
 
 describe('Encrypt', () => {
     let container: Container;
@@ -14,7 +15,7 @@ describe('Encrypt', () => {
 
     beforeEach(() => {
         container = DependencyInjection.create();
-        usecase = container.get<EncryptPort>(Encrypt);
+        usecase = container.get<EncryptPort>(TYPES.Encrypt);
         sinon.stub(FileSystem, 'existsSync').returns(true);
     });
 

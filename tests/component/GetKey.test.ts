@@ -9,6 +9,7 @@ import GetKeyPort from '../../src/application/ports/GetKeyPort';
 import CryptoKeyType from '../../src/domain/types/CryptoKeyType';
 
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.constants';
+import TYPES from '../../src/infrastructure/configuration/Types';
 
 describe('GetKey', () => {
     let container: Container;
@@ -16,7 +17,7 @@ describe('GetKey', () => {
 
     beforeEach(async () => {
         container = DependencyInjection.create();
-        usecase = container.get<GetKeyPort>(GetKey);
+        usecase = container.get<GetKeyPort>(TYPES.GetKey);
         FileSystemHelper.deleteFolder('./keys');
     });
 

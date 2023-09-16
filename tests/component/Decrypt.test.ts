@@ -8,6 +8,7 @@ import Decrypt from '../../src/application/usecases/Decrypt';
 
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.constants';
 import DecryptPort from '../../src/application/ports/DecryptPort';
+import TYPES from '../../src/infrastructure/configuration/Types';
 
 describe('Decrypt', () => {
     let container: Container;
@@ -15,7 +16,7 @@ describe('Decrypt', () => {
 
     beforeEach(() => {
         container = DependencyInjection.create();
-        usecase = container.get<DecryptPort>(Decrypt);
+        usecase = container.get<DecryptPort>(TYPES.Decrypt);
         sinon.stub(FileSystem, 'existsSync').returns(true);
     });
 

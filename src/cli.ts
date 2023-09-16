@@ -3,22 +3,23 @@ import 'reflect-metadata';
 
 import { log } from './shared/utils/log';
 
-import GenerateKeyPair from './application/usecases/GenerateKeyPair';
-import GetKey from './application/usecases/GetKey';
-import CliContainerUI from './shared/presentation/CliContainerUI';
-
-import Encrypt from './application/usecases/Encrypt';
-import Decrypt from './application/usecases/Decrypt';
 import CryptoKeyType from './domain/types/CryptoKeyType';
+
+import GenerateKeyPairPort from './application/ports/GenerateKeyPairPort';
+import GetKeyPort from './application/ports/GetKeyPort';
+import EncryptPort from './application/ports/EncryptPort';
+import DecryptPort from './application/ports/DecryptPort';
+import TYPES from './infrastructure/configuration/Types';
+import CliContainerUI from './shared/presentation/CliContainerUI';
 
 @injectable()
 export default class CLI {
     constructor(
-        @inject(CliContainerUI) readonly cliContainerUI: CliContainerUI,
-        @inject(GenerateKeyPair) readonly generateKeyPair: GenerateKeyPair,
-        @inject(GetKey) readonly getKey: GetKey,
-        @inject(Encrypt) readonly encrypt: Encrypt,
-        @inject(Decrypt) readonly decrypt: Decrypt
+        @inject(TYPES.CliContainerUI) readonly cliContainerUI: CliContainerUI,
+        @inject(TYPES.GenerateKeyPair) readonly generateKeyPair: GenerateKeyPairPort,
+        @inject(TYPES.GetKey) readonly getKey: GetKeyPort,
+        @inject(TYPES.Encrypt) readonly encrypt: EncryptPort,
+        @inject(TYPES.Decrypt) readonly decrypt: DecryptPort
     ) {}
 
     async start() {

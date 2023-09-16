@@ -10,6 +10,7 @@ import CliContainerUI from '../../src/shared/presentation/CliContainerUI';
 
 import { deleteFolder } from '../shared/utils/FileSystemHelper';
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.constants';
+import TYPES from '../../src/infrastructure/configuration/Types';
 
 describe('CLI', () => {
     let readlineQuestionStub: sinon.SinonStub;
@@ -23,7 +24,7 @@ describe('CLI', () => {
     beforeEach(() => {
         container = DependencyInjection.createCLI();
         readline = container.get<Readline.Interface>(Readline.Interface);
-        ui = container.get<CliContainerUI>(CliContainerUI);
+        ui = container.get<CliContainerUI>(TYPES.CliContainerUI);
         cli = container.get<CLI>(CLI);
 
         consoleLogSpy = sinon.spy(console, 'log');

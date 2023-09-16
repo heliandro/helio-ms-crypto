@@ -22,10 +22,10 @@ const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
 
     // Ports
-    container.bind<GenerateKeyPairPort>(GenerateKeyPair).to(GenerateKeyPair).inSingletonScope();
-    container.bind<GetKeyPort>(GetKey).to(GetKey).inSingletonScope();
-    container.bind<EncryptPort>(Encrypt).to(Encrypt).inSingletonScope();
-    container.bind<DecryptPort>(Decrypt).to(Decrypt).inSingletonScope();
+    container.bind<GenerateKeyPairPort>(TYPES.GenerateKeyPair).to(GenerateKeyPair).inSingletonScope();
+    container.bind<GetKeyPort>(TYPES.GetKey).to(GetKey).inSingletonScope();
+    container.bind<EncryptPort>(TYPES.Encrypt).to(Encrypt).inSingletonScope();
+    container.bind<DecryptPort>(TYPES.Decrypt).to(Decrypt).inSingletonScope();
     // Adapters
     container
         .bind<CryptoRepositoryPort>(TYPES.CryptoRepositoryFileSystem)
@@ -49,7 +49,7 @@ export default class DependencyInjection {
             output: process.stdout
         });
         container.bind<Readline.Interface>(Readline.Interface).toConstantValue(readline);
-        container.bind<CliContainerUI>(CliContainerUI).to(CliContainerUI).inSingletonScope();
+        container.bind<CliContainerUI>(TYPES.CliContainerUI).to(CliContainerUI).inSingletonScope();
         // CLI Driver
         container.bind<CLI>(CLI).to(CLI).inSingletonScope();
 
