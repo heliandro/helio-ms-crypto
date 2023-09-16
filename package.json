@@ -8,7 +8,7 @@
     "start:cli-prod": "node -e \"require('./dist/main').initCLI()\"",
     "test": "jest --runInBand --coverage",
     "test:mutation": "stryker run",
-    "format": "prettier --write --config ./prettier.config.json 'src/**/*.ts'"
+    "format": "prettier --write --config ./prettier.config.json 'src/**/*.ts' 'tests/**/*.ts'"
   },
   "keywords": [
     "crypto",
