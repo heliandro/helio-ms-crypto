@@ -1,6 +1,6 @@
 import Express from 'express';
 import cors from 'cors';
-import DependencyInjectionConfig from './config/DependencyInjectionConfig';
+import DependencyInjectionConfig from './infrastructure/configuration/DependencyInjection';
 import Encrypt from './application/usecases/Encrypt';
 import { Container } from 'inversify';
 import GenerateKeyPair from './application/usecases/GenerateKeyPair';
@@ -11,7 +11,6 @@ interface CustomRequest extends Express.Request {
 }
 
 class Application {
-
     private static app: Express.Application;
     private static container: Container;
 
@@ -63,8 +62,7 @@ const cryptoRouter = Express.Router();
 cryptoRouter.post('/encrypt', async (req: CustomRequest, res: any) => {
     let { data } = req.body;
 
-    if (typeof data !== 'string')
-        data = JSON.stringify(data);
+    if (typeof data !== 'string') data = JSON.stringify(data);
 
     const usecase = req.container.get(Encrypt);
     const encryptedData = await usecase.execute({ data });
@@ -75,8 +73,7 @@ cryptoRouter.post('/encrypt', async (req: CustomRequest, res: any) => {
 cryptoRouter.post('/decrypt', async (req: CustomRequest, res: any) => {
     let { data } = req.body;
 
-    if (typeof data !== 'string')
-        res.status(400).json({ message: 'Invalid data.' });
+    if (typeof data !== 'string') res.status(400).json({ message: 'Invalid data.' });
 
     const usecase = req.container.get(Decrypt);
     const decryptedData = await usecase.execute({ data });
@@ -89,8 +86,7 @@ healthRouter.get('/health', (req: Express.Request, res: any) => {
     res.json({ message: 'OK' });
 });
 
-Application
-    .init()
+Application.init()
     .registerRouter('', healthRouter)
     .registerRouter('/api', cryptoRouter)
     .runServer();
