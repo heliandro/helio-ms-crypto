@@ -3,14 +3,13 @@ import FileSystem from 'node:fs';
 import Readline from 'readline';
 import sinon from 'sinon';
 
-import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
-
-import CLIDriver from '../../src/CLIDriver';
-import CliContainerUI from '../../src/shared/presentation/CliContainerUI';
-
 import { deleteFolder } from '../shared/utils/FileSystemHelper';
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.constants';
+
+import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 import TYPES from '../../src/infrastructure/configuration/Types';
+import CLIAdapterPort from '../../src/application/ports/adapters/CLIAdapterPort';
+import CLIDriver from '../../src/CLIDriver';
 
 describe('CLI', () => {
     let readlineQuestionStub: sinon.SinonStub;
@@ -18,15 +17,15 @@ describe('CLI', () => {
 
     let container: Container;
     let readline: Readline.Interface;
-    let ui: CliContainerUI;
+    let cliAdapter: CLIAdapterPort;
     let cli: CLIDriver;
 
     beforeEach(() => {
         container = DependencyInjection.createCLI();
-        readline = container.get<Readline.Interface>(Readline.Interface);
-        ui = container.get<CliContainerUI>(TYPES.CliContainerUI);
+        cliAdapter = container.get<CLIAdapterPort>(TYPES.CLIAdapter);
+        readline = <Readline.Interface>cliAdapter.getReadline();
         cli = container.get<CLIDriver>(CLIDriver);
-
+        // stubs
         consoleLogSpy = sinon.spy(console, 'log');
         readlineQuestionStub = sinon.stub();
         sinon.replace(readline, 'question', readlineQuestionStub);
@@ -58,7 +57,7 @@ describe('CLI', () => {
             // Given
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, 'generate');
             readlineQuestionStub.onSecondCall().callsArgWith(1, 'n');
@@ -66,14 +65,14 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
         });
 
         test('Deve voltar ao menu apos gerar as chaves de criptografia', async () => {
             // Given
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, 'generate');
             readlineQuestionStub.onSecondCall().callsArgWith(1, 's');
@@ -82,7 +81,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(2);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
         });
 
         test('Deve recuperar a chave publica', async () => {
@@ -91,7 +90,7 @@ describe('CLI', () => {
             sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PUBLIC_KEY);
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, 'get public');
             readlineQuestionStub.onSecondCall().callsArgWith(1, 'n');
@@ -99,7 +98,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
         });
 
         test('Deve recuperar a chave privada', async () => {
@@ -108,7 +107,7 @@ describe('CLI', () => {
             sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PRIVATE_KEY);
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, 'get private');
             readlineQuestionStub.onSecondCall().callsArgWith(1, 'n');
@@ -116,7 +115,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
         });
 
         test('Deve encriptar um dado', async () => {
@@ -126,7 +125,7 @@ describe('CLI', () => {
             const data = JSON.stringify({ nome: 'heliandro' });
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             const message = '"data": ';
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, `encrypt ${data}`);
@@ -135,7 +134,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(message)).toBe(true);
         });
 
@@ -147,7 +146,7 @@ describe('CLI', () => {
                 'ZDnjmkjlZGv4O7p/vRW3yCoEphgLQLLZTS9PMrfEFWnc2Hp7jOvujnmlEpWtZmuEXmRJnPvRlYlXoDUKVO+QxPxOT0k1z1W0HJTIbpD5WYbEt3ONgkpmwVk4Y1ZFYn9sNdQf5DQMuStkFLlMhsBS5zw0qq4JQ0l8nYygD3N8yVc=';
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             const message = '"data": ';
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, `decrypt ${data}`);
@@ -156,7 +155,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(message)).toBe(true);
         });
 
@@ -164,7 +163,7 @@ describe('CLI', () => {
             // Given
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             const errorMessage = 'Opção inválida.';
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, 'xpto');
@@ -173,7 +172,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true);
         });
     });
@@ -183,7 +182,7 @@ describe('CLI', () => {
             // Given
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             const errorMessage = 'Opção inválida.';
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, 'get');
@@ -192,7 +191,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true);
         });
 
@@ -201,7 +200,7 @@ describe('CLI', () => {
             sinon.stub(FileSystem, 'existsSync').returns(true);
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             const errorMessage =
                 'O par de chaves de criptografia já existe no caminho especificado.';
             // When
@@ -211,7 +210,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true);
         });
 
@@ -221,7 +220,7 @@ describe('CLI', () => {
             sinon.stub(FileSystem, 'mkdirSync').throws(new Error('Erro de escrita'));
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             const errorMessage = 'Falha ao salvar o par de chaves de criptografia.';
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, 'generate');
@@ -230,7 +229,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true);
         });
 
@@ -238,7 +237,7 @@ describe('CLI', () => {
             // Given
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             const errorMessage = 'A chave de criptografia não existe no caminho especificado.';
             // When
             readlineQuestionStub.onFirstCall().callsArgWith(1, 'get public');
@@ -247,7 +246,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true);
         });
 
@@ -257,7 +256,7 @@ describe('CLI', () => {
             sinon.stub(FileSystem, 'readFileSync').throws(new Error('Erro de leitura'));
             const cliStartSpy = sinon.spy(cli, 'start');
             const cliStartShowMenuSpy = sinon.spy(cli, 'showMenu');
-            const uiFinishSpy = sinon.spy(ui, 'finish');
+            const cliAdapterFinishSpy = sinon.spy(cliAdapter, 'finish');
             const errorMessage =
                 'A chave de criptografia não pode ser recuperada devido a uma falha no serviço.';
             // When
@@ -267,7 +266,7 @@ describe('CLI', () => {
             // Then
             expect(cliStartSpy.callCount).toBe(1);
             expect(cliStartShowMenuSpy.callCount).toBe(1);
-            expect(uiFinishSpy.callCount).toBe(1);
+            expect(cliAdapterFinishSpy.callCount).toBe(1);
             expect(consoleLogSpy.getCall(2).calledWithMatch(errorMessage)).toBe(true);
         });
     });

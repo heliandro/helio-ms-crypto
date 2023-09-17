@@ -3,8 +3,7 @@ import FileSystem from 'node:fs';
 import sinon from 'sinon';
 import TYPES from '../../src/infrastructure/configuration/Types';
 
-import CryptoRepositoryPort from '../../src/application/ports/repository/CryptoRepositoryPort';
-import CryptoRepository from '../../src/application/ports/repository/CryptoRepositoryPort';
+import CryptoRepositoryPort from '../../src/application/ports/adapters/CryptoRepositoryPort';
 import KeyPair from '../../src/domain/entities/KeyPair';
 import CryptoKeyType from '../../src/domain/types/CryptoKeyType';
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
@@ -12,7 +11,7 @@ import DependencyInjection from '../../src/infrastructure/configuration/Dependen
 import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../shared/types/KeyPair.constants';
 
 describe('CryptoRepositoryFileSystem', () => {
-    let repository: CryptoRepository;
+    let repository: CryptoRepositoryPort;
     let container: Container;
 
     beforeEach(() => {

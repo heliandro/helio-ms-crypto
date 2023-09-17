@@ -4,7 +4,7 @@ import TYPES from '../../infrastructure/configuration/Types';
 import EncryptPort from '../ports/EncryptPort';
 
 import Crypto from '../../domain/entities/Crypto';
-import CryptoRepositoryPort from '../ports/repository/CryptoRepositoryPort';
+import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
 
 @injectable()
 export default class Encrypt implements EncryptPort {

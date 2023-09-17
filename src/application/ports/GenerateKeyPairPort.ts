@@ -1,5 +1,5 @@
 import { Output } from '../usecases/GenerateKeyPair';
-import CryptoRepositoryPort from './repository/CryptoRepositoryPort';
+import CryptoRepositoryPort from './adapters/CryptoRepositoryPort';
 
 export default interface GenerateKeyPairPort {
     readonly repository: CryptoRepositoryPort;

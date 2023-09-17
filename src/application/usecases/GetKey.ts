@@ -4,7 +4,7 @@ import TYPES from '../../infrastructure/configuration/Types';
 import GetKeyPort from '../ports/GetKeyPort';
 
 import KeyPair from '../../domain/entities/KeyPair';
-import CryptoRepositoryPort from '../ports/repository/CryptoRepositoryPort';
+import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
 import CryptoKeyType from '../../domain/types/CryptoKeyType';
 
 @injectable()

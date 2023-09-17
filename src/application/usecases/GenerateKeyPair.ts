@@ -4,7 +4,7 @@ import TYPES from '../../infrastructure/configuration/Types';
 import GenerateKeyPairPort from '../ports/GenerateKeyPairPort';
 
 import Crypto from '../../domain/entities/Crypto';
-import CryptoRepositoryPort from '../ports/repository/CryptoRepositoryPort';
+import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
 
 @injectable()
 export default class GenerateKeyPair implements GenerateKeyPairPort {

@@ -4,7 +4,7 @@ const TYPES = {
     Encrypt: Symbol.for('Encrypt'),
     Decrypt: Symbol.for('Decrypt'),
     GetKey: Symbol.for('GetKey'),
-    CliContainerUI: Symbol.for('CliContainerUI')
+    CLIAdapter: Symbol.for('CLIAdapter')
 };
 
 export default TYPES;

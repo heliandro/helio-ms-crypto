@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import * as FileSystem from 'node:fs';
 
 import KeyPair from '../../../domain/entities/KeyPair';
-import CryptoRepositoryPort from '../../../application/ports/repository/CryptoRepositoryPort';
+import CryptoRepositoryPort from '../../../application/ports/adapters/CryptoRepositoryPort';
 import CryptoKeyType from '../../../domain/types/CryptoKeyType';
 
 const PATH_KEY_FOLDER = './keys';

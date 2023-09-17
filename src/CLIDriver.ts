@@ -10,15 +10,17 @@ import GetKeyPort from './application/ports/GetKeyPort';
 import EncryptPort from './application/ports/EncryptPort';
 import DecryptPort from './application/ports/DecryptPort';
 
-import CliContainerUI from './shared/presentation/CliContainerUI';
-
 import DependencyInjection from './infrastructure/configuration/DependencyInjection';
 import TYPES from './infrastructure/configuration/Types';
+import CLIAdapterPort from './application/ports/adapters/CLIAdapterPort';
+import { HeaderComponentUI } from './presentation/HeaderComponentUI';
+import { MenuComponentUI } from './presentation/MenuComponentUI';
+import { LogColor } from './shared/enum/LogColor.enum';
 
 @injectable()
 export default class CLIDriver {
     constructor(
-        @inject(TYPES.CliContainerUI) readonly cliContainerUI: CliContainerUI,
+        @inject(TYPES.CLIAdapter) readonly cliAdapter: CLIAdapterPort,
         @inject(TYPES.GenerateKeyPair) readonly generateKeyPair: GenerateKeyPairPort,
         @inject(TYPES.GetKey) readonly getKey: GetKeyPort,
         @inject(TYPES.Encrypt) readonly encrypt: EncryptPort,
@@ -26,22 +28,13 @@ export default class CLIDriver {
     ) {}
 
     async start() {
-        this.cliContainerUI.start();
-        const isHeaderUI = false;
-        await this.showMenu(isHeaderUI);
-    }
-
-    private async continueQuestion(): Promise<void> {
-        const chosen = await this.cliContainerUI.continueAndChooseAnOption();
-
-        if (chosen === 'n')
-            return this.cliContainerUI.finish();
-
+        HeaderComponentUI();
         await this.showMenu();
     }
 
-    async showMenu(isHeaderUI: boolean = true): Promise<void> {
-        const chosen = await this.cliContainerUI.showMenuAndChooseAnOption(isHeaderUI);
+    async showMenu(): Promise<void> {
+        MenuComponentUI();
+        const chosen = await this.cliAdapter.executeQuestion();
         const [chosenFirstArg, chosenSecondArg] = this.extractArguments(chosen);
 
         if (this.isInvalidOptions(chosenFirstArg, chosenSecondArg)) {
@@ -68,7 +61,7 @@ export default class CLIDriver {
                 break;
 
             case 'close':
-                this.cliContainerUI.finish();
+                this.finishCLI();
                 break;
 
             default:
@@ -77,12 +70,28 @@ export default class CLIDriver {
         }
     }
 
-    private extractArguments(chosen: string) {
+    private extractArguments(chosen: string): string[] {
         return /\s/.test(chosen) ? chosen.replace(' ', '--').split('--') : [chosen];
     }
 
     private isInvalidOptions(first: string, second: string): boolean {
-        return !first || first !== 'generate' && first !== 'close' && !second;
+        return !first || (first !== 'generate' && first !== 'close' && !second);
+    }
+
+    private async continueQuestion(): Promise<void> {
+        const chosen = await this.cliAdapter.executeQuestion(
+            '\nDeseja continuar? digite: "s" ou "n"\n'
+        );
+
+        if (chosen === 'n') return this.finishCLI();
+
+        await this.showMenu();
+    }
+
+    private finishCLI(): void {
+        const message = 'Encerrando o CLI. Até a proxima!';
+        console.log(`\n${LogColor.MAGENTA}${message}${LogColor.RESET}\n`);
+        this.cliAdapter.finish();
     }
 
     private async choiceGenerateKeys() {

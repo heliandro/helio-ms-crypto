@@ -1,4 +1,4 @@
-import { LogColor } from '../enum/LogColor.enum';
+import { LogColor } from '../shared/enum/LogColor.enum';
 
 const HEADER_UI = `${LogColor.GREEN}
 :'######::'########::'####:'########::'########::'#######:::'######:::'########:::::'###::::'########:'####::::'###::::

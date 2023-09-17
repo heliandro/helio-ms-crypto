@@ -1,5 +1,5 @@
 import { Input, Output } from '../usecases/Encrypt';
-import CryptoRepositoryPort from './repository/CryptoRepositoryPort';
+import CryptoRepositoryPort from './adapters/CryptoRepositoryPort';
 
 export default interface EncryptPort {
     readonly repository: CryptoRepositoryPort;
