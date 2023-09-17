@@ -1,31 +1,30 @@
-import { Container } from "inversify";
+import { Container } from 'inversify';
 import FileSystem from 'node:fs';
-import sinon from "sinon";
-import TYPES from '../../src/config/Types';
+import sinon from 'sinon';
+import TYPES from '../../src/infrastructure/configuration/Types';
 
-import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../shared/types/KeyPair.constants';
-import CryptoRepository from "../../src/domain/repositories/CryptoRepository";
+import CryptoRepositoryPort from '../../src/application/ports/adapters/CryptoRepositoryPort';
 import KeyPair from '../../src/domain/entities/KeyPair';
 import CryptoKeyType from '../../src/domain/types/CryptoKeyType';
-import DependencyInjectionConfig from "../../src/config/DependencyInjectionConfig";
+import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
+
+import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../shared/types/KeyPair.constants';
 
 describe('CryptoRepositoryFileSystem', () => {
-
-    let repository: CryptoRepository;
+    let repository: CryptoRepositoryPort;
     let container: Container;
 
     beforeEach(() => {
-        container = DependencyInjectionConfig.create();
-        repository = container.get<CryptoRepository>(TYPES.CryptoRepositoryFileSystem);
-    })
+        container = DependencyInjection.create();
+        repository = container.get<CryptoRepositoryPort>(TYPES.CryptoRepositoryFileSystem);
+    });
 
     afterEach(async () => {
         container.unbindAll();
         sinon.restore();
-    })
+    });
 
     describe('Cenários de Sucesso', () => {
-
         test('Deve salvar o par de chaves de criptografia', async () => {
             // Given
             sinon.stub(FileSystem, 'existsSync').returns(false);
@@ -36,7 +35,7 @@ describe('CryptoRepositoryFileSystem', () => {
             await repository.save(keyPair);
             // Then
             expect(stub.callCount).toBe(2);
-        })
+        });
 
         test('Deve recuperar a chave de criptografia publica', async () => {
             // Given
@@ -47,7 +46,7 @@ describe('CryptoRepositoryFileSystem', () => {
             const output = await repository.getKey(keyType);
             // Then
             expect(output.publicKey).toBe(MOCK_PUBLIC_KEY);
-        })
+        });
 
         test('Deve recuperar a chave de criptografia privada', async () => {
             // Given
@@ -70,7 +69,7 @@ describe('CryptoRepositoryFileSystem', () => {
             await expect(() => repository.getKey(keyType)).rejects.toThrow(
                 new Error('A chave de criptografia não existe no caminho especificado.')
             );
-        })
+        });
 
         test('Deve lançar um erro ao tentar ler o arquivo da chave de criptografia', async () => {
             // Given
@@ -79,7 +78,9 @@ describe('CryptoRepositoryFileSystem', () => {
             const keyType: CryptoKeyType = 'private';
             // When - Then
             await expect(() => repository.getKey(keyType)).rejects.toThrow(
-                new Error('A chave de criptografia não pode ser recuperada devido a uma falha no serviço.')
+                new Error(
+                    'A chave de criptografia não pode ser recuperada devido a uma falha no serviço.'
+                )
             );
         });
 
@@ -94,4 +95,4 @@ describe('CryptoRepositoryFileSystem', () => {
             );
         });
     });
-})
+});

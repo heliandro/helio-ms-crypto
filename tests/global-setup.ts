@@ -1,4 +1,4 @@
 module.exports = async function () {
-    const globalSetup =  global as any;
+    const globalSetup = global as any;
     globalSetup.start = true;
-}
+};
