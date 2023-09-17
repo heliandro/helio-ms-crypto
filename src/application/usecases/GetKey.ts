@@ -1,32 +1,31 @@
 import { inject, injectable } from 'inversify';
-import TYPES from '../../config/Types';
+import TYPES from '../../infrastructure/configuration/Types';
 
-import UseCase from './interfaces/UseCase';
+import GetKeyPort from '../ports/GetKeyPort';
 
-import KeyPair from "../../domain/entities/KeyPair";
-import CryptoRepository from "../../domain/repositories/CryptoRepository";
-import CryptoKeyType from "../../domain/types/CryptoKeyType";
+import KeyPair from '../../domain/entities/KeyPair';
+import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
+import CryptoKeyType from '../../domain/types/CryptoKeyType';
 
 @injectable()
-export default class GetKey implements UseCase {
-    
+export default class GetKey implements GetKeyPort {
     constructor(
-        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepository
+        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
     ) {}
 
     async execute(input: Input): Promise<Output> {
         const keyPair: KeyPair = await this.repository.getKey(input.keyType);
         return {
             [`${input.keyType}Key`]: keyPair.publicKey || keyPair.privateKey
-        }
+        };
     }
 }
 
-type Input = {
-    keyType: CryptoKeyType
-}
+export type Input = {
+    keyType: CryptoKeyType;
+};
 
-type Output = {
-    publicKey?: string,
-    privateKey?: string
-}
+export type Output = {
+    publicKey?: string;
+    privateKey?: string;
+};

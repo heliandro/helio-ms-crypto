@@ -1,16 +1,15 @@
 import { inject, injectable } from 'inversify';
-import TYPES from '../../config/Types';
+import TYPES from '../../infrastructure/configuration/Types';
 
-import UseCase from './interfaces/UseCase';
+import EncryptPort from '../ports/EncryptPort';
 
 import Crypto from '../../domain/entities/Crypto';
-import CryptoRepository from '../../domain/repositories/CryptoRepository';
+import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
 
 @injectable()
-export default class Encrypt implements UseCase {
-    
+export default class Encrypt implements EncryptPort {
     constructor(
-        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepository
+        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
     ) {}
 
     async execute(input: Input): Promise<Output> {
@@ -19,14 +18,14 @@ export default class Encrypt implements UseCase {
         const encryptedData = crypto.encrypt(input.data);
         return {
             data: encryptedData
-        }
+        };
     }
 }
 
-type Input = {
-    data: string
-}
+export type Input = {
+    data: string;
+};
 
-type Output = {
-    data: any
-}
+export type Output = {
+    data: any;
+};
