@@ -42,32 +42,17 @@ export default class CLIDriver {
             return await this.continueQuestion();
         }
 
-        switch (chosenFirstArg) {
-            case 'generate':
-                await this.choiceGenerateKeys();
-                break;
+        await this.chosenStrategy()[chosenFirstArg](chosenSecondArg);
+    }
 
-            case 'get':
-                const type = <CryptoKeyType>chosenSecondArg;
-                await this.choiceGetKey(type);
-                break;
-
-            case 'encrypt':
-                await this.choiceEncrypt(chosenSecondArg);
-                break;
-
-            case 'decrypt':
-                await this.choiceDecrypt(chosenSecondArg);
-                break;
-
-            case 'close':
-                this.finishCLI();
-                break;
-
-            default:
-                log.error('\nOpção inválida.');
-                await this.continueQuestion();
-        }
+    private chosenStrategy(): { [key: string]: Function } {
+        return {
+            generate: async () => await this.getUsecase(this.generateKeyPair),
+            get: async (data: string) => await this.getUsecase(this.getKey, <CryptoKeyType>data),
+            encrypt: async (data: string) => await this.getUsecase(this.encrypt, { data }),
+            decrypt: async (data: string) => await this.getUsecase(this.decrypt, { data }),
+            close: () => this.finishCLI()
+        };
     }
 
     private extractArguments(chosen: string): string[] {
@@ -76,6 +61,24 @@ export default class CLIDriver {
 
     private isInvalidOptions(first: string, second: string): boolean {
         return !first || (first !== 'generate' && first !== 'close' && !second);
+    }
+
+    private async getUsecase(usecase: { execute: Function }, data?: any) {
+        return usecase
+            .execute(data)
+            .then(this.outputSuccess)
+            .catch(this.outputError)
+            .finally(() => {
+                this.continueQuestion().then();
+            });
+    }
+
+    private outputSuccess(data: any) {
+        log.info('\n' + JSON.stringify(data, null, 2));
+    }
+
+    private outputError(error: any) {
+        log.error(`\n${error.message}`);
     }
 
     private async continueQuestion(): Promise<void> {
@@ -92,54 +95,6 @@ export default class CLIDriver {
         const message = 'Encerrando o CLI. Até a proxima!';
         console.log(`\n${LogColor.MAGENTA}${message}${LogColor.RESET}\n`);
         this.cliAdapter.finish();
-    }
-
-    private async choiceGenerateKeys() {
-        return this.generateKeyPair
-            .execute()
-            .then(this.outputSuccess)
-            .catch(this.outputError)
-            .finally(() => {
-                this.continueQuestion().then();
-            });
-    }
-
-    private async choiceGetKey(type: CryptoKeyType) {
-        return this.getKey
-            .execute({ keyType: type })
-            .then(this.outputSuccess)
-            .catch(this.outputError)
-            .finally(() => {
-                this.continueQuestion().then();
-            });
-    }
-
-    private async choiceEncrypt(data: any) {
-        return this.encrypt
-            .execute({ data })
-            .then(this.outputSuccess)
-            .catch(this.outputError)
-            .finally(() => {
-                this.continueQuestion().then();
-            });
-    }
-
-    private async choiceDecrypt(data: string) {
-        return this.decrypt
-            .execute({ data })
-            .then(this.outputSuccess)
-            .catch(this.outputError)
-            .finally(() => {
-                this.continueQuestion().then();
-            });
-    }
-
-    private outputSuccess(data: any) {
-        log.info('\n' + JSON.stringify(data, null, 2));
-    }
-
-    private outputError(error: any) {
-        log.error(`\n${error.message}`);
     }
 }
 
