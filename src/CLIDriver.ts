@@ -29,20 +29,30 @@ export default class CLIDriver {
 
     async start() {
         HeaderComponentUI();
-        await this.showMenu();
+        await this.showMenuAndAskAQuestion();
     }
 
-    async showMenu(): Promise<void> {
+    async showMenuAndAskAQuestion(): Promise<void> {
         MenuComponentUI();
         const chosen = await this.cliAdapter.executeQuestion();
-        const [chosenFirstArg, chosenSecondArg] = this.extractArguments(chosen);
+        const [option, argument] = this.extractOptionAndArgument(chosen);
 
-        if (this.isInvalidOptions(chosenFirstArg, chosenSecondArg)) {
-            log.error('\nOpção inválida.');
-            return await this.continueQuestion();
+        try {
+            this.validateChosen(option, argument);
+            await this.chosenStrategy()[option](argument);
+        } catch (error: any) {
+            log.error(`\n${error.message}`);
+            await this.askAContinueQuestion();
         }
+    }
 
-        await this.chosenStrategy()[chosenFirstArg](chosenSecondArg);
+    private extractOptionAndArgument(chosen: string): string[] {
+        return /\s/.test(chosen) ? chosen.replace(' ', '--').split('--') : [chosen];
+    }
+
+    private validateChosen(first: string, second: string): void {
+        const isInvalid = !first || (first !== 'generate' && first !== 'close' && !second);
+        if (isInvalid) throw new Error('Opção inválida.');
     }
 
     private chosenStrategy(): { [key: string]: Function } {
@@ -55,21 +65,13 @@ export default class CLIDriver {
         };
     }
 
-    private extractArguments(chosen: string): string[] {
-        return /\s/.test(chosen) ? chosen.replace(' ', '--').split('--') : [chosen];
-    }
-
-    private isInvalidOptions(first: string, second: string): boolean {
-        return !first || (first !== 'generate' && first !== 'close' && !second);
-    }
-
     private async getUsecase(usecase: { execute: Function }, data?: any) {
         return usecase
             .execute(data)
             .then(this.outputSuccess)
             .catch(this.outputError)
             .finally(() => {
-                this.continueQuestion().then();
+                this.askAContinueQuestion().then();
             });
     }
 
@@ -81,14 +83,13 @@ export default class CLIDriver {
         log.error(`\n${error.message}`);
     }
 
-    private async continueQuestion(): Promise<void> {
+    private async askAContinueQuestion(): Promise<void> {
         const chosen = await this.cliAdapter.executeQuestion(
             '\nDeseja continuar? digite: "s" ou "n"\n'
         );
-
-        if (chosen === 'n') return this.finishCLI();
-
-        await this.showMenu();
+        if (chosen === 'n') 
+            return this.finishCLI();
+        await this.showMenuAndAskAQuestion();
     }
 
     private finishCLI(): void {
