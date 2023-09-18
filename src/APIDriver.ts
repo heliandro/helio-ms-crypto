@@ -1,92 +1,53 @@
 import Express from 'express';
-import cors from 'cors';
-import DependencyInjectionConfig from './infrastructure/configuration/DependencyInjection';
-import Encrypt from './application/usecases/Encrypt';
+import DependencyInjection from './infrastructure/configuration/DependencyInjection';
+
 import { Container } from 'inversify';
-import GenerateKeyPair from './application/usecases/GenerateKeyPair';
-import Decrypt from './application/usecases/Decrypt';
 
-interface CustomRequest extends Express.Request {
-    container: Container;
-}
+// import Decrypt from './application/usecases/Decrypt';
+import HttpExpressAdapter from './infrastructure/adapters/http/HttpExpressAdapter';
+// import HttpWithMiddlewareRequest from './infrastructure/interfaces/HttpWithMiddlewareRequest';
+import EncryptController from './infrastructure/controllers/EncryptController';
+import TYPES from './infrastructure/configuration/Types';
+import GenerateKeyPairPort from './application/ports/GenerateKeyPairPort';
 
-class Application {
-    private static app: Express.Application;
-    private static container: Container;
+(async () => {
+    const httpExpressAdapter = new HttpExpressAdapter();
+    const container: Container = DependencyInjection.create();
+    const generateCryptoKeyPairUsecase = container.get<GenerateKeyPairPort>(TYPES.GenerateKeyPair);
+    await generateCryptoKeyPairUsecase.execute().catch((error: any) => console.log(error.message));
 
-    static init() {
-        this.configureExpress();
-        this.injectDependencies();
-        this.generateCryptoKeyPair();
-        return this;
+    const dependencyInjectionMiddleware = (req: any, res: any, next: any) => {
+        req.container = container;
+        next();
     }
 
-    private static configureExpress() {
-        this.app = Express();
-        this.app.use(Express.json());
-        this.app.use(cors());
-        return this;
-    }
+    const encryptController = new EncryptController();
 
-    private static injectDependencies() {
-        this.container = DependencyInjectionConfig.create();
-        this.app.use((req: CustomRequest, res: any, next: any) => {
-            req.container = this.container;
-            next();
-        });
-    }
+    httpExpressAdapter
+        .setMiddleware(dependencyInjectionMiddleware)
+        .registerRouter('/api', encryptController.getEncryptRouter())
+        .runServer();
+})();
 
-    private static async generateCryptoKeyPair() {
-        console.log('Generando chaves de criptografia...');
-        const usecase = this.container.get(GenerateKeyPair);
-        try {
-            await usecase.execute();
-        } catch (error: any) {
-            console.log(error.message);
-        }
-    }
 
-    static registerRouter(apiPath: string, router: Express.Router) {
-        this.app.use(apiPath, router);
-        return this;
-    }
+// const cryptoRouter = Express.Router();
+// cryptoRouter.post('/decrypt', (req: any, res: any) => {
+//     let { data } = req.body;
 
-    static runServer() {
-        this.app.listen(3000, () => {
-            console.log('Server running on port 3000');
-        });
-    }
-}
+//     if (typeof data !== 'string') res.status(400).json({ message: 'Invalid data.' });
 
-const cryptoRouter = Express.Router();
-cryptoRouter.post('/encrypt', async (req: CustomRequest, res: any) => {
-    let { data } = req.body;
+//     const usecase = req.container.get(Decrypt);
+//     return usecase.execute({ data })
+//         .then((decryptedData: any) => res.json(decryptedData))
+//         .catch((error: any) => res.status(500).json({ message: error.message }));
+// });
 
-    if (typeof data !== 'string') data = JSON.stringify(data);
+// const healthRouter = Express.Router();
+// healthRouter.get('/health', (req: Express.Request, res: any) => {
+//     res.json({ message: 'OK' });
+// });
 
-    const usecase = req.container.get(Encrypt);
-    const encryptedData = await usecase.execute({ data });
-
-    res.json(encryptedData);
-});
-
-cryptoRouter.post('/decrypt', async (req: CustomRequest, res: any) => {
-    let { data } = req.body;
-
-    if (typeof data !== 'string') res.status(400).json({ message: 'Invalid data.' });
-
-    const usecase = req.container.get(Decrypt);
-    const decryptedData = await usecase.execute({ data });
-
-    res.json(decryptedData);
-});
-
-const healthRouter = Express.Router();
-healthRouter.get('/health', (req: Express.Request, res: any) => {
-    res.json({ message: 'OK' });
-});
-
-Application.init()
-    .registerRouter('', healthRouter)
-    .registerRouter('/api', cryptoRouter)
-    .runServer();
+// Application.init()
+//     .registerRouter('', healthRouter)
+//     .registerRouter('/api', cryptoRouter)
+//     .runServer();
