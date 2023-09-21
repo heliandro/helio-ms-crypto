@@ -1,22 +1,25 @@
 import { Container } from 'inversify';
-import FileSystem from 'node:fs';
+import fsPromise from 'node:fs/promises';
 import sinon from 'sinon';
 import TYPES from '../../src/infrastructure/configuration/Types';
 
-import CryptoRepositoryPort from '../../src/application/ports/adapters/CryptoRepositoryPort';
+import CryptoRepository from '../../src/application/ports/adapters/CryptoRepository';
 import KeyPair from '../../src/domain/entities/KeyPair';
 import CryptoKeyType from '../../src/domain/types/CryptoKeyType';
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 
 import { MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY } from '../shared/types/KeyPair.constants';
+import { deleteFolder } from '../shared/utils/FileSystemHelper';
+import fsPromisesStub from '../shared/stubs/fsPromisesStub';
 
-describe('CryptoRepositoryFileSystem', () => {
-    let repository: CryptoRepositoryPort;
+describe('CryptoFileSystemRepository', () => {
+    let repository: CryptoRepository;
     let container: Container;
 
     beforeEach(() => {
+        deleteFolder('./keys');
         container = DependencyInjection.create();
-        repository = container.get<CryptoRepositoryPort>(TYPES.CryptoRepositoryFileSystem);
+        repository = container.get<CryptoRepository>(TYPES.CryptoFileSystemRepository);
     });
 
     afterEach(async () => {
@@ -27,20 +30,21 @@ describe('CryptoRepositoryFileSystem', () => {
     describe('Cenários de Sucesso', () => {
         test('Deve salvar o par de chaves de criptografia', async () => {
             // Given
-            sinon.stub(FileSystem, 'existsSync').returns(false);
-            sinon.stub(FileSystem, 'mkdirSync').resolves('');
-            const stub = sinon.stub(FileSystem, 'writeFileSync').returns();
+            fsPromisesStub.stat({ isDirectory: true });
+            const mkdirStub = fsPromisesStub.mkdir();
+            const writeFileStub = fsPromisesStub.writeFile();
             const keyPair: KeyPair = new KeyPair(MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY);
             // When
             await repository.save(keyPair);
             // Then
-            expect(stub.callCount).toBe(2);
+            expect(mkdirStub.callCount).toBe(0);
+            expect(writeFileStub.callCount).toBe(2);
         });
 
         test('Deve recuperar a chave de criptografia publica', async () => {
             // Given
-            sinon.stub(FileSystem, 'existsSync').returns(true);
-            sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PUBLIC_KEY);
+            fsPromisesStub.stat({ isDirectory: true, isFile: true });
+            sinon.stub(fsPromise, 'readFile').resolves(MOCK_PUBLIC_KEY);
             const keyType: CryptoKeyType = 'public';
             // When
             const output = await repository.getKey(keyType);
@@ -50,8 +54,8 @@ describe('CryptoRepositoryFileSystem', () => {
 
         test('Deve recuperar a chave de criptografia privada', async () => {
             // Given
-            sinon.stub(FileSystem, 'existsSync').returns(true);
-            sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PRIVATE_KEY);
+            fsPromisesStub.stat({ isDirectory: true, isFile: true });
+            fsPromisesStub.readFile(MOCK_PRIVATE_KEY);
             const keyType: CryptoKeyType = 'private';
             // When
             const output = await repository.getKey(keyType);
@@ -63,7 +67,7 @@ describe('CryptoRepositoryFileSystem', () => {
     describe('Cenários de Erro', () => {
         test('Deve lançar um erro ao tentar recuperar uma chave de criptografia que não existe', async () => {
             // Given
-            sinon.stub(FileSystem, 'existsSync').returns(false);
+            fsPromisesStub.stat();
             const keyType: CryptoKeyType = 'public';
             // When - Then
             await expect(() => repository.getKey(keyType)).rejects.toThrow(
@@ -73,8 +77,8 @@ describe('CryptoRepositoryFileSystem', () => {
 
         test('Deve lançar um erro ao tentar ler o arquivo da chave de criptografia', async () => {
             // Given
-            sinon.stub(FileSystem, 'existsSync').returns(true);
-            sinon.stub(FileSystem, 'readFileSync').throwsException('Erro de leitura');
+            fsPromisesStub.stat({ isFile: true });
+            fsPromisesStub.readFile().throwsException('Erro de leitura');
             const keyType: CryptoKeyType = 'private';
             // When - Then
             await expect(() => repository.getKey(keyType)).rejects.toThrow(
@@ -86,8 +90,8 @@ describe('CryptoRepositoryFileSystem', () => {
 
         test('Deve lançar um erro ao tentar salvar o par de chaves de criptografia', async () => {
             // Given
-            sinon.stub(FileSystem, 'existsSync').returns(false);
-            sinon.stub(FileSystem, 'mkdirSync').throwsException('Erro de escrita');
+            fsPromisesStub.stat();
+            fsPromisesStub.mkdir().throwsException('Erro ao criar a pasta');
             const keyPair: KeyPair = new KeyPair(MOCK_PUBLIC_KEY, MOCK_PRIVATE_KEY);
             // When - Then
             await expect(() => repository.save(keyPair)).rejects.toThrow(

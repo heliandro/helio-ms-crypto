@@ -1,7 +1,7 @@
 import { Input, Output } from '../usecases/Encrypt';
-import CryptoRepositoryPort from './adapters/CryptoRepositoryPort';
+import CryptoRepository from './adapters/CryptoRepository';
 
 export default interface EncryptPort {
-    readonly repository: CryptoRepositoryPort;
+    readonly repository: CryptoRepository;
     execute(input: Input): Promise<Output>;
 }

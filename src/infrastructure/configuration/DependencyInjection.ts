@@ -11,12 +11,14 @@ import GenerateKeyPair from '../../application/usecases/GenerateKeyPair';
 import GetKey from '../../application/usecases/GetKey';
 import Encrypt from '../../application/usecases/Encrypt';
 import Decrypt from '../../application/usecases/Decrypt';
-import CryptoRepositoryPort from '../../application/ports/adapters/CryptoRepositoryPort';
-import CryptoRepositoryFileSystem from '../adapters/repository/CryptoRepositoryFileSystem';
+import CryptoRepository from '../../application/ports/adapters/CryptoRepository';
+import CryptoFileSystemRepository from '../repository/CryptoFileSystemRepository';
 
 import CLIDriver from '../../CLIDriver';
-import CLIAdapterPort from '../../application/ports/adapters/CLIAdapterPort';
-import CLIAdapter from '../adapters/cli/CLIAdapter';
+import CLIAdapter from '../../application/ports/adapters/CLIAdapter';
+import CLIReadlineAdapter from '../adapters/cli/CLIReadlineAdapter';
+import FileSystemFSAdapter from '../adapters/system/FileSystemFSAdapter';
+import FileSystemAdapter from '../../application/ports/adapters/FileSystemAdapter';
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
@@ -31,8 +33,12 @@ const diBindCore = (container: Container) => {
     container.bind<DecryptPort>(TYPES.Decrypt).to(Decrypt).inSingletonScope();
     // Adapters
     container
-        .bind<CryptoRepositoryPort>(TYPES.CryptoRepositoryFileSystem)
-        .to(CryptoRepositoryFileSystem)
+        .bind<FileSystemAdapter>(TYPES.FileSystemAdapter)
+        .to(FileSystemFSAdapter)
+        .inSingletonScope();
+    container
+        .bind<CryptoRepository>(TYPES.CryptoFileSystemRepository)
+        .to(CryptoFileSystemRepository)
         .inSingletonScope();
 };
 
@@ -48,7 +54,7 @@ export default class DependencyInjection {
         const container = new Container();
         diBindCore(container);
 
-        container.bind<CLIAdapterPort>(TYPES.CLIAdapter).to(CLIAdapter).inSingletonScope();
+        container.bind<CLIAdapter>(TYPES.CLIAdapter).to(CLIReadlineAdapter).inSingletonScope();
         container.bind<CLIDriver>(CLIDriver).to(CLIDriver).inSingletonScope();
 
         return container;

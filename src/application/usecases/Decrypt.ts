@@ -4,13 +4,11 @@ import TYPES from '../../infrastructure/configuration/Types';
 import DecryptPort from '../ports/DecryptPort';
 
 import Crypto from '../../domain/entities/Crypto';
-import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
+import CryptoRepository from '../ports/adapters/CryptoRepository';
 
 @injectable()
 export default class Decrypt implements DecryptPort {
-    constructor(
-        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
-    ) {}
+    constructor(@inject(TYPES.CryptoFileSystemRepository) readonly repository: CryptoRepository) {}
 
     async execute(input: Input): Promise<Output> {
         const keyPair = await this.repository.getKey('private');

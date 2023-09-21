@@ -12,7 +12,7 @@ import DecryptPort from './application/ports/DecryptPort';
 
 import DependencyInjection from './infrastructure/configuration/DependencyInjection';
 import TYPES from './infrastructure/configuration/Types';
-import CLIAdapterPort from './application/ports/adapters/CLIAdapterPort';
+import CLIAdapter from './application/ports/adapters/CLIAdapter';
 import { HeaderComponentUI } from './presentation/HeaderComponentUI';
 import { MenuComponentUI } from './presentation/MenuComponentUI';
 import { LogColor } from './shared/enum/LogColor.enum';
@@ -20,7 +20,7 @@ import { LogColor } from './shared/enum/LogColor.enum';
 @injectable()
 export default class CLIDriver {
     constructor(
-        @inject(TYPES.CLIAdapter) readonly cliAdapter: CLIAdapterPort,
+        @inject(TYPES.CLIAdapter) readonly cliAdapter: CLIAdapter,
         @inject(TYPES.GenerateKeyPair) readonly generateKeyPair: GenerateKeyPairPort,
         @inject(TYPES.GetKey) readonly getKey: GetKeyPort,
         @inject(TYPES.Encrypt) readonly encrypt: EncryptPort,
@@ -87,8 +87,7 @@ export default class CLIDriver {
         const chosen = await this.cliAdapter.executeQuestion(
             '\nDeseja continuar? digite: "s" ou "n"\n'
         );
-        if (chosen === 'n') 
-            return this.finishCLI();
+        if (chosen === 'n') return this.finishCLI();
         await this.showMenuAndAskAQuestion();
     }
 

@@ -1,7 +1,7 @@
 import { Output } from '../usecases/GenerateKeyPair';
-import CryptoRepositoryPort from './adapters/CryptoRepositoryPort';
+import CryptoRepository from './adapters/CryptoRepository';
 
 export default interface GenerateKeyPairPort {
-    readonly repository: CryptoRepositoryPort;
+    readonly repository: CryptoRepository;
     execute(): Promise<Output>;
 }

@@ -4,13 +4,11 @@ import TYPES from '../../infrastructure/configuration/Types';
 import GenerateKeyPairPort from '../ports/GenerateKeyPairPort';
 
 import Crypto from '../../domain/entities/Crypto';
-import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
+import CryptoRepository from '../ports/adapters/CryptoRepository';
 
 @injectable()
 export default class GenerateKeyPair implements GenerateKeyPairPort {
-    constructor(
-        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
-    ) {}
+    constructor(@inject(TYPES.CryptoFileSystemRepository) readonly repository: CryptoRepository) {}
 
     async execute(): Promise<Output> {
         const crypto = await Crypto.create();

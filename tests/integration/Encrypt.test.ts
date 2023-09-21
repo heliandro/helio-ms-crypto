@@ -1,4 +1,4 @@
-import FileSystem from 'node:fs';
+import fsPromisesStub from './../shared/stubs/fsPromisesStub';
 import sinon from 'sinon';
 
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
@@ -16,7 +16,7 @@ describe('Encrypt', () => {
     beforeEach(() => {
         container = DependencyInjection.create();
         usecase = container.get<EncryptPort>(TYPES.Encrypt);
-        sinon.stub(FileSystem, 'existsSync').returns(true);
+        fsPromisesStub.stat({ isDirectory: true, isFile: true });
     });
 
     afterEach(() => {
@@ -27,7 +27,7 @@ describe('Encrypt', () => {
     describe('Cenários de Sucesso', () => {
         test('Deve encriptar um dado', async () => {
             // Given
-            sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PUBLIC_KEY);
+            fsPromisesStub.readFile(MOCK_PUBLIC_KEY);
             const dataObject = { name: 'heliandro' };
             const input = { data: JSON.stringify(dataObject) };
             // When
