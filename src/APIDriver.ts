@@ -1,34 +1,29 @@
-import Express from 'express';
+import { Container } from 'inversify';
 import DependencyInjection from './infrastructure/configuration/DependencyInjection';
 
-import { Container } from 'inversify';
-
-// import Decrypt from './application/usecases/Decrypt';
-import HttpExpressAdapter from './infrastructure/adapters/http/HttpExpressAdapter';
-// import HttpWithMiddlewareRequest from './infrastructure/interfaces/HttpWithMiddlewareRequest';
-import EncryptController from './infrastructure/controllers/EncryptController';
+import HttpEncryptController from './infrastructure/controllers/HttpEncryptController';
 import TYPES from './infrastructure/configuration/Types';
 import GenerateKeyPairPort from './application/ports/GenerateKeyPairPort';
+import HttpAdapter from './application/ports/adapters/HttpAdapter';
 
 (async () => {
-    const httpExpressAdapter = new HttpExpressAdapter();
-    const container: Container = DependencyInjection.create();
+    const container: Container = DependencyInjection.createHttp();
+    const httpExpressAdapter = container.get<HttpAdapter>(TYPES.HttpExpressAdapter);
+    const httpEncryptController = container.get<HttpEncryptController>(TYPES.HttpEncryptController);
     const generateCryptoKeyPairUsecase = container.get<GenerateKeyPairPort>(TYPES.GenerateKeyPair);
+    
     await generateCryptoKeyPairUsecase.execute().catch((error: any) => console.log(error.message));
 
     const dependencyInjectionMiddleware = (req: any, res: any, next: any) => {
         req.container = container;
         next();
-    }
-
-    const encryptController = new EncryptController();
+    };
 
     httpExpressAdapter
         .setMiddleware(dependencyInjectionMiddleware)
-        .registerRouter('/api', encryptController.getEncryptRouter())
+        .registerRouter('/api', httpEncryptController.getEncryptRouter())
         .runServer();
 })();
-
 
 // const cryptoRouter = Express.Router();
 // cryptoRouter.post('/decrypt', (req: any, res: any) => {

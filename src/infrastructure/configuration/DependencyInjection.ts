@@ -19,6 +19,9 @@ import CLIAdapter from '../../application/ports/adapters/CLIAdapter';
 import CLIReadlineAdapter from '../adapters/cli/CLIReadlineAdapter';
 import FileSystemFSAdapter from '../adapters/system/FileSystemFSAdapter';
 import FileSystemAdapter from '../../application/ports/adapters/FileSystemAdapter';
+import HttpAdapter from '@app/src/application/ports/adapters/HttpAdapter';
+import HttpExpressAdapter from '../adapters/http/HttpExpressAdapter';
+import HttpEncryptController from '../controllers/HttpEncryptController';
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
@@ -56,6 +59,20 @@ export default class DependencyInjection {
 
         container.bind<CLIAdapter>(TYPES.CLIAdapter).to(CLIReadlineAdapter).inSingletonScope();
         container.bind<CLIDriver>(CLIDriver).to(CLIDriver).inSingletonScope();
+
+        return container;
+    }
+
+    static createHttp(): Container {
+        const container = new Container();
+        diBindCore(container);
+
+        container
+            .bind<HttpAdapter>(TYPES.HttpExpressAdapter)
+            .to(HttpExpressAdapter)
+            .inSingletonScope();
+
+        container.bind<HttpEncryptController>(TYPES.HttpEncryptController).to(HttpEncryptController);
 
         return container;
     }

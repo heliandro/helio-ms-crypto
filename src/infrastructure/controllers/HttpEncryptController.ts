@@ -1,32 +1,32 @@
-import { Request, Response, Router } from 'express';
+import { Container, inject, injectable } from 'inversify';
+import { Response, Router } from 'express';
+
 import { Output as EncryptOutput } from '../../application/usecases/Encrypt';
-import HttpWithMiddlewareRequest from '../interfaces/HttpWithMiddlewareRequest';
-import HttpExpressAdapter from '../adapters/http/HttpExpressAdapter';
 import TYPES from '../configuration/Types';
 import EncryptPort from '../../application/ports/EncryptPort';
-import { Container } from 'inversify';
 
-export default class EncryptController {
+import HttpAdapter from '../../application/ports/adapters/HttpAdapter';
 
+@injectable()
+export default class HttpEncryptController {
     private cryptoRouter: Router;
 
-    constructor() {
-        this.cryptoRouter = HttpExpressAdapter.createRouter();
+    constructor(@inject(TYPES.HttpExpressAdapter) readonly httpAdapter: HttpAdapter) {
+        this.cryptoRouter = this.httpAdapter.createRouter();
     }
 
     encrypt(req: any, res: Response) {
-        if (!req.body?.data)
-            res.status(400).json({ message: 'Invalid data.' });
+        if (!req.body?.data) res.status(400).json({ message: 'Invalid data.' });
 
         let { data } = req.body;
 
-        if (typeof req.body.data !== 'string') 
-            data = JSON.stringify(req.body.data);
+        if (typeof req.body.data !== 'string') data = JSON.stringify(req.body.data);
 
         const container = <Container>req.container;
         const usecase = container.get<EncryptPort>(TYPES.Encrypt);
 
-        usecase.execute({ data })
+        usecase
+            .execute({ data })
             .then((encryptedData: EncryptOutput) => {
                 res.status(200).json(encryptedData);
             })
