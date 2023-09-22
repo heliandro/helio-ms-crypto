@@ -2,13 +2,13 @@ import { Container, injectable } from 'inversify';
 import { Response, Router } from 'express';
 
 import TYPES from '../configuration/Types';
-import EncryptPort from '../../application/ports/EncryptPort';
-import { Input, Output } from '../../application/usecases/Encrypt';
 
 import HttpWithMiddlewareRequest from '../interfaces/HttpWithMiddlewareRequest';
+import DecryptPort from '../../application/ports/DecryptPort';
+import { Input, Output } from '../../application/usecases/Decrypt';
 
 @injectable()
-export default class HttpEncryptController {
+export default class HttpDecryptController {
     private cryptoRouter: Router;
 
     constructor() {
@@ -16,14 +16,14 @@ export default class HttpEncryptController {
     }
 
     router() {
-        return this.cryptoRouter.post('/encrypt', async (req: any, res: Response) => {
+        return this.cryptoRouter.post('/decrypt', async (req: any, res: Response) => {
             this.validateRequestBody(req, res);
 
             const input: Input = {
-                data: this.mapperData(req.body.data)
+                data: req.body.data
             };
 
-            await this.encryptUsecase(req)
+            await this.decryptUsecase(req)
                 .execute(input)
                 .then((output: Output) => {
                     res.status(200).json(output);
@@ -35,18 +35,14 @@ export default class HttpEncryptController {
     }
 
     private validateRequestBody(req: any, res: Response) {
-        if (!req.body?.data) 
+        if (!req.body?.data)
             res.status(400).json({ message: 'Invalid data.' });
+        if (typeof req.body?.data !== 'string')
+            res.status(400).json({ message: 'Property data must be a string.' });
     }
 
-    private mapperData(data: any) {
-        if (typeof data !== 'string') 
-            return JSON.stringify(data);
-        return data;
-    }
-
-    private encryptUsecase(req: HttpWithMiddlewareRequest) {
+    private decryptUsecase(req: HttpWithMiddlewareRequest) {
         const container = <Container>req.container;
-        return container.get<EncryptPort>(TYPES.Encrypt);
+        return container.get<DecryptPort>(TYPES.Decrypt);
     }
 }

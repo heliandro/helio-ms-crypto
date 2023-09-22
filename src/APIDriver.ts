@@ -10,6 +10,7 @@ import HttpAdapter from './application/ports/adapters/HttpAdapter';
     const container: Container = DependencyInjection.createHttp();
     const httpExpressAdapter = container.get<HttpAdapter>(TYPES.HttpExpressAdapter);
     const httpEncryptController = container.get<HttpEncryptController>(TYPES.HttpEncryptController);
+    const httpDecryptController = container.get<HttpEncryptController>(TYPES.HttpDecryptController);
     const generateCryptoKeyPairUsecase = container.get<GenerateKeyPairPort>(TYPES.GenerateKeyPair);
     
     await generateCryptoKeyPairUsecase.execute().catch((error: any) => console.log(error.message));
@@ -22,27 +23,6 @@ import HttpAdapter from './application/ports/adapters/HttpAdapter';
     httpExpressAdapter
         .setMiddleware(dependencyInjectionMiddleware)
         .registerRouter('/api/v1', httpEncryptController.router())
+        .registerRouter('/api/v1', httpDecryptController.router())
         .runServer();
 })();
-
-// const cryptoRouter = Express.Router();
-// cryptoRouter.post('/decrypt', (req: any, res: any) => {
-//     let { data } = req.body;
-
-//     if (typeof data !== 'string') res.status(400).json({ message: 'Invalid data.' });
-
-//     const usecase = req.container.get(Decrypt);
-//     return usecase.execute({ data })
-//         .then((decryptedData: any) => res.json(decryptedData))
-//         .catch((error: any) => res.status(500).json({ message: error.message }));
-// });
-
-// const healthRouter = Express.Router();
-// healthRouter.get('/health', (req: Express.Request, res: any) => {
-//     res.json({ message: 'OK' });
-// });
-
-// Application.init()
-//     .registerRouter('', healthRouter)
-//     .registerRouter('/api', cryptoRouter)
-//     .runServer();

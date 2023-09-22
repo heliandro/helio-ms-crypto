@@ -19,10 +19,6 @@ export default class HttpExpressAdapter implements HttpAdapter {
         this.configureCors();
     }
 
-    createRouter() {
-        return Express.Router();
-    }
-
     private configureExpress() {
         this.app.use(Express.json());
     }

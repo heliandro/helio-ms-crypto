@@ -22,6 +22,8 @@ import FileSystemAdapter from '../../application/ports/adapters/FileSystemAdapte
 import HttpAdapter from '@app/src/application/ports/adapters/HttpAdapter';
 import HttpExpressAdapter from '../adapters/http/HttpExpressAdapter';
 import HttpEncryptController from '../controllers/HttpEncryptController';
+import HttpDecryptController from '../controllers/HttpDecryptController';
+import HttpHealthController from '../controllers/HttpHealthController';
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
@@ -72,7 +74,9 @@ export default class DependencyInjection {
             .to(HttpExpressAdapter)
             .inSingletonScope();
 
+        container.bind<HttpHealthController>(TYPES.HttpHealthController).to(HttpHealthController);
         container.bind<HttpEncryptController>(TYPES.HttpEncryptController).to(HttpEncryptController);
+        container.bind<HttpDecryptController>(TYPES.HttpDecryptController).to(HttpDecryptController);
 
         return container;
     }

@@ -1,4 +1,3 @@
-
 const TYPES = {
     GenerateKeyPair: Symbol.for('GenerateKeyPair'),
     Encrypt: Symbol.for('Encrypt'),
@@ -8,7 +7,9 @@ const TYPES = {
     FileSystemAdapter: Symbol.for('FileSystemAdapter'),
     CLIAdapter: Symbol.for('CLIAdapter'),
     HttpExpressAdapter: Symbol.for('HttpExpressAdapter'),
+    HttpHealthController: Symbol.for('HttpHealthController'),
     HttpEncryptController: Symbol.for('HttpEncryptController'),
+    HttpDecryptController: Symbol.for('HttpDecryptController'),
 };
 
 export default TYPES;
