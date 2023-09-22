@@ -21,7 +21,7 @@ import HttpAdapter from './application/ports/adapters/HttpAdapter';
 
     httpExpressAdapter
         .setMiddleware(dependencyInjectionMiddleware)
-        .registerRouter('/api', httpEncryptController.getEncryptRouter())
+        .registerRouter('/api/v1', httpEncryptController.router())
         .runServer();
 })();
 

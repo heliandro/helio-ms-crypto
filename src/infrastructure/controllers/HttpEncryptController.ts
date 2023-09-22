@@ -6,6 +6,7 @@ import TYPES from '../configuration/Types';
 import EncryptPort from '../../application/ports/EncryptPort';
 
 import HttpAdapter from '../../application/ports/adapters/HttpAdapter';
+import HttpWithMiddlewareRequest from '../interfaces/HttpWithMiddlewareRequest';
 
 @injectable()
 export default class HttpEncryptController {
@@ -15,26 +16,36 @@ export default class HttpEncryptController {
         this.cryptoRouter = this.httpAdapter.createRouter();
     }
 
-    encrypt(req: any, res: Response) {
-        if (!req.body?.data) res.status(400).json({ message: 'Invalid data.' });
+    router() {
+        return this.cryptoRouter.post('/encrypt', async (req: any, res: Response) => {
+            this.validateRequestBody(req, res);
 
-        let { data } = req.body;
+            const data = this.mapperData(req.body.data);
 
-        if (typeof req.body.data !== 'string') data = JSON.stringify(req.body.data);
-
-        const container = <Container>req.container;
-        const usecase = container.get<EncryptPort>(TYPES.Encrypt);
-
-        usecase
-            .execute({ data })
-            .then((encryptedData: EncryptOutput) => {
-                res.status(200).json(encryptedData);
-            })
-            .catch((error: any) => res.status(500).json({ message: error.message }));
+            await this.encryptUsecase(req)
+                .execute({ data })
+                .then((encryptedData: EncryptOutput) => {
+                    res.status(200).json(encryptedData);
+                })
+                .catch((error: any) => {
+                    res.status(500).json({ message: error.message });
+                });
+        });
     }
 
-    getEncryptRouter() {
-        this.cryptoRouter.post('/encrypt', this.encrypt);
-        return this.cryptoRouter;
+    private validateRequestBody(req: any, res: Response) {
+        if (!req.body?.data) 
+            res.status(400).json({ message: 'Invalid data.' });
+    }
+
+    private mapperData(data: any) {
+        if (typeof data !== 'string') 
+            return JSON.stringify(data);
+        return data;
+    }
+
+    private encryptUsecase(req: HttpWithMiddlewareRequest) {
+        const container = <Container>req.container;
+        return container.get<EncryptPort>(TYPES.Encrypt);
     }
 }
