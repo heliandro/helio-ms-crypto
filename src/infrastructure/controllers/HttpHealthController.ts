@@ -10,7 +10,7 @@ export default class HttpHealthController {
     }
 
     router() {
-        return this.heathRouter.post('/health', async (req: any, res: Response) => {
+        return this.heathRouter.get('/health', async (req: any, res: Response) => {
             res.status(200).json({ message: 'OK' });
         });
     }
