@@ -24,6 +24,8 @@ import HttpExpressAdapter from '../adapters/http/HttpExpressAdapter';
 import HttpEncryptController from '../controllers/HttpEncryptController';
 import HttpDecryptController from '../controllers/HttpDecryptController';
 import HttpHealthController from '../controllers/HttpHealthController';
+import HttpExpressRouterAdapter from '../adapters/http/HttpExpressRouterAdapter';
+import HttpRouterAdapter from '@app/src/application/ports/inbound/HttpRouterAdapter';
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
@@ -73,14 +75,23 @@ export default class DependencyInjection {
             .bind<HttpAdapter>(TYPES.HttpExpressAdapter)
             .to(HttpExpressAdapter)
             .inSingletonScope();
+        container
+            .bind<HttpRouterAdapter>(TYPES.HttpExpressRouterAdapter)
+            .to(HttpExpressRouterAdapter)
+            .inSingletonScope();
 
-        container.bind<HttpHealthController>(TYPES.HttpHealthController).to(HttpHealthController);
+        container
+            .bind<HttpHealthController>(TYPES.HttpHealthController)
+            .to(HttpHealthController)
+            .inSingletonScope();
         container
             .bind<HttpEncryptController>(TYPES.HttpEncryptController)
-            .to(HttpEncryptController);
+            .to(HttpEncryptController)
+            .inSingletonScope();
         container
             .bind<HttpDecryptController>(TYPES.HttpDecryptController)
-            .to(HttpDecryptController);
+            .to(HttpDecryptController)
+            .inSingletonScope();
 
         return container;
     }

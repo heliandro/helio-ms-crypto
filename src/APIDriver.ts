@@ -19,13 +19,7 @@ import HttpAdapter from './application/ports/inbound/HttpAdapter';
 
     await generateCryptoKeyPairUsecase.execute().catch((error: any) => console.log(error.message));
 
-    const dependencyInjectionMiddleware = (req: any, res: any, next: any) => {
-        req.container = container;
-        next();
-    };
-
     httpExpressAdapter
-        .setMiddleware(dependencyInjectionMiddleware)
         .registerRouter('', httpHealthController.router())
         .registerRouter('/api/v1', httpEncryptController.router())
         .registerRouter('/api/v1', httpDecryptController.router())

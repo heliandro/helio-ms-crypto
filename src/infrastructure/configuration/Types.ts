@@ -7,6 +7,7 @@ const TYPES = {
     FileSystemAdapter: Symbol.for('FileSystemAdapter'),
     CLIAdapter: Symbol.for('CLIAdapter'),
     HttpExpressAdapter: Symbol.for('HttpExpressAdapter'),
+    HttpExpressRouterAdapter: Symbol.for('HttpExpressRouterAdapter'),
     HttpHealthController: Symbol.for('HttpHealthController'),
     HttpEncryptController: Symbol.for('HttpEncryptController'),
     HttpDecryptController: Symbol.for('HttpDecryptController')

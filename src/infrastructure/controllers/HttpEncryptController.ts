@@ -1,18 +1,21 @@
-import { Container, injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { Response, Router } from 'express';
 
 import TYPES from '../configuration/Types';
 import Encrypt from '../../application/usecases/interfaces/Encrypt';
 import { Input, Output } from '../../application/usecases/EncryptUsecase';
 
-import HttpWithMiddlewareRequest from '../interfaces/HttpWithMiddlewareRequest';
+import HttpRouterAdapter from '@app/src/application/ports/inbound/HttpRouterAdapter';
 
 @injectable()
 export default class HttpEncryptController {
     private encryptRouter: Router;
 
-    constructor() {
-        this.encryptRouter = Router();
+    constructor(
+        @inject(TYPES.EncryptUsecase) readonly encryptUsecase: Encrypt,
+        @inject(TYPES.HttpExpressRouterAdapter) readonly routerAdapter: HttpRouterAdapter
+    ) {
+        this.encryptRouter = this.routerAdapter.createRouter();
     }
 
     router() {
@@ -23,7 +26,7 @@ export default class HttpEncryptController {
                 data: this.mapperData(req.body.data)
             };
 
-            await this.encryptUsecase(req)
+            await this.encryptUsecase
                 .execute(input)
                 .then((output: Output) => {
                     res.status(200).json(output);
@@ -41,10 +44,5 @@ export default class HttpEncryptController {
     private mapperData(data: any) {
         if (typeof data !== 'string') return JSON.stringify(data);
         return data;
-    }
-
-    private encryptUsecase(req: HttpWithMiddlewareRequest) {
-        const container = <Container>req.container;
-        return container.get<Encrypt>(TYPES.EncryptUsecase);
     }
 }
