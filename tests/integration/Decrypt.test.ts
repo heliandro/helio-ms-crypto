@@ -3,20 +3,20 @@ import sinon from 'sinon';
 
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 import Crypto from '../../src/domain/entities/Crypto';
-import Decrypt from '../../src/application/usecases/Decrypt';
+import DecryptUsecase from '../../src/application/usecases/DecryptUsecase';
 
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.constants';
-import DecryptPort from '../../src/application/ports/DecryptPort';
+import Decrypt from '../../src/application/usecases/interfaces/Decrypt';
 import TYPES from '../../src/infrastructure/configuration/Types';
 import fsPromisesStub from '../shared/stubs/fsPromisesStub';
 
 describe('Decrypt', () => {
     let container: Container;
-    let usecase: Decrypt;
+    let usecase: DecryptUsecase;
 
     beforeEach(() => {
         container = DependencyInjection.create();
-        usecase = container.get<DecryptPort>(TYPES.Decrypt);
+        usecase = container.get<Decrypt>(TYPES.DecryptUsecase);
         fsPromisesStub.stat({ isDirectory: true, isFile: true });
     });
 

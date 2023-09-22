@@ -1,6 +1,6 @@
 import Express from 'express';
 import Cors, { CorsOptions } from 'cors';
-import HttpAdapter from '../../../application/ports/adapters/HttpAdapter';
+import HttpAdapter from '../../../application/ports/inbound/HttpAdapter';
 import { injectable } from 'inversify';
 
 @injectable()

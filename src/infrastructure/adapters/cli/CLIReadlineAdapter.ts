@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import Readline from 'readline';
-import CLIAdapter from '../../../application/ports/adapters/CLIAdapter';
+import CLIAdapter from '../../../application/ports/inbound/CLIAdapter';
 
 @injectable()
 export default class CLIReadlineAdapter implements CLIAdapter {

@@ -2,24 +2,24 @@ import { Container } from 'inversify';
 import TYPES from './Types';
 import 'reflect-metadata';
 
-import GenerateKeyPairPort from '../../application/ports/GenerateKeyPairPort';
-import GetKeyPort from '../../application/ports/GetKeyPort';
-import EncryptPort from '../../application/ports/EncryptPort';
-import DecryptPort from '../../application/ports/DecryptPort';
+import GenerateKeyPair from '../../application/usecases/interfaces/GenerateKeyPair';
+import GetKey from '../../application/usecases/interfaces/GetKey';
+import Encrypt from '../../application/usecases/interfaces/Encrypt';
+import Decrypt from '../../application/usecases/interfaces/Decrypt';
 
-import GenerateKeyPair from '../../application/usecases/GenerateKeyPair';
-import GetKey from '../../application/usecases/GetKey';
-import Encrypt from '../../application/usecases/Encrypt';
-import Decrypt from '../../application/usecases/Decrypt';
-import CryptoRepository from '../../application/ports/adapters/CryptoRepository';
+import GenerateKeyPairUsecase from '../../application/usecases/GenerateKeyPairUsecase';
+import GetKeyUsecase from '../../application/usecases/GetKeyUsecase';
+import EncryptUsecase from '../../application/usecases/EncryptUsecase';
+import DecryptUsecase from '../../application/usecases/DecryptUsecase';
+import CryptoRepository from '../../application/ports/outbound/CryptoRepository';
 import CryptoFileSystemRepository from '../repository/CryptoFileSystemRepository';
 
 import CLIDriver from '../../CLIDriver';
-import CLIAdapter from '../../application/ports/adapters/CLIAdapter';
+import CLIAdapter from '../../application/ports/inbound/CLIAdapter';
 import CLIReadlineAdapter from '../adapters/cli/CLIReadlineAdapter';
 import FileSystemFSAdapter from '../adapters/system/FileSystemFSAdapter';
-import FileSystemAdapter from '../../application/ports/adapters/FileSystemAdapter';
-import HttpAdapter from '@app/src/application/ports/adapters/HttpAdapter';
+import FileSystemAdapter from '../../application/ports/outbound/FileSystemAdapter';
+import HttpAdapter from '../../application/ports/inbound/HttpAdapter';
 import HttpExpressAdapter from '../adapters/http/HttpExpressAdapter';
 import HttpEncryptController from '../controllers/HttpEncryptController';
 import HttpDecryptController from '../controllers/HttpDecryptController';
@@ -30,12 +30,12 @@ const diBindCore = (container: Container) => {
 
     // Ports
     container
-        .bind<GenerateKeyPairPort>(TYPES.GenerateKeyPair)
-        .to(GenerateKeyPair)
+        .bind<GenerateKeyPair>(TYPES.GenerateKeyPairUsecase)
+        .to(GenerateKeyPairUsecase)
         .inSingletonScope();
-    container.bind<GetKeyPort>(TYPES.GetKey).to(GetKey).inSingletonScope();
-    container.bind<EncryptPort>(TYPES.Encrypt).to(Encrypt).inSingletonScope();
-    container.bind<DecryptPort>(TYPES.Decrypt).to(Decrypt).inSingletonScope();
+    container.bind<GetKey>(TYPES.GetKeyUsecase).to(GetKeyUsecase).inSingletonScope();
+    container.bind<Encrypt>(TYPES.EncryptUsecase).to(EncryptUsecase).inSingletonScope();
+    container.bind<Decrypt>(TYPES.DecryptUsecase).to(DecryptUsecase).inSingletonScope();
     // Adapters
     container
         .bind<FileSystemAdapter>(TYPES.FileSystemAdapter)
@@ -75,8 +75,12 @@ export default class DependencyInjection {
             .inSingletonScope();
 
         container.bind<HttpHealthController>(TYPES.HttpHealthController).to(HttpHealthController);
-        container.bind<HttpEncryptController>(TYPES.HttpEncryptController).to(HttpEncryptController);
-        container.bind<HttpDecryptController>(TYPES.HttpDecryptController).to(HttpDecryptController);
+        container
+            .bind<HttpEncryptController>(TYPES.HttpEncryptController)
+            .to(HttpEncryptController);
+        container
+            .bind<HttpDecryptController>(TYPES.HttpDecryptController)
+            .to(HttpDecryptController);
 
         return container;
     }

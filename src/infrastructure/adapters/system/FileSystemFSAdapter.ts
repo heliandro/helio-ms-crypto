@@ -1,4 +1,4 @@
-import FileSystemAdapter from '@app/src/application/ports/adapters/FileSystemAdapter';
+import FileSystemAdapter from '../../../application/ports/outbound/FileSystemAdapter';
 import { injectable } from 'inversify';
 import * as fsPromises from 'node:fs/promises';
 

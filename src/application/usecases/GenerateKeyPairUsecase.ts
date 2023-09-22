@@ -1,13 +1,13 @@
 import { inject, injectable } from 'inversify';
 import TYPES from '../../infrastructure/configuration/Types';
 
-import GenerateKeyPairPort from '../ports/GenerateKeyPairPort';
+import GenerateKeyPair from './interfaces/GenerateKeyPair';
 
 import Crypto from '../../domain/entities/Crypto';
-import CryptoRepository from '../ports/adapters/CryptoRepository';
+import CryptoRepository from '../ports/outbound/CryptoRepository';
 
 @injectable()
-export default class GenerateKeyPair implements GenerateKeyPairPort {
+export default class GenerateKeyPairUsecase implements GenerateKeyPair {
     constructor(@inject(TYPES.CryptoFileSystemRepository) readonly repository: CryptoRepository) {}
 
     async execute(): Promise<Output> {

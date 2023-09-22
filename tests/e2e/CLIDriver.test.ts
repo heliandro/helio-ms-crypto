@@ -7,11 +7,11 @@ import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.const
 
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 import TYPES from '../../src/infrastructure/configuration/Types';
-import CLIAdapter from '../../src/application/ports/adapters/CLIAdapter';
+import CLIAdapter from '../../src/application/ports/inbound/CLIAdapter';
 import CLIDriver from '../../src/CLIDriver';
 import fsPromisesStub from '../shared/stubs/fsPromisesStub';
-import EncryptPort from '../../src/application/ports/EncryptPort';
-import DecryptPort from '../../src/application/ports/DecryptPort';
+import Encrypt from '../../src/application/usecases/interfaces/Encrypt';
+import Decrypt from '../../src/application/usecases/interfaces/Decrypt';
 
 describe('CLIDriver', () => {
     let readlineQuestionStub: sinon.SinonStub;
@@ -21,16 +21,16 @@ describe('CLIDriver', () => {
     let readline: readline.Interface;
     let cliAdapter: CLIAdapter;
     let cliDriver: CLIDriver;
-    let encrypt: EncryptPort;
-    let decrypt: DecryptPort;
+    let encrypt: Encrypt;
+    let decrypt: Decrypt;
 
     beforeEach(() => {
         container = DependencyInjection.createCLI();
         cliAdapter = container.get<CLIAdapter>(TYPES.CLIAdapter);
         readline = <readline.Interface>cliAdapter.getReadline();
         cliDriver = container.get<CLIDriver>(CLIDriver);
-        encrypt = container.get<EncryptPort>(TYPES.Encrypt);
-        decrypt = container.get<DecryptPort>(TYPES.Decrypt);
+        encrypt = container.get<Encrypt>(TYPES.EncryptUsecase);
+        decrypt = container.get<Decrypt>(TYPES.DecryptUsecase);
         // stubs
         consoleLogSpy = sinon.spy(console, 'log');
         readlineQuestionStub = sinon.stub();

@@ -3,7 +3,7 @@ import fsPromise from 'node:fs/promises';
 import sinon from 'sinon';
 import TYPES from '../../src/infrastructure/configuration/Types';
 
-import CryptoRepository from '../../src/application/ports/adapters/CryptoRepository';
+import CryptoRepository from '../../src/application/ports/outbound/CryptoRepository';
 import KeyPair from '../../src/domain/entities/KeyPair';
 import CryptoKeyType from '../../src/domain/types/CryptoKeyType';
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';

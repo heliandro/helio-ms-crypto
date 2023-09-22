@@ -3,18 +3,20 @@ import DependencyInjection from './infrastructure/configuration/DependencyInject
 
 import HttpEncryptController from './infrastructure/controllers/HttpEncryptController';
 import TYPES from './infrastructure/configuration/Types';
-import GenerateKeyPairPort from './application/ports/GenerateKeyPairPort';
-import HttpAdapter from './application/ports/adapters/HttpAdapter';
+import GenerateKeyPair from './application/usecases/interfaces/GenerateKeyPair';
+import HttpAdapter from './application/ports/inbound/HttpAdapter';
 
 (async () => {
     const container: Container = DependencyInjection.createHttp();
-    
+
     const httpExpressAdapter = container.get<HttpAdapter>(TYPES.HttpExpressAdapter);
     const httpEncryptController = container.get<HttpEncryptController>(TYPES.HttpEncryptController);
     const httpDecryptController = container.get<HttpEncryptController>(TYPES.HttpDecryptController);
     const httpHealthController = container.get<HttpEncryptController>(TYPES.HttpHealthController);
-    const generateCryptoKeyPairUsecase = container.get<GenerateKeyPairPort>(TYPES.GenerateKeyPair);
-    
+    const generateCryptoKeyPairUsecase = container.get<GenerateKeyPair>(
+        TYPES.GenerateKeyPairUsecase
+    );
+
     await generateCryptoKeyPairUsecase.execute().catch((error: any) => console.log(error.message));
 
     const dependencyInjectionMiddleware = (req: any, res: any, next: any) => {

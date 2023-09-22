@@ -5,14 +5,14 @@ import { log } from './shared/utils/log';
 
 import CryptoKeyType from './domain/types/CryptoKeyType';
 
-import GenerateKeyPairPort from './application/ports/GenerateKeyPairPort';
-import GetKeyPort from './application/ports/GetKeyPort';
-import EncryptPort from './application/ports/EncryptPort';
-import DecryptPort from './application/ports/DecryptPort';
+import GenerateKeyPair from './application/usecases/interfaces/GenerateKeyPair';
+import GetKey from './application/usecases/interfaces/GetKey';
+import Encrypt from './application/usecases/interfaces/Encrypt';
+import Decrypt from './application/usecases/interfaces/Decrypt';
 
 import DependencyInjection from './infrastructure/configuration/DependencyInjection';
 import TYPES from './infrastructure/configuration/Types';
-import CLIAdapter from './application/ports/adapters/CLIAdapter';
+import CLIAdapter from './application/ports/inbound/CLIAdapter';
 import { HeaderComponentUI } from './presentation/HeaderComponentUI';
 import { MenuComponentUI } from './presentation/MenuComponentUI';
 import { LogColor } from './shared/enum/LogColor.enum';
@@ -21,10 +21,10 @@ import { LogColor } from './shared/enum/LogColor.enum';
 export default class CLIDriver {
     constructor(
         @inject(TYPES.CLIAdapter) readonly cliAdapter: CLIAdapter,
-        @inject(TYPES.GenerateKeyPair) readonly generateKeyPair: GenerateKeyPairPort,
-        @inject(TYPES.GetKey) readonly getKey: GetKeyPort,
-        @inject(TYPES.Encrypt) readonly encrypt: EncryptPort,
-        @inject(TYPES.Decrypt) readonly decrypt: DecryptPort
+        @inject(TYPES.GenerateKeyPairUsecase) readonly generateKeyPair: GenerateKeyPair,
+        @inject(TYPES.GetKeyUsecase) readonly getKey: GetKey,
+        @inject(TYPES.EncryptUsecase) readonly encrypt: Encrypt,
+        @inject(TYPES.DecryptUsecase) readonly decrypt: Decrypt
     ) {}
 
     async start() {

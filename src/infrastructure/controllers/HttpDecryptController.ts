@@ -4,19 +4,19 @@ import { Response, Router } from 'express';
 import TYPES from '../configuration/Types';
 
 import HttpWithMiddlewareRequest from '../interfaces/HttpWithMiddlewareRequest';
-import DecryptPort from '../../application/ports/DecryptPort';
-import { Input, Output } from '../../application/usecases/Decrypt';
+import Decrypt from '../../application/usecases/interfaces/Decrypt';
+import { Input, Output } from '../../application/usecases/DecryptUsecase';
 
 @injectable()
 export default class HttpDecryptController {
-    private cryptoRouter: Router;
+    private decryptRouter: Router;
 
     constructor() {
-        this.cryptoRouter = Router();
+        this.decryptRouter = Router();
     }
 
     router() {
-        return this.cryptoRouter.post('/decrypt', async (req: any, res: Response) => {
+        return this.decryptRouter.post('/decrypt', async (req: any, res: Response) => {
             this.validateRequestBody(req, res);
 
             const input: Input = {
@@ -35,14 +35,13 @@ export default class HttpDecryptController {
     }
 
     private validateRequestBody(req: any, res: Response) {
-        if (!req.body?.data)
-            res.status(400).json({ message: 'Invalid data.' });
+        if (!req.body?.data) res.status(400).json({ message: 'Invalid data.' });
         if (typeof req.body?.data !== 'string')
             res.status(400).json({ message: 'Property data must be a string.' });
     }
 
     private decryptUsecase(req: HttpWithMiddlewareRequest) {
         const container = <Container>req.container;
-        return container.get<DecryptPort>(TYPES.Decrypt);
+        return container.get<Decrypt>(TYPES.DecryptUsecase);
     }
 }

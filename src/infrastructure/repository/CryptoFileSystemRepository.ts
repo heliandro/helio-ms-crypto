@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
 
 import KeyPair from '../../domain/entities/KeyPair';
-import CryptoRepository from '../../application/ports/adapters/CryptoRepository';
+import CryptoRepository from '../../application/ports/outbound/CryptoRepository';
 import CryptoKeyType from '../../domain/types/CryptoKeyType';
 import TYPES from '../configuration/Types';
-import FileSystemAdapter from '../../application/ports/adapters/FileSystemAdapter';
+import FileSystemAdapter from '../../application/ports/outbound/FileSystemAdapter';
 
 @injectable()
 export default class CryptoFileSystemRepository implements CryptoRepository {
