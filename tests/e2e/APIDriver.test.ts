@@ -1,5 +1,5 @@
 import { Container } from "inversify";
-import APIDriver, { initAPIDriver } from "../../src/APIDriver";
+import { initAPIDriver } from "../../src/APIDriver";
 import TYPES from '../../src/infrastructure/configuration/Types';
 import HttpAdapter from "../../src/application/ports/inbound/HttpAdapter";
 import axios from 'axios';
@@ -11,12 +11,10 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 describe('API Driver', () => {
 
     let container: Container;
-    // let apiDriver: APIDriver;
     let httpAdapter: HttpAdapter;
 
     beforeEach(async () => {
         container = initAPIDriver();
-        // apiDriver = container.get<APIDriver>(APIDriver);
         httpAdapter = container.get<HttpAdapter>(TYPES.HttpExpressAdapter);
         await sleep(100);
     });

@@ -3,8 +3,6 @@ import 'reflect-metadata';
 
 import { log } from './shared/utils/log';
 
-import CryptoKeyType from './domain/types/CryptoKeyType';
-
 import GenerateKeyPair from './application/usecases/interfaces/GenerateKeyPair';
 import GetKey from './application/usecases/interfaces/GetKey';
 import Encrypt from './application/usecases/interfaces/Encrypt';
