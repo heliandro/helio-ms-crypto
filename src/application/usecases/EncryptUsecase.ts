@@ -1,16 +1,14 @@
 import { inject, injectable } from 'inversify';
 import TYPES from '../../infrastructure/configuration/Types';
 
-import EncryptPort from '../ports/EncryptPort';
+import Encrypt from './interfaces/Encrypt';
 
 import Crypto from '../../domain/entities/Crypto';
-import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
+import CryptoRepository from '../ports/outbound/CryptoRepository';
 
 @injectable()
-export default class Encrypt implements EncryptPort {
-    constructor(
-        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
-    ) {}
+export default class EncryptUsecase implements Encrypt {
+    constructor(@inject(TYPES.CryptoFileSystemRepository) readonly repository: CryptoRepository) {}
 
     async execute(input: Input): Promise<Output> {
         const keyPair = await this.repository.getKey('public');

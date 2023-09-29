@@ -1,0 +1,38 @@
+@hostname = localhost
+@port = 3000
+@baseUrl = http://{{hostname}}:{{port}}
+@contentType = application/json
+
+### Health Check
+# @name health
+GET {{baseUrl}}/health HTTP/1.1
+
+
+### Encrypt Data
+# @name encrypt
+POST {{baseUrl}}/api/v1/encrypt HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+  "data": {
+    "name": "John Doe",
+    "email": "johndoe@gmail.com"
+  }
+}
+
+### Decrypt Data
+@encryptedData = {{encrypt.response.body.data}}
+
+# @name decrypt
+POST {{baseUrl}}/api/v1/decrypt HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+  "data": "{{encryptedData}}"
+}
+
+### Encrypt CURL
+curl --request POST \
+    --url http://localhost:3000/api/encrypt \
+    --header 'content-type: application/json' \
+    --data '{"data": "my data"}'

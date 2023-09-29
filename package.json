@@ -1,11 +1,13 @@
 {
   "name": "helio-ms-crypto",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Crypto Microsservice",
   "scripts": {
     "build": "tsc --build",
-    "start:cli": "npx ts-node -e \"import { initCLI } from './src/CLIDriver'; initCLI();\"",
-    "start:cli-prod": "node -e \"require('./dist/CLIDriver').initCLI()\"",
+    "start:cli": "npx ts-node -e \"import { initCLIDriver } from './src/CLIDriver'; initCLIDriver();\"",
+    "start:cli-prod": "node -e \"require('./dist/CLIDriver').initCLIDriver()\"",
+    "start:api": "npx ts-node -e \"import { initAPIDriver } from './src/APIDriver'; initAPIDriver();\"",
+    "start:api-prod": "node -e \"require('./dist/APIDriver').initAPIDriver()\"",
     "test": "jest --runInBand --coverage",
     "test:mutation": "stryker run",
     "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts'"
@@ -21,6 +23,7 @@
     "@stryker-mutator/core": "^7.1.1",
     "@stryker-mutator/jest-runner": "^7.1.1",
     "@types/body-parser": "^1.19.2",
+    "@types/cors": "^2.8.14",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.4",
     "@types/node": "^20.5.4",
@@ -37,7 +40,10 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@types/axios": "^0.14.0",
+    "axios": "^1.5.1",
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",

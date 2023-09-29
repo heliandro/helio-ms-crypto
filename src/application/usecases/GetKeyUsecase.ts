@@ -1,17 +1,15 @@
 import { inject, injectable } from 'inversify';
 import TYPES from '../../infrastructure/configuration/Types';
 
-import GetKeyPort from '../ports/GetKeyPort';
+import GetKey from './interfaces/GetKey';
 
 import KeyPair from '../../domain/entities/KeyPair';
-import CryptoRepositoryPort from '../ports/adapters/CryptoRepositoryPort';
+import CryptoRepository from '../ports/outbound/CryptoRepository';
 import CryptoKeyType from '../../domain/types/CryptoKeyType';
 
 @injectable()
-export default class GetKey implements GetKeyPort {
-    constructor(
-        @inject(TYPES.CryptoRepositoryFileSystem) readonly repository: CryptoRepositoryPort
-    ) {}
+export default class GetKeyUsecase implements GetKey {
+    constructor(@inject(TYPES.CryptoFileSystemRepository) readonly repository: CryptoRepository) {}
 
     async execute(input: Input): Promise<Output> {
         const keyPair: KeyPair = await this.repository.getKey(input.keyType);

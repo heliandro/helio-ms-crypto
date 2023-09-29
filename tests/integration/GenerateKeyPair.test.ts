@@ -3,17 +3,17 @@ import { Container } from 'inversify';
 import * as FileSystemHelper from '../shared/utils/FileSystemHelper';
 
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
-import GenerateKeyPair from '../../src/application/usecases/GenerateKeyPair';
-import GenerateKeyPairPort from '../../src/application/ports/GenerateKeyPairPort';
+import GenerateKeyPairUsecase from '../../src/application/usecases/GenerateKeyPairUsecase';
+import GenerateKeyPair from '../../src/application/usecases/interfaces/GenerateKeyPair';
 import TYPES from '../../src/infrastructure/configuration/Types';
 
 describe('GenerateKeyPair', () => {
     let container: Container;
-    let usecase: GenerateKeyPair;
+    let usecase: GenerateKeyPairUsecase;
 
     beforeEach(() => {
         container = DependencyInjection.create();
-        usecase = container.get<GenerateKeyPairPort>(TYPES.GenerateKeyPair);
+        usecase = container.get<GenerateKeyPair>(TYPES.GenerateKeyPairUsecase);
         FileSystemHelper.deleteFolder('./keys');
     });
 

@@ -1,23 +1,23 @@
 import { Container } from 'inversify';
-import FileSystem from 'node:fs';
 import sinon from 'sinon';
 
 import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 import Crypto from '../../src/domain/entities/Crypto';
-import Decrypt from '../../src/application/usecases/Decrypt';
+import DecryptUsecase from '../../src/application/usecases/DecryptUsecase';
 
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.constants';
-import DecryptPort from '../../src/application/ports/DecryptPort';
+import Decrypt from '../../src/application/usecases/interfaces/Decrypt';
 import TYPES from '../../src/infrastructure/configuration/Types';
+import fsPromisesStub from '../shared/stubs/fsPromisesStub';
 
 describe('Decrypt', () => {
     let container: Container;
-    let usecase: Decrypt;
+    let usecase: DecryptUsecase;
 
     beforeEach(() => {
         container = DependencyInjection.create();
-        usecase = container.get<DecryptPort>(TYPES.Decrypt);
-        sinon.stub(FileSystem, 'existsSync').returns(true);
+        usecase = container.get<Decrypt>(TYPES.DecryptUsecase);
+        fsPromisesStub.stat({ isDirectory: true, isFile: true });
     });
 
     afterEach(() => {
@@ -32,7 +32,7 @@ describe('Decrypt', () => {
             const crypto = new Crypto(MOCK_PUBLIC_KEY, '');
             const encryptedData = crypto.encrypt(jsonData);
             const input = { data: encryptedData };
-            sinon.stub(FileSystem, 'readFileSync').returns(MOCK_PRIVATE_KEY);
+            fsPromisesStub.readFile(MOCK_PRIVATE_KEY);
             // When
             const output = await usecase.execute(input);
             // Then

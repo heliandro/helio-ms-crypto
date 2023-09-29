@@ -2,37 +2,49 @@ import { Container } from 'inversify';
 import TYPES from './Types';
 import 'reflect-metadata';
 
-import GenerateKeyPairPort from '../../application/ports/GenerateKeyPairPort';
-import GetKeyPort from '../../application/ports/GetKeyPort';
-import EncryptPort from '../../application/ports/EncryptPort';
-import DecryptPort from '../../application/ports/DecryptPort';
+import GenerateKeyPair from '../../application/usecases/interfaces/GenerateKeyPair';
+import GetKey from '../../application/usecases/interfaces/GetKey';
+import Encrypt from '../../application/usecases/interfaces/Encrypt';
+import Decrypt from '../../application/usecases/interfaces/Decrypt';
 
-import GenerateKeyPair from '../../application/usecases/GenerateKeyPair';
-import GetKey from '../../application/usecases/GetKey';
-import Encrypt from '../../application/usecases/Encrypt';
-import Decrypt from '../../application/usecases/Decrypt';
-import CryptoRepositoryPort from '../../application/ports/adapters/CryptoRepositoryPort';
-import CryptoRepositoryFileSystem from '../adapters/repository/CryptoRepositoryFileSystem';
+import GenerateKeyPairUsecase from '../../application/usecases/GenerateKeyPairUsecase';
+import GetKeyUsecase from '../../application/usecases/GetKeyUsecase';
+import EncryptUsecase from '../../application/usecases/EncryptUsecase';
+import DecryptUsecase from '../../application/usecases/DecryptUsecase';
+import CryptoRepository from '../../application/ports/outbound/CryptoRepository';
+import CryptoFileSystemRepository from '../repository/CryptoFileSystemRepository';
 
 import CLIDriver from '../../CLIDriver';
-import CLIAdapterPort from '../../application/ports/adapters/CLIAdapterPort';
-import CLIAdapter from '../adapters/cli/CLIAdapter';
+import CLIAdapter from '../../application/ports/inbound/CLIAdapter';
+import CLIReadlineAdapter from '../adapters/cli/CLIReadlineAdapter';
+import FileSystemFSAdapter from '../adapters/system/FileSystemFSAdapter';
+import FileSystemAdapter from '../../application/ports/outbound/FileSystemAdapter';
+import HttpAdapter from '../../application/ports/inbound/HttpAdapter';
+import HttpExpressAdapter from '../adapters/http/HttpExpressAdapter';
+import HttpEncryptController from '../controllers/HttpEncryptController';
+import HttpDecryptController from '../controllers/HttpDecryptController';
+import HttpHealthController from '../controllers/HttpHealthController';
+import HttpExpressRouterAdapter from '../adapters/http/HttpExpressRouterAdapter';
+import HttpRouterAdapter from '@app/src/application/ports/inbound/HttpRouterAdapter';
+import APIDriver from '../../APIDriver';
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
 
-    // Ports
     container
-        .bind<GenerateKeyPairPort>(TYPES.GenerateKeyPair)
-        .to(GenerateKeyPair)
+        .bind<GenerateKeyPair>(TYPES.GenerateKeyPairUsecase)
+        .to(GenerateKeyPairUsecase)
         .inSingletonScope();
-    container.bind<GetKeyPort>(TYPES.GetKey).to(GetKey).inSingletonScope();
-    container.bind<EncryptPort>(TYPES.Encrypt).to(Encrypt).inSingletonScope();
-    container.bind<DecryptPort>(TYPES.Decrypt).to(Decrypt).inSingletonScope();
-    // Adapters
+    container.bind<GetKey>(TYPES.GetKeyUsecase).to(GetKeyUsecase).inSingletonScope();
+    container.bind<Encrypt>(TYPES.EncryptUsecase).to(EncryptUsecase).inSingletonScope();
+    container.bind<Decrypt>(TYPES.DecryptUsecase).to(DecryptUsecase).inSingletonScope();
     container
-        .bind<CryptoRepositoryPort>(TYPES.CryptoRepositoryFileSystem)
-        .to(CryptoRepositoryFileSystem)
+        .bind<FileSystemAdapter>(TYPES.FileSystemAdapter)
+        .to(FileSystemFSAdapter)
+        .inSingletonScope();
+    container
+        .bind<CryptoRepository>(TYPES.CryptoFileSystemRepository)
+        .to(CryptoFileSystemRepository)
         .inSingletonScope();
 };
 
@@ -48,8 +60,39 @@ export default class DependencyInjection {
         const container = new Container();
         diBindCore(container);
 
-        container.bind<CLIAdapterPort>(TYPES.CLIAdapter).to(CLIAdapter).inSingletonScope();
+        container.bind<CLIAdapter>(TYPES.CLIAdapter).to(CLIReadlineAdapter).inSingletonScope();
         container.bind<CLIDriver>(CLIDriver).to(CLIDriver).inSingletonScope();
+
+        return container;
+    }
+
+    static createHttp(): Container {
+        const container = new Container();
+        diBindCore(container);
+
+        container
+            .bind<HttpAdapter>(TYPES.HttpExpressAdapter)
+            .to(HttpExpressAdapter)
+            .inSingletonScope();
+        container
+            .bind<HttpRouterAdapter>(TYPES.HttpExpressRouterAdapter)
+            .to(HttpExpressRouterAdapter)
+            .inSingletonScope();
+
+        container
+            .bind<HttpHealthController>(TYPES.HttpHealthController)
+            .to(HttpHealthController)
+            .inSingletonScope();
+        container
+            .bind<HttpEncryptController>(TYPES.HttpEncryptController)
+            .to(HttpEncryptController)
+            .inSingletonScope();
+        container
+            .bind<HttpDecryptController>(TYPES.HttpDecryptController)
+            .to(HttpDecryptController)
+            .inSingletonScope();
+
+        container.bind<APIDriver>(APIDriver).to(APIDriver).inSingletonScope();
 
         return container;
     }
