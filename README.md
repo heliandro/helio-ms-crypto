@@ -23,10 +23,7 @@ Este projeto adota a arquitetura hexagonal para garantir uma separação clara e
 - [x] Criptografia de dados.
 - [x] Descriptografia de dados.
 - [x] CLI para integração.
-- [ ] API RESTful para integração.
-- [ ] Documentação com Swagger.
-- [ ] Container/Cloud Like.
-
+- [x] API RESTful para integração.
 
 ## Pré-requisitos
 
@@ -41,7 +38,7 @@ Instale as dependências:
    npm install
    ```
 
-## Utilização
+## Utilização - CLI
 
 1. Inicie o cli
     ```bash
@@ -65,6 +62,14 @@ Instale as dependências:
     ```bash
     decrypt "ZDnjmkjlZGv4O7p/vRW3yCoEphgLQLLZTS9PMrfEFWnc2Hp7jOvujnmlEpWtZmuEXmRJnPvRlYlXoDUKVO+QxPxOT0k1z1W0HJTIbpD5WYbEt3ONgkpmwVk4Y1ZFYn9sNdQf5DQMuStkFLlMhsBS5zw0qq4JQ0l8nYygD3N8yVc="
     ```
+
+## Utilização - API
+
+1. Inicie a api
+    ```bash
+    npm run start:api
+    ```
+ 2. Utilize o arquivo api.http na raiz do projeto para efetuar as requests
 
 ## Testes
 
