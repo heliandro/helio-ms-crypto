@@ -6,9 +6,9 @@ import { Server } from 'http';
 
 @injectable()
 export default class HttpExpressAdapter implements HttpAdapter {
-    private app: Express.Application;
-    private PORT: number;
-    private WHITE_LIST: string[];
+    private readonly app: Express.Application;
+    private readonly PORT: number;
+    private readonly WHITE_LIST: string[];
     private server: Server = {} as Server;
 
     constructor() {
