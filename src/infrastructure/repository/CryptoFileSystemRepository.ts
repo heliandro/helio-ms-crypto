@@ -8,11 +8,11 @@ import FileSystemAdapter from '../../application/ports/outbound/FileSystemAdapte
 
 @injectable()
 export default class CryptoFileSystemRepository implements CryptoRepository {
-    private PATH_FOLDER = './keys';
-    private PUBLIC_KEY_FILENAME = 'public_key.pem';
-    private PRIVATE_KEY_FILENAME = 'private_key.pem';
-    private PATH_PUBLIC_KEY = `${this.PATH_FOLDER}/${this.PUBLIC_KEY_FILENAME}`;
-    private PATH_PRIVATE_KEY = `${this.PATH_FOLDER}/${this.PRIVATE_KEY_FILENAME}`;
+    private readonly PATH_FOLDER = './keys';
+    private readonly PUBLIC_KEY_FILENAME = 'public_key.pem';
+    private readonly PRIVATE_KEY_FILENAME = 'private_key.pem';
+    private readonly PATH_PUBLIC_KEY = `${this.PATH_FOLDER}/${this.PUBLIC_KEY_FILENAME}`;
+    private readonly PATH_PRIVATE_KEY = `${this.PATH_FOLDER}/${this.PRIVATE_KEY_FILENAME}`;
 
     constructor(
         @inject(TYPES.FileSystemAdapter) private readonly fileSystemAdapter: FileSystemAdapter
@@ -63,7 +63,7 @@ export default class CryptoFileSystemRepository implements CryptoRepository {
         const filename = `${type}_key.pem`;
 
         try {
-            let content = await this.fileSystemAdapter.readFile(this.PATH_FOLDER, filename);
+            const content = await this.fileSystemAdapter.readFile(this.PATH_FOLDER, filename);
             let publicKey = '';
             let privateKey = '';
 

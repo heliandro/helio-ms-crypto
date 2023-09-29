@@ -55,10 +55,10 @@ export default class CLIDriver {
 
     private chosenStrategy(): { [key: string]: Function } {
         return {
-            generate: async () => await this.getUsecase(this.generateKeyPair),
-            get: async (data: string) => await this.getUsecase(this.getKey, { keyType: data }),
-            encrypt: async (data: string) => await this.getUsecase(this.encrypt, { data }),
-            decrypt: async (data: string) => await this.getUsecase(this.decrypt, { data }),
+            generate: () => this.getUsecase(this.generateKeyPair),
+            get: (data: string) => this.getUsecase(this.getKey, { keyType: data }),
+            encrypt: (data: string) => this.getUsecase(this.encrypt, { data }),
+            decrypt: (data: string) => this.getUsecase(this.decrypt, { data }),
             close: () => this.finishCLI()
         };
     }

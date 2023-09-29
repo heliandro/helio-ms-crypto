@@ -15,7 +15,7 @@ export default class APIDriver {
         @inject(TYPES.HttpDecryptController) readonly httpDecryptController: HttpEncryptController,
         @inject(TYPES.HttpHealthController) readonly httpHealthController: HttpEncryptController
     ) {
-        this.generateKeyPair.execute().catch((error: any) => console.log(error.message));
+        this.generateKeyPair.execute().catch((error: Error) => console.error(error.message));
     }
 
     async start() {

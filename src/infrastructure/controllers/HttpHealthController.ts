@@ -1,5 +1,6 @@
 import { injectable } from 'inversify';
 import { Response, Router } from 'express';
+import { HttpStatusCode } from 'axios';
 
 @injectable()
 export default class HttpHealthController {
@@ -10,8 +11,8 @@ export default class HttpHealthController {
     }
 
     router() {
-        return this.heathRouter.get('/health', async (req: any, res: Response) => {
-            res.status(200).json({ message: 'OK' });
+        return this.heathRouter.get('/health', async (_req, res: Response) => {
+            res.status(HttpStatusCode.Ok).json({ message: 'OK' });
         });
     }
 }

@@ -13,7 +13,7 @@ export default class HttpExpressAdapter implements HttpAdapter {
 
     constructor() {
         this.app = Express();
-        this.PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+        this.PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
         this.WHITE_LIST = process.env.WHITE_LIST
             ? process.env.WHITE_LIST.split(',')
             : [`http://localhost:${this.PORT}`];

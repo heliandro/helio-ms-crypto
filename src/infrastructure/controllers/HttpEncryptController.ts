@@ -22,8 +22,8 @@ export default class HttpEncryptController {
 
     router() {
         return this.encryptRouter.post('/encrypt', async (req: any, res: Response) => {
-            const error = this.validateRequestBody(req);
-            if (error) return res.status(error.status).json(error.data);
+            const reqBodyError = this.validateRequestBody(req);
+            if (reqBodyError) return res.status(reqBodyError.status).json(reqBodyError.data);
 
             try {
                 const input: Input = this.mapperDataToInput(req.body.data);
