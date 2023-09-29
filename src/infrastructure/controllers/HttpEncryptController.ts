@@ -6,6 +6,8 @@ import Encrypt from '../../application/usecases/interfaces/Encrypt';
 import { Input, Output } from '../../application/usecases/EncryptUsecase';
 
 import HttpRouterAdapter from '@app/src/application/ports/inbound/HttpRouterAdapter';
+import RequestBodyDataMissingException from '../Exceptions/RequestBodyDataMissingException';
+import { HttpStatusCode } from 'axios';
 
 @injectable()
 export default class HttpEncryptController {
@@ -20,29 +22,25 @@ export default class HttpEncryptController {
 
     router() {
         return this.encryptRouter.post('/encrypt', async (req: any, res: Response) => {
-            this.validateRequestBody(req, res);
+            const error = this.validateRequestBody(req);
+            if (error) return res.status(error.status).json(error.data);
 
-            const input: Input = {
-                data: this.mapperData(req.body.data)
-            };
-
-            await this.encryptUsecase
-                .execute(input)
-                .then((output: Output) => {
-                    res.status(200).json(output);
-                })
-                .catch((error: any) => {
-                    res.status(500).json({ message: error.message });
-                });
+            try {
+                const input: Input = this.mapperDataToInput(req.body.data);
+                const output: Output = await this.encryptUsecase.execute(input);
+                return res.status(HttpStatusCode.Ok).json(output);                
+            } catch (error: any) {
+                return res.status(HttpStatusCode.InternalServerError).json({ message: error.message });
+            }
         });
     }
 
-    private validateRequestBody(req: any, res: Response) {
-        if (!req.body?.data) res.status(400).json({ message: 'Invalid data.' });
+    private validateRequestBody(req: any) {
+        if (!req.body.data) return new RequestBodyDataMissingException();
     }
 
-    private mapperData(data: any) {
-        if (typeof data !== 'string') return JSON.stringify(data);
-        return data;
+    private mapperDataToInput(data: any) {
+        if (typeof data !== 'string') return { data: JSON.stringify(data) };
+        return { data };
     }
 }

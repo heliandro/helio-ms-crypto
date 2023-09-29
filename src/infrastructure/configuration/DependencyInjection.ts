@@ -26,11 +26,11 @@ import HttpDecryptController from '../controllers/HttpDecryptController';
 import HttpHealthController from '../controllers/HttpHealthController';
 import HttpExpressRouterAdapter from '../adapters/http/HttpExpressRouterAdapter';
 import HttpRouterAdapter from '@app/src/application/ports/inbound/HttpRouterAdapter';
+import APIDriver from '../../APIDriver';
 
 const diBindCore = (container: Container) => {
     if (!container) throw new Error('DI iniciado incorretamente.');
 
-    // Ports
     container
         .bind<GenerateKeyPair>(TYPES.GenerateKeyPairUsecase)
         .to(GenerateKeyPairUsecase)
@@ -38,7 +38,6 @@ const diBindCore = (container: Container) => {
     container.bind<GetKey>(TYPES.GetKeyUsecase).to(GetKeyUsecase).inSingletonScope();
     container.bind<Encrypt>(TYPES.EncryptUsecase).to(EncryptUsecase).inSingletonScope();
     container.bind<Decrypt>(TYPES.DecryptUsecase).to(DecryptUsecase).inSingletonScope();
-    // Adapters
     container
         .bind<FileSystemAdapter>(TYPES.FileSystemAdapter)
         .to(FileSystemFSAdapter)
@@ -92,6 +91,8 @@ export default class DependencyInjection {
             .bind<HttpDecryptController>(TYPES.HttpDecryptController)
             .to(HttpDecryptController)
             .inSingletonScope();
+
+        container.bind<APIDriver>(APIDriver).to(APIDriver).inSingletonScope();
 
         return container;
     }

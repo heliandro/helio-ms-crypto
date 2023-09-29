@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { Container, inject, injectable } from 'inversify';
 import 'reflect-metadata';
 
 import { log } from './shared/utils/log';
@@ -58,7 +58,7 @@ export default class CLIDriver {
     private chosenStrategy(): { [key: string]: Function } {
         return {
             generate: async () => await this.getUsecase(this.generateKeyPair),
-            get: async (data: string) => await this.getUsecase(this.getKey, <CryptoKeyType>data),
+            get: async (data: string) => await this.getUsecase(this.getKey, { keyType: data }),
             encrypt: async (data: string) => await this.getUsecase(this.encrypt, { data }),
             decrypt: async (data: string) => await this.getUsecase(this.decrypt, { data }),
             close: () => this.finishCLI()
@@ -98,8 +98,9 @@ export default class CLIDriver {
     }
 }
 
-export const initCLI = () => {
-    const di = DependencyInjection.createCLI();
-    const cli = di.get(CLIDriver);
+export const initCLIDriver = (): Container => {
+    const container = DependencyInjection.createCLI();
+    const cli = container.get(CLIDriver);
     cli.start();
+    return container;
 };

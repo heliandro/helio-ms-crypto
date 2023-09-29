@@ -6,6 +6,9 @@ import TYPES from '../configuration/Types';
 import Decrypt from '../../application/usecases/interfaces/Decrypt';
 import { Input, Output } from '../../application/usecases/DecryptUsecase';
 import HttpRouterAdapter from '@app/src/application/ports/inbound/HttpRouterAdapter';
+import RequestBodyDataMissingException from '../Exceptions/RequestBodyDataMissingException';
+import { HttpStatusCode } from 'axios';
+import RequestBodyDataNoStringException from '../Exceptions/RequestBodyDataNoStringException';
 
 @injectable()
 export default class HttpDecryptController {
@@ -20,26 +23,21 @@ export default class HttpDecryptController {
 
     router() {
         return this.decryptRouter.post('/decrypt', async (req: any, res: Response) => {
-            this.validateRequestBody(req, res);
+            const error = this.validateRequestBody(req);
+            if (error) return res.status(error.status).json(error.data);
 
-            const input: Input = {
-                data: req.body.data
-            };
-
-            await this.decryptUsecase
-                .execute(input)
-                .then((output: Output) => {
-                    res.status(200).json(output);
-                })
-                .catch((error: any) => {
-                    res.status(500).json({ message: error.message });
-                });
+            try {
+                const input: Input = { data: req.body.data };
+                const output: Output = await this.decryptUsecase.execute(input);
+                return res.status(HttpStatusCode.Ok).json(output);
+            } catch (error: any) {
+                return res.status(HttpStatusCode.InternalServerError).json({ message: error.message });
+            }
         });
     }
 
-    private validateRequestBody(req: any, res: Response) {
-        if (!req.body?.data) res.status(400).json({ message: 'Invalid data.' });
-        if (typeof req.body?.data !== 'string')
-            res.status(400).json({ message: 'Property data must be a string.' });
+    private validateRequestBody(req: any) {
+        if (!req.body.data) return new RequestBodyDataMissingException();
+        if (typeof req.body?.data !== 'string') return new RequestBodyDataNoStringException();
     }
 }

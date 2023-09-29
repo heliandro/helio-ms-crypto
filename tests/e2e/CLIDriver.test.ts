@@ -5,10 +5,9 @@ import sinon from 'sinon';
 import { deleteFolder } from '../shared/utils/FileSystemHelper';
 import { MOCK_PRIVATE_KEY, MOCK_PUBLIC_KEY } from '../shared/types/KeyPair.constants';
 
-import DependencyInjection from '../../src/infrastructure/configuration/DependencyInjection';
 import TYPES from '../../src/infrastructure/configuration/Types';
 import CLIAdapter from '../../src/application/ports/inbound/CLIAdapter';
-import CLIDriver from '../../src/CLIDriver';
+import CLIDriver, { initCLIDriver } from '../../src/CLIDriver';
 import fsPromisesStub from '../shared/stubs/fsPromisesStub';
 import Encrypt from '../../src/application/usecases/interfaces/Encrypt';
 import Decrypt from '../../src/application/usecases/interfaces/Decrypt';
@@ -25,7 +24,7 @@ describe('CLIDriver', () => {
     let decrypt: Decrypt;
 
     beforeEach(() => {
-        container = DependencyInjection.createCLI();
+        container = initCLIDriver();
         cliAdapter = container.get<CLIAdapter>(TYPES.CLIAdapter);
         readline = <readline.Interface>cliAdapter.getReadline();
         cliDriver = container.get<CLIDriver>(CLIDriver);

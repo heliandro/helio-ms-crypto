@@ -2,12 +2,14 @@ import Express from 'express';
 import Cors, { CorsOptions } from 'cors';
 import HttpAdapter from '../../../application/ports/inbound/HttpAdapter';
 import { injectable } from 'inversify';
+import { Server } from 'http';
 
 @injectable()
 export default class HttpExpressAdapter implements HttpAdapter {
     private app: Express.Application;
     private PORT: number;
     private WHITE_LIST: string[];
+    private server: Server = {} as Server;
 
     constructor() {
         this.app = Express();
@@ -47,8 +49,12 @@ export default class HttpExpressAdapter implements HttpAdapter {
     }
 
     runServer() {
-        this.app.listen(this.PORT, () => {
+        this.server = this.app.listen(this.PORT, () => {
             console.log(`Servidor rodando na porta ${this.PORT}`);
         });
+    }
+
+    stopServer() {
+        this.server.close();
     }
 }

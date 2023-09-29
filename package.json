@@ -4,8 +4,10 @@
   "description": "Crypto Microsservice",
   "scripts": {
     "build": "tsc --build",
-    "start:cli": "npx ts-node -e \"import { initCLI } from './src/CLIDriver'; initCLI();\"",
-    "start:cli-prod": "node -e \"require('./dist/CLIDriver').initCLI()\"",
+    "start:cli": "npx ts-node -e \"import { initCLIDriver } from './src/CLIDriver'; initCLIDriver();\"",
+    "start:cli-prod": "node -e \"require('./dist/CLIDriver').initCLIDriver()\"",
+    "start:api": "npx ts-node -e \"import { initAPIDriver } from './src/APIDriver'; initAPIDriver();\"",
+    "start:api-prod": "node -e \"require('./dist/APIDriver').initAPIDriver()\"",
     "test": "jest --runInBand --coverage",
     "test:mutation": "stryker run",
     "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts'"
@@ -38,6 +40,8 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@types/axios": "^0.14.0",
+    "axios": "^1.5.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
