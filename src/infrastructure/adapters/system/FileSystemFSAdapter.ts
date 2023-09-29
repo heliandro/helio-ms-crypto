@@ -4,7 +4,7 @@ import * as fsPromises from 'node:fs/promises';
 
 @injectable()
 export default class FileSystemFSAdapter implements FileSystemAdapter {
-    private fileSystem: typeof fsPromises;
+    private readonly fileSystem: typeof fsPromises;
 
     constructor() {
         this.fileSystem = fsPromises;
@@ -50,6 +50,6 @@ export default class FileSystemFSAdapter implements FileSystemAdapter {
             throw new Error(`The directory ${dirPath} does not exists.`);
         }
         const path = `${dirPath}/${filename}`;
-        return await this.fileSystem.readFile(path, 'utf8');
+        return this.fileSystem.readFile(path, 'utf8');
     }
 }
